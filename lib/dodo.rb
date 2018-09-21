@@ -6,20 +6,14 @@ module Dodo
   module TimeWarp
     class Window
 
-      attr_reader :starting, :duration
+      attr_reader :start, :duration
 
-      def initialize(duration, starting: 0, &block)
+      def initialize(duration, &block)
         @duration = duration
-        @starting = starting
-        @offset = starting
         @happenings = []
         @total_child_duration = 0
 
         instance_eval &block
-      end
-
-      def ending
-        starting + duration
       end
 
       def over(duration, &block)
@@ -40,17 +34,14 @@ module Dodo
         self << happening
       end
 
-      def eval(offset)
-        schedule = []
+      def eval(starting:)
+        total_offset = starting
 
-        [@happenings, distribution].transpose do |happening, dist_offset|
-          offset += dist_offset
-          happening.eval(offset).tap
-          offset += happening.duration
+        [@happenings, distribution].transpose do |happening, offset|
+          total_offset += happening.eval(total_offset + offset)
         end
 
-        offset = ending
-        schedule
+        starting + duration
       end
 
       def << (happening)
@@ -74,13 +65,9 @@ module Dodo
         @starting = nil
       end
 
-      def eval(offset)
-        Timecop
-        [self]
-      end
-
-      def ending
-        starting
+      def eval(starting:)
+        Timecop.freeze offset { @block.call }
+        starting # + duration (== 0)
       end
 
       def duration
