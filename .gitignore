@@ -6,9 +6,9 @@
 /pkg/
 /spec/reports/
 /tmp/
-/.idea/
+.idea/*
 
-/Gemfile.lock/
+Gemfile.lock
 
 # rspec failure tracking
 .rspec_status
