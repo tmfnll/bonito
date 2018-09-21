@@ -1,5 +1,6 @@
 require "dodo/version"
 require "securerandom"
+require "timecop"
 
 module Dodo
   module TimeWarp
@@ -39,12 +40,13 @@ module Dodo
         self << happening
       end
 
-      def schedule(offset)
+      def eval(offset)
         schedule = []
 
-        schedule.concat [@happenings, distribution].transpose do |happening, dist_offset|
+        [@happenings, distribution].transpose do |happening, dist_offset|
           offset += dist_offset
-          happening.schedule(offset).tap { |_moments| offset += happening.duration}
+          happening.eval(offset).tap
+          offset += happening.duration
         end
 
         offset = ending
@@ -72,8 +74,8 @@ module Dodo
         @starting = nil
       end
 
-      def schedule(offset)
-        @starting = offset
+      def eval(offset)
+        Timecop
         [self]
       end
 
