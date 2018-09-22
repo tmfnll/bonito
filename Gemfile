@@ -7,4 +7,8 @@ gemspec
 
 gem "timecop"
 
-
+group :development do
+  gem 'pry'
+  gem 'activesupport', '~> 5.0'
+  gem "rubocop"
+end
