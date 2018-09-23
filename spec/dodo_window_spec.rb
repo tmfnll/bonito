@@ -206,4 +206,43 @@ RSpec.describe Dodo::Window do
       end
     end
   end
+
+  describe '#eval' do
+    context 'with a total of :this_many happenings queued' do
+      let(:this_many) { 5 }
+
+      let(:some_time_ago) { 3.weeks.ago }
+
+      let(:distribution) do
+        [1.days, 3.days, 1.week, 8.days, 11.days].map(&:to_i)
+      end
+
+      before do
+        this_many.times { window << moment }
+        allow(window).to receive(:distribution).and_return(distribution)
+        allow(moment).to receive(:eval, &:itself)
+      end
+
+      subject { window.eval starting: some_time_ago }
+
+      it 'should call eval on each queued happening' do
+        expect(moment).to receive(:eval).exactly(this_many).times
+        subject
+      end
+
+      it 'should return the initial offset plus the duration of the window' do
+        expect(subject).to eq some_time_ago + window.duration
+      end
+
+      it 'should call eval, offset according to distribution' do
+        offsets = []
+        allow(moment).to receive(:eval) do |offset|
+          offsets << offset
+          offset
+        end
+        subject
+        expect(offsets).to eq distribution.map { |offset| some_time_ago + offset }
+      end
+    end
+  end
 end

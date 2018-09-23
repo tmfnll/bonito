@@ -9,8 +9,12 @@ gemspec
 
 gem 'timecop'
 
-group :development do
+group :development, :test do
   gem 'activesupport', '~> 5.0'
-  gem 'pry'
   gem 'rubocop'
+  gem 'simplecov', require: false
+end
+
+group :development do
+  gem 'pry'
 end

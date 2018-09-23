@@ -31,10 +31,8 @@ module Dodo
     end
 
     def eval(starting:)
-      total_offset = starting
-
-      [@happenings, distribution].transpose do |happening, offset|
-        total_offset += happening.eval(total_offset + offset)
+      [@happenings, distribution].transpose.each do |happening, offset|
+        happening.eval(starting + offset)
       end
 
       starting + duration
