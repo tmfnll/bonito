@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'dodo'
+require 'active_support/core_ext/numeric/time'
 
 RSpec.describe Dodo do
   it 'has a version number' do
@@ -8,11 +9,11 @@ RSpec.describe Dodo do
   end
 
   it 'does something useful' do
-    window = Dodo::TimeWarp::Window.new 20 do
+   over 2.weeks do
       now do
         puts 'first moment'
       end
-      over 3 do
+      over 3.days do
         now do
           puts 'second moment'
         end
@@ -21,6 +22,6 @@ RSpec.describe Dodo do
         puts 'third moment'
       end
     end
-    window.schedule 0
+    window.eval starting: 2.weeks.ago
   end
 end

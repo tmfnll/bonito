@@ -23,7 +23,7 @@ module Dodo
         end
       end
 
-      def now(&block)
+      def please(&block)
         Moment.new(&block).tap { |moment| self << moment }
       end
 
@@ -61,15 +61,30 @@ module Dodo
       end
     end
 
+    def over(duration, &block)
+      Window.new duration, &block
+    end
+
+    def starting(start)
+      window = yield
+      window.eval starting: start
+    end
+
+    def ending(end_)
+      window = yield
+      start = end_ - window.duration
+      window.eval starting: start
+    end
+
+
     class Moment
       def initialize(&block)
         @block = block
-        @starting = nil
       end
 
       def eval(starting:)
         Timecop.freeze offset { @block.call }
-        starting # + duration (== 0)
+        starting + duration
       end
 
       def duration
