@@ -1,7 +1,11 @@
----
-sudo: false
 language: ruby
-cache: bundler
 rvm:
-  - 2.5.1
-before_install: gem install bundler -v 1.16.5
+- 2.0.0
+- 1.9.3
+- jruby-19mode
+- rbx-2
+bundler_args: --jobs=2
+script:
+  - bundle exec rake db:setup
+  - bundle exec rake spec
+cache: bundler

@@ -13,6 +13,8 @@ group :development, :test do
   gem 'activesupport', '~> 5.0'
   gem 'rubocop'
   gem 'simplecov', require: false
+  gem 'travis'
+  gem 'travis-lint'
 end
 
 group :development do
