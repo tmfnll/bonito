@@ -10,7 +10,7 @@ gemspec
 gem 'timecop'
 
 group :development, :test do
-  gem 'activesupport', '~> 5.0'
+  gem 'activesupport'
   gem 'rubocop'
   gem 'simplecov', require: false
   gem 'travis'
