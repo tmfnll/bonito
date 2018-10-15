@@ -223,7 +223,7 @@ RSpec.describe Dodo::Window do
         allow(moment).to receive(:eval, &:itself)
       end
 
-      subject { window.eval starting: some_time_ago }
+      subject { window.eval some_time_ago }
 
       it 'should call eval on each queued happening' do
         expect(moment).to receive(:eval).exactly(this_many).times
@@ -243,6 +243,18 @@ RSpec.describe Dodo::Window do
         subject
         expect(offsets).to eq distribution.map { |offset| some_time_ago + offset }
       end
+    end
+  end
+end
+
+Dodo.starting 3.weeks.ago do
+  over 2.weeks do
+    please do
+      puts "#{Time.now} Hello"
+    end
+
+    please do
+      puts "#{Time.now} goodbye"
     end
   end
 end

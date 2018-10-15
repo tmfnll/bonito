@@ -6,39 +6,59 @@ require 'timecop'
 
 module Dodo
   class Window
-    attr_reader :duration
+    attr_reader :happenings, :duration, :total_child_duration
 
     def initialize(duration, &block)
       @duration = duration
       @happenings = []
+      @moments = []
+      @windows = []
       @total_child_duration = 0
 
       instance_eval(&block)
     end
 
+    def total_moments
+      @moments.size
+    end
+
+    def total_windows
+      @windows.size
+    end
+
     def over(duration, &block)
-      self.class.new(duration, &block).tap do |window|
-        self << window
-      end
+      self.class.new(duration, &block).tap { |window| push_window window }
     end
 
     def please(&block)
-      Moment.new(&block).tap { |moment| self << moment }
+      Moment.new(&block).tap { |moment| push_moment moment }
     end
 
     def repeat(times: 2, &block)
       times.times.map { please &block }
     end
 
-    def eval(starting:)
-      [@happenings, distribution].transpose.each do |happening, offset|
-        happening.eval(starting + offset)
-      end
-
-      starting + duration
+    def use(window)
+      push_window window
     end
 
-    def <<(happening)
+    def enum(distribution, opts = {})
+      WindowEnumerator.new self, distribution, opts
+    end
+
+    private
+
+    def push_moment(moment)
+      @moments << moment
+      push moment
+    end
+
+    def push_window(window)
+      @windows << window
+      push window
+    end
+
+    def push(happening)
       tap do
         @total_child_duration += happening.duration
         raise Exception if @total_child_duration > duration
@@ -46,45 +66,134 @@ module Dodo
         @happenings << happening
       end
     end
-
-    alias use <<
-
-    private
-
-    def distribution
-      @happenings.size.times.map do
-        SecureRandom.random_number (duration - @total_child_duration).to_i
-      end.sort
-    end
   end
 
-  def over(duration, &block)
+  def self.over(duration, &block)
     Window.new duration, &block
   end
 
-  def starting(start)
-    window = yield
-    window.eval starting: start
+  def self.starting(start, with = {}, &block)
+    window = module_eval &block
+    runner = Runner.new with
+    runner.call window, start, with
   end
 
-  def ending(end_)
-    window = yield
+  def self.ending(end_, with = {}, &block)
+    window = module_eval &block
     start = end_ - window.duration
-    window.eval starting: start
+    runner = Runner.new with
+    runner.call window, start, with
+  end
+
+  module Scalable
+    def cram
+      @cram ||= @opts.fetch(:scale) {  @opts.fetch(:cram) { 1 } }.ceil
+    end
+
+    def stretch
+      @stretch ||= @opts.fetch(:scale) {  @opts.fetch(:stretch) { 1 } }
+    end
+  end
+
+  class WindowEnumerator
+    include Enumerable
+    include Scalable
+
+    def initialize(window, distribution, opts = {})
+      @window = window
+      @starting_offset = distribution.next
+      @opts = opts
+      @distribution = distribute
+    end
+
+    def each
+      return to_enum(:each) unless block_given?
+
+      @window.happenings.each do |happening|
+        happening.enum(@distribution, @opts).each { |offset, moment| yield offset, moment }
+      end
+    end
+
+    private
+
+    def total_crammed_happenings
+      (@window.total_moments * cram) + @window.total_windows
+    end
+
+    def distribute
+      total_crammed_happenings.times.map do
+        offset = SecureRandom.random_number((@window.duration - @window.total_child_duration).floor)
+        offset *= stretch
+        offset + @starting_offset
+      end.sort.each
+    end
+
   end
 
   class Moment
+
+    attr_reader :duration
+
     def initialize(&block)
       @block = block
+      @duration = 0
     end
 
-    def eval(starting:)
-      Timecop.freeze offset { @block.call }
-      starting + duration
+    def call
+      @block.call
     end
 
-    def duration
-      0
+    def enum(distribution, opts = {})
+      MomentEnumerator.new self, distribution, opts
+    end
+  end
+
+  class MomentEnumerator
+    include Enumerable
+    include Scalable
+
+    def initialize(moment, distribution, opts)
+      @moment = moment
+      @distribution = distribution
+      @opts = opts
+    end
+
+    def each
+      return to_enum(:each) unless block_given?
+
+      cram.times { yield @distribution.next, @moment}
+    end
+  end
+
+  class Runner
+    def initialize(opts = {})
+      @opts = opts
+    end
+
+    def live?
+      @opts.fetch(:live) { false }
+    end
+
+    def daemonize?
+      @opts.fetch(:daemonize) { false }
+    end
+
+    def call(window, start, opts = {})
+      Process.daemon if daemonize?
+
+      window.enum([0].each, opts).each do |offset, moment|
+        occurring_at(offset) { moment.call }
+      end
+    end
+
+    private
+
+    def occurring_at(instant)
+      if live? && instant > Time.now
+        nap_time = [instant - Time.now, 0].max
+        sleep nap_time
+      end
+      Timecop.freeze(instant) { yield }
     end
   end
 end
