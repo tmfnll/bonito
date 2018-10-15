@@ -34,8 +34,8 @@ RSpec.describe Dodo::Window do
     end
   end
 
-  describe '#<<' do
-    subject { window << happening }
+  describe '#push' do
+    subject { window.send :push, happening }
 
     context 'with a happening whose duration is less than that of the window' do
       let(:happening) { Dodo::Window.new(duration - 1) {} }
@@ -61,8 +61,8 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#use' do
-    it 'should be an alias for #<<' do
-      expect(window.method(:use)).to eq(window.method(:<<))
+    it 'should be an alias for #push' do
+      expect(window.method(:use)).to eq(window.method(:push))
     end
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Dodo::Window do
     end
 
     it 'should append the new window to parent@happenings' do
-      expect(window).to receive(:<<).with(child)
+      expect(window).to receive(:push_window).with(child)
       subject
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Dodo::Window do
     end
 
     it 'should append the new window to window@happenings' do
-      expect(window).to receive(:<<).with(moment)
+      expect(window).to receive(:push_moment).with(moment)
       subject
     end
 
