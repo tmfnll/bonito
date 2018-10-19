@@ -61,8 +61,8 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#use' do
-    it 'should be an alias for #push' do
-      expect(window.method(:use)).to eq(window.method(:push))
+    it 'should be an alias for #push_window' do
+      expect(window.method(:use)).to eq(window.method(:push_window))
     end
   end
 
@@ -139,77 +139,22 @@ RSpec.describe Dodo::Window do
     end
 
     context 'with an integer as the :times argument and passing block' do
-      let(:this_many) { 3 }
+      let(:k) { 3 }
 
-      subject { window.repeat times: this_many, &block }
+      subject { window.repeat times: k, &block }
 
       it 'should invoke #please :repetitions times passing block' do
         expect(window).to receive(:please) do |&blk|
           expect(blk).to eq block
-        end.exactly(this_many).times
+        end.exactly(k).times
         subject
       end
     end
   end
 
-  describe '#distribution' do
-    subject { window.send(:distribution) }
-
-    context 'with a total of :this_many happenings queued' do
-      let(:this_many) { 5 }
-
-      let(:random_numbers) do
-        [3.days, 8.days, 1.day, 11.days, 1.week].map(&:to_i)
-      end
-
-      subject { window.send(:distribution) }
-
-      context 'with @total_child_duration = 0' do
-        before do
-          this_many.times { window << moment }
-          allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
-        end
-
-        it 'should call SecureRandom::random_number :this_many times, with a limit of window.duration' do
-          expect(SecureRandom).to receive(:random_number) do |limit|
-            expect(limit).to eq window.duration
-          end.exactly(this_many).times
-          subject
-        end
-
-        it 'should return a sorted array of offsets' do
-          expect(subject).to eq random_numbers.sort
-        end
-      end
-
-      context 'with @total_child_duration = :a_couple_of_days' do
-        let(:a_couple_of_days) { 2.days }
-
-        let(:child) { Dodo::Window.new(a_couple_of_days) {} }
-
-        before do
-          window << child
-          (this_many - 1).times { window << moment }
-          allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
-        end
-
-        it 'should call SecureRandom::random_number :this_many times, with a limit of window.duration - window.@total_child_duration' do
-          expect(SecureRandom).to receive(:random_number) do |limit|
-            expect(limit).to eq window.duration - window.instance_variable_get(:@total_child_duration)
-          end.exactly(this_many).times
-          subject
-        end
-
-        it 'should return a sorted array of offsets' do
-          expect(subject).to eq random_numbers.sort
-        end
-      end
-    end
-  end
-
   describe '#eval' do
-    context 'with a total of :this_many happenings queued' do
-      let(:this_many) { 5 }
+    context 'with a total of :k happenings queued' do
+      let(:k) { 5 }
 
       let(:some_time_ago) { 3.weeks.ago }
 
@@ -218,7 +163,7 @@ RSpec.describe Dodo::Window do
       end
 
       before do
-        this_many.times { window << moment }
+        k.times { window << moment }
         allow(window).to receive(:distribution).and_return(distribution)
         allow(moment).to receive(:eval, &:itself)
       end
@@ -226,7 +171,7 @@ RSpec.describe Dodo::Window do
       subject { window.eval some_time_ago }
 
       it 'should call eval on each queued happening' do
-        expect(moment).to receive(:eval).exactly(this_many).times
+        expect(moment).to receive(:eval).exactly(k).times
         subject
       end
 

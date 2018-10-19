@@ -38,16 +38,6 @@ module Dodo
       times.times.map { please &block }
     end
 
-    def use(window)
-      push_window window
-    end
-
-    def enum(distribution, opts = {})
-      WindowEnumerator.new self, distribution, opts
-    end
-
-    private
-
     def push_moment(moment)
       @moments << moment
       push moment
@@ -57,6 +47,14 @@ module Dodo
       @windows << window
       push window
     end
+
+    alias :use :push_window
+
+    def enum(distribution, opts = {})
+      WindowEnumerator.new self, distribution, opts
+    end
+
+    private
 
     def push(happening)
       tap do
@@ -99,18 +97,21 @@ module Dodo
     include Enumerable
     include Scalable
 
-    def initialize(window, distribution, opts = {})
+    def initialize(window, parent_distribution = nil, opts = {})
       @window = window
-      @starting_offset = distribution.next
+      @starting_offset = parent_distribution&.next || 0
       @opts = opts
-      @distribution = distribute
     end
 
     def each
       return to_enum(:each) unless block_given?
 
+      distribution = distribute
+
       @window.happenings.each do |happening|
-        happening.enum(@distribution, @opts).each { |offset, moment| yield offset, moment }
+        happening.enum(distribution, @opts).map do |offset, moment|
+          yield offset, moment
+        end
       end
     end
 
@@ -161,7 +162,7 @@ module Dodo
     def each
       return to_enum(:each) unless block_given?
 
-      cram.times { yield @distribution.next, @moment}
+      cram.times { yield @distribution.next, @moment }
     end
   end
 
