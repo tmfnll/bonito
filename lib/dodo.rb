@@ -35,12 +35,7 @@ module Dodo
     end
 
     def repeat(times: 2, &block)
-      times.times.map { please &block }
-    end
-
-    def push_moment(moment)
-      @moments << moment
-      push moment
+      Array.new(times) { please(&block) }
     end
 
     def push_window(window)
@@ -55,6 +50,11 @@ module Dodo
     end
 
     private
+
+    def push_moment(moment)
+      @moments << moment
+      push moment
+    end
 
     def push(happening)
       tap do

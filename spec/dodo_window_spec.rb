@@ -94,7 +94,7 @@ RSpec.describe Dodo::Window do
     end
   end
 
-  describe 'please' do
+  describe '#please' do
     before do
       allow(Dodo::Moment).to receive(:new).and_return(moment)
     end
