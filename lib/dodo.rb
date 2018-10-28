@@ -91,8 +91,8 @@ module Dodo
       distribution = distribute
 
       @window.happenings.each do |happening|
-        happening.enum(distribution, @opts).map do |offset, moment|
-          yield offset, moment
+        happening.enum(distribution, @opts).map do |moment|
+          yield moment
         end
       end
     end
@@ -103,7 +103,6 @@ module Dodo
       @window.happenings.reduce(0) do |sum, happening|
         sum + (happening.scales? ? cram : 1)
       end
-      # (@window.total_moments * cram) + @window.total_non_moments
     end
 
     def distribute
@@ -136,6 +135,14 @@ module Dodo
     end
   end
 
+  class MomentDecorator < SimpleDelegator
+    attr_reader :offset
+    def initialize(moment, offset)
+      @offset = offset
+      super moment
+    end
+  end
+
   class MomentEnumerator
     include Enumerable
     include Scalable
@@ -149,7 +156,10 @@ module Dodo
     def each
       return to_enum(:each) unless block_given?
 
-      cram.times { yield @distribution.next, @moment }
+      cram.times do
+        dec = MomentDecorator.new(@moment, @distribution.next)
+        yield dec
+      end
     end
   end
 
@@ -169,8 +179,8 @@ module Dodo
     def call(window, start, opts = {})
       Process.daemon if daemonize?
 
-      window.enum(nil, opts).each do |offset, moment|
-        occurring_at(start + offset) { moment.call }
+      window.enum(nil, opts).each do |moment|
+        occurring_at(start + moment.offset) { moment.call }
       end
     end
 
