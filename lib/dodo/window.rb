@@ -52,19 +52,6 @@ module Dodo
     Window.new duration, &block
   end
 
-  def self.starting(start, with = {}, &block)
-    window = module_eval &block
-    runner = Runner.new with
-    runner.call window, start, with
-  end
-
-  def self.ending(end_, with = {}, &block)
-    window = module_eval &block
-    start = end_ - window.duration
-    runner = Runner.new with
-    runner.call window, start, with
-  end
-
   class WindowEnumerator
     include Enumerable
     include Scalable

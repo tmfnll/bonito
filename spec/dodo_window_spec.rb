@@ -178,5 +178,3 @@ RSpec.describe Dodo::Window do
     end
   end
 end
-
-

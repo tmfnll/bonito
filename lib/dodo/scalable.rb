@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dodo
   module Scalable
     def cram

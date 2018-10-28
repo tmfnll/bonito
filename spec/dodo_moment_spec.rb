@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Dodo::Moment do
   let(:block) { proc { p 'some block' } }
   let(:moment) { Dodo::Moment.new &block }

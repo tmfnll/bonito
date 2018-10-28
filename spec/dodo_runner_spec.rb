@@ -72,7 +72,6 @@ RSpec.describe Dodo::Runner do
     end
 
     context 'with a context provided' do
-
       subject { runner.call window, start, context, enum_opts }
 
       it 'should invoke window.enum with nil and opts' do
