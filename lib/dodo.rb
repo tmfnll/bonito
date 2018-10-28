@@ -11,52 +11,32 @@ module Dodo
     def initialize(duration, &block)
       @duration = duration
       @happenings = []
-      @moments = []
-      @windows = []
       @total_child_duration = 0
 
       instance_eval(&block)
     end
 
-    def total_moments
-      @moments.size
-    end
-
-    def total_windows
-      @windows.size
-    end
-
     def over(duration, &block)
-      self.class.new(duration, &block).tap { |window| push_window window }
+      self.class.new(duration, &block).tap { |window| self << window }
     end
 
     def please(&block)
-      Moment.new(&block).tap { |moment| push_moment moment }
+      Moment.new(&block).tap { |moment| self << moment }
     end
 
     def repeat(times: 2, &block)
       Array.new(times) { please(&block) }
     end
 
-    def push_window(window)
-      @windows << window
-      push window
-    end
-
-    alias use push_window
-
     def enum(distribution, opts = {})
       WindowEnumerator.new self, distribution, opts
     end
 
-    private
-
-    def push_moment(moment)
-      @moments << moment
-      push moment
+    def scales?
+      false
     end
 
-    def push(happening)
+    def <<(happening)
       tap do
         @total_child_duration += happening.duration
         raise Exception if @total_child_duration > duration
@@ -64,6 +44,8 @@ module Dodo
         @happenings << happening
       end
     end
+
+    alias use <<
   end
 
   def self.over(duration, &block)
@@ -118,7 +100,10 @@ module Dodo
     private
 
     def total_crammed_happenings
-      (@window.total_moments * cram) + @window.total_windows
+      @window.happenings.reduce(0) do |sum, happening|
+        sum + (happening.scales? ? cram : 1)
+      end
+      # (@window.total_moments * cram) + @window.total_non_moments
     end
 
     def distribute
@@ -144,6 +129,10 @@ module Dodo
 
     def enum(distribution, opts = {})
       MomentEnumerator.new self, distribution, opts
+    end
+
+    def scales?
+      true
     end
   end
 

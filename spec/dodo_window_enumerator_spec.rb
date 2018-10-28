@@ -53,8 +53,8 @@ RSpec.describe Dodo::WindowEnumerator do
 
     context 'with a single moment and a single child window' do
       before do
-        window.push_moment moment
-        window.push_window child_window
+        window << moment
+        window << child_window
       end
 
       context 'with a cram factor of 1' do
@@ -84,8 +84,8 @@ RSpec.describe Dodo::WindowEnumerator do
 
       context 'with a child window' do
         before do
-          window.push_window child_window
-          (k - 1).times { window.push_moment moment }
+          window << child_window
+          (k - 1).times { window << moment }
         end
 
         it 'should call SecureRandom::random_number :k times, with a limit of window.duration - window.@total_child_duration' do
@@ -113,8 +113,8 @@ RSpec.describe Dodo::WindowEnumerator do
       end
 
       before do
-        window.push_window child_window
-        (k - 1).times { window.push_moment moment }
+        window << child_window
+        (k - 1).times { window << moment }
       end
 
       subject { enumerator.each }

@@ -34,8 +34,8 @@ RSpec.describe Dodo::Window do
     end
   end
 
-  describe '#push' do
-    subject { window.send :push, happening }
+  describe '#<<' do
+    subject { window << happening }
 
     context 'with a happening whose duration is less than that of the window' do
       let(:happening) { Dodo::Window.new(duration - 1) {} }
@@ -62,7 +62,7 @@ RSpec.describe Dodo::Window do
 
   describe '#use' do
     it 'should be an alias for #push_window' do
-      expect(window.method(:use)).to eq(window.method(:push_window))
+      expect(window.method(:use)).to eq(window.method(:<<))
     end
   end
 
@@ -85,7 +85,7 @@ RSpec.describe Dodo::Window do
     end
 
     it 'should append the new window to parent@happenings' do
-      expect(window).to receive(:push_window).with(child)
+      expect(window).to receive(:<<).with(child)
       subject
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Dodo::Window do
     end
 
     it 'should append the new window to window@happenings' do
-      expect(window).to receive(:push_moment).with(moment)
+      expect(window).to receive(:<<).with(moment)
       subject
     end
 
@@ -152,6 +152,13 @@ RSpec.describe Dodo::Window do
     end
   end
 
+  describe '#scales?' do
+    subject { window.scales? }
+    it 'returns false' do
+      expect(subject).to be false
+    end
+  end
+
   describe '#enum' do
     let(:distribution) { double }
     let(:opts) { double }
@@ -171,9 +178,7 @@ RSpec.describe Dodo::Window do
     end
   end
 end
-RSpec.describe Dodo::WindowEnumerator do
 
-end
 RSpec.describe Dodo::Moment do
   let(:block) { proc { p 'some block' } }
   let(:moment) { Dodo::Moment.new &block }
@@ -214,6 +219,12 @@ RSpec.describe Dodo::Moment do
         expect(Dodo::MomentEnumerator).to receive(:new).with(moment, distribution, {})
         subject
       end
+    end
+  end
+  describe '#scales?' do
+    subject { moment.scales? }
+    it 'returns true' do
+      expect(subject).to be true
     end
   end
 end
