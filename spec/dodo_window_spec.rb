@@ -151,47 +151,50 @@ RSpec.describe Dodo::Window do
       end
     end
   end
-
-  describe '#eval' do
-    context 'with a total of :k happenings queued' do
-      let(:k) { 5 }
-
-      let(:some_time_ago) { 3.weeks.ago }
-
-      let(:distribution) do
-        [1.days, 3.days, 1.week, 8.days, 11.days].map(&:to_i)
-      end
-
-      before do
-        k.times { window << moment }
-        allow(window).to receive(:distribution).and_return(distribution)
-        allow(moment).to receive(:eval, &:itself)
-      end
-
-      subject { window.eval some_time_ago }
-
-      it 'should call eval on each queued happening' do
-        expect(moment).to receive(:eval).exactly(k).times
+end
+RSpec.describe Dodo::Moment do
+  let(:block) { proc { p 'some block' } }
+  let(:moment) { Dodo::Moment.new &block }
+  describe '#initialize' do
+    subject { moment }
+    context 'when passed a block' do
+      it 'should initialize successfully' do
         subject
       end
-
-      it 'should return the initial offset plus the duration of the window' do
-        expect(subject).to eq some_time_ago + window.duration
-      end
-
-      it 'should call eval, offset according to distribution' do
-        offsets = []
-        allow(moment).to receive(:eval) do |offset|
-          offsets << offset
-          offset
-        end
+    end
+  end
+  describe '#duration' do
+    subject { moment.duration }
+    it 'should return 0' do
+      expect(subject).to eq 0
+    end
+  end
+  describe '#call' do
+    subject { moment.call }
+    it 'should call the underlying block' do
+      expect(block).to receive(:call).with no_args
+      subject
+    end
+  end
+  describe '#enum' do
+    let(:distribution) { double }
+    let(:opts) { double }
+    subject { moment.enum distribution, opts }
+    context 'with opts' do
+      it 'should create a new MomentEnumerator with opts included' do
+        expect(Dodo::MomentEnumerator).to receive(:new).with(moment, distribution, opts)
         subject
-        expect(offsets).to eq distribution.map { |offset| some_time_ago + offset }
+      end
+    end
+    context 'without opts' do
+      subject { moment.enum distribution }
+      it 'should create a new MomentEnumerator with an empty ahs as opts' do
+        expect(Dodo::MomentEnumerator).to receive(:new).with(moment, distribution, {})
+        subject
       end
     end
   end
 end
-
 Dodo.starting 3.weeks.ago do
   over 2.weeks do
     please do

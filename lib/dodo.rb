@@ -48,7 +48,7 @@ module Dodo
       push window
     end
 
-    alias :use :push_window
+    alias use push_window
 
     def enum(distribution, opts = {})
       WindowEnumerator.new self, distribution, opts
@@ -89,7 +89,7 @@ module Dodo
     end
 
     def stretch
-      @stretch ||= @opts.fetch(:scale) {  @opts.fetch(:stretch) { 1 } }
+      @stretch ||= @opts.fetch(:scale) { @opts.fetch(:stretch) { 1 } }
     end
   end
 
@@ -128,11 +128,9 @@ module Dodo
         offset + @starting_offset
       end.sort.each
     end
-
   end
 
   class Moment
-
     attr_reader :duration
 
     def initialize(&block)
@@ -182,8 +180,8 @@ module Dodo
     def call(window, start, opts = {})
       Process.daemon if daemonize?
 
-      window.enum([0].each, opts).each do |offset, moment|
-        occurring_at(offset) { moment.call }
+      window.enum(nil, opts).each do |offset, moment|
+        occurring_at(start + offset) { moment.call }
       end
     end
 
