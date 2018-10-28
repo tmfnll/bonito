@@ -1,3 +1,4 @@
+require 'timecop'
 module Dodo
   class Runner
     def initialize(opts = {})
@@ -8,14 +9,14 @@ module Dodo
       @opts.fetch(:live) { false }
     end
 
-    def daemonize?
-      @opts.fetch(:daemonize) { false }
+    def daemonise?
+      @opts.fetch(:daemonise) { false }
     end
 
-    def call(window, start, opts = {})
-      Process.daemon if daemonize?
+    def call(window, start, enum_opts = {})
+      Process.daemon if daemonise?
 
-      window.enum(nil, opts).each do |moment|
+      window.enum(nil, enum_opts).each do |moment|
         occurring_at(start + moment.offset) { moment.call }
       end
     end
@@ -26,8 +27,10 @@ module Dodo
       if live? && instant > Time.now
         nap_time = [instant - Time.now, 0].max
         sleep nap_time
+        yield
+      else
+        Timecop.freeze(instant) { yield }
       end
-      Timecop.freeze(instant) { yield }
     end
   end
 end
