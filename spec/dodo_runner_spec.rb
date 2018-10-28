@@ -70,14 +70,13 @@ RSpec.describe Dodo::Runner do
     subject { runner.call window, start, enum_opts }
     before do
       allow(window).to receive(:enum).and_return moments
-      allow(runner).to receive(:occuring_at).and_yield
     end
 
     it 'should invoke window.enum with nil and opts' do
       expect(window).to receive(:enum).with(nil, enum_opts)
       subject
     end
-    it 'should make a call to occuring_at once for each yielded moment' do
+    it 'should make a call to occurring_at once for each yielded moment' do
       expect(runner).to receive(:occurring_at).exactly(n).times
       subject
     end
