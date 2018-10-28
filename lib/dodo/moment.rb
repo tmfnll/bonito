@@ -4,15 +4,11 @@ require 'dodo/scalable'
 
 module Dodo
   class Moment
-    attr_reader :duration
+    attr_reader :duration, :block
 
     def initialize(&block)
       @block = block
       @duration = 0
-    end
-
-    def call
-      @block.call
     end
 
     def enum(distribution, opts = {})

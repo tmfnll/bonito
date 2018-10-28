@@ -15,11 +15,10 @@ RSpec.describe Dodo::Moment do
       expect(subject).to eq 0
     end
   end
-  describe '#call' do
-    subject { moment.call }
-    it 'should call the underlying block' do
-      expect(block).to receive(:call).with no_args
-      subject
+  describe '#block' do
+    subject { moment.block }
+    it 'should return block' do
+      expect(subject).to eq block
     end
   end
   describe '#enum' do

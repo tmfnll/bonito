@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'timecop'
 module Dodo
   class Runner
@@ -13,11 +15,14 @@ module Dodo
       @opts.fetch(:daemonise) { false }
     end
 
-    def call(window, start, enum_opts = {})
+    def call(window, start, context = nil, enum_opts = {})
       Process.daemon if daemonise?
+      context = Context.new if context.nil?
 
       window.enum(nil, enum_opts).each do |moment|
-        occurring_at(start + moment.offset) { moment.call }
+        occurring_at(start + moment.offset) do
+          context.instance_eval(&moment.block)
+        end
       end
     end
 
@@ -33,4 +38,6 @@ module Dodo
       end
     end
   end
+
+  class Context; end
 end
