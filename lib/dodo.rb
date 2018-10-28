@@ -122,7 +122,7 @@ module Dodo
     end
 
     def distribute
-      total_crammed_happenings.times.map do
+      Array.new(total_crammed_happenings) do
         offset = SecureRandom.random_number((@window.duration - @window.total_child_duration).floor)
         offset *= stretch
         offset + @starting_offset

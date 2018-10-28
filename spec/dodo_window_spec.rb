@@ -151,6 +151,28 @@ RSpec.describe Dodo::Window do
       end
     end
   end
+
+  describe '#enum' do
+    let(:distribution) { double }
+    let(:opts) { double }
+    subject { window.enum distribution, opts }
+    context 'with opts' do
+      it 'should create a new WinowEnumerator with opts included' do
+        expect(Dodo::WindowEnumerator).to receive(:new).with(window, distribution, opts)
+        subject
+      end
+    end
+    context 'without opts' do
+      subject { window.enum distribution }
+      it 'should create a new WindowEnumerator with an empty hash as opts' do
+        expect(Dodo::WindowEnumerator).to receive(:new).with(window, distribution, {})
+        subject
+      end
+    end
+  end
+end
+RSpec.describe Dodo::WindowEnumerator do
+
 end
 RSpec.describe Dodo::Moment do
   let(:block) { proc { p 'some block' } }
