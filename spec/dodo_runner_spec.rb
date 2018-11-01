@@ -11,7 +11,7 @@ RSpec.describe Dodo::Runner do
   let(:block) { proc { true } }
   let(:moments) do
     (1..n).map do |offset|
-      Dodo::MomentDecorator.new(Dodo::Moment.new(&block), offset)
+      Dodo::OffsetHappening.new(Dodo::Moment.new(&block), offset)
     end
   end
   let(:window) do

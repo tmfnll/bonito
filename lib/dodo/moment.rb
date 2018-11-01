@@ -20,7 +20,7 @@ module Dodo
     end
     end
 
-  class MomentDecorator < SimpleDelegator
+  class OffsetHappening < SimpleDelegator
     attr_reader :offset
     def initialize(moment, offset)
       @offset = offset
@@ -42,7 +42,7 @@ module Dodo
       return to_enum(:each) unless block_given?
 
       cram.times do
-        dec = MomentDecorator.new(@moment, @distribution.next)
+        dec = OffsetHappening.new(@moment, @distribution.next)
         yield dec
       end
     end
