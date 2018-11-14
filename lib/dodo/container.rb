@@ -1,10 +1,11 @@
+require 'dodo/happening'
 require 'dodo/window'
 module Dodo
-  class Container
-    attr_reader :windows, :duration
+  class Container < Happening
+    attr_reader :windows
     def initialize(over:, &block)
       @windows = []
-      @duration = 0
+      super 0
       window = Dodo::Window.new(over, &block)
       self << OffsetHappening.new(window, 0)
     end

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-
+require 'dodo/happening'
 require 'dodo/scalable'
 
 module Dodo
-  class Moment
-    attr_reader :duration, :block
+  class Moment < Happening
+    attr_reader :block
 
     def initialize(&block)
       @block = block
-      @duration = 0
+      super 0
     end
 
     def enum(distribution, opts = {})

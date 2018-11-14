@@ -1,18 +1,17 @@
 # frozen_string_literal: true
-
+require 'dodo/happening'
 require 'dodo/moment'
 require 'securerandom'
 require 'timecop'
 
 module Dodo
-  class Window
-    attr_reader :happenings, :duration, :total_child_duration
+  class Window < Happening
+    attr_reader :happenings, :total_child_duration
 
     def initialize(duration, &block)
-      @duration = duration
       @happenings = []
       @total_child_duration = 0
-
+      super duration
       instance_eval(&block)
     end
 
