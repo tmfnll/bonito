@@ -9,9 +9,9 @@ module Dodo
 
   class OffsetHappening < SimpleDelegator
     attr_reader :offset
-    def initialize(moment, offset)
+    def initialize(happening, offset)
       @offset = offset
-      super moment
+      super happening
     end
 
     def ==(other)
