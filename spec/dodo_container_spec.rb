@@ -41,7 +41,7 @@ RSpec.describe Dodo::Container do
     end
 
     it 'should append the window provided to the windows array' do
-      expect(subject.windows.last).to be offset_window
+      expect(subject.windows.last).to eq offset_window
     end
 
     it 'should return the container itself' do
@@ -49,7 +49,7 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'an orange' do
+  shared_examples 'a method that allows additional windows be added to a container' do
 
     context 'when passed a single OffsetHappening as an argument' do
 
@@ -81,14 +81,16 @@ RSpec.describe Dodo::Container do
 
   describe '#<<' do
     subject { container << offset_window }
-    it_behaves_like 'an orange'
+    it_behaves_like 'a method that allows additional windows be added to a container'
   end
   describe '#also' do
-    before { allow(Dodo::Window).to receive(:new).and_return(window) }
+    before do
+      container # Ensure the container is created before patching the window constructor
+      allow(Dodo::Window).to receive(:new).and_return(window)
+    end
     context 'with an integer provided' do
       subject { container.also after: offset, over: window_duration, &block }
-
-      it_behaves_like 'an orange'
+      it_behaves_like 'a method that allows additional windows be added to a container'
     end
   end
 end
