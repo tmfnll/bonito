@@ -20,5 +20,9 @@ module Dodo
       window = Dodo::Window.new over, &block
       self << OffsetHappening.new(window, after)
     end
+
+    def also_use(window, after:)
+      self << OffsetHappening.new(window, after)
+    end
   end
 end
