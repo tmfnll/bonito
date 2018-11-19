@@ -25,4 +25,8 @@ module Dodo
       self << OffsetHappening.new(window, after)
     end
   end
+
+  class ContainerEnumerator
+
+  end
 end

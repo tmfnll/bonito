@@ -15,6 +15,7 @@ group :development, :test do
   gem 'simplecov', require: false
   gem 'travis'
   gem 'travis-lint'
+  gem 'factory_bot'
 end
 
 group :development do
