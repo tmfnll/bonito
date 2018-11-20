@@ -17,5 +17,9 @@ module Dodo
     def ==(other)
       offset == other.offset && __getobj__ == other.__getobj__
     end
+
+    def <=>(other)
+      offset <=> other.offset
+    end
   end
 end

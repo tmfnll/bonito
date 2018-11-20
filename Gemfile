@@ -7,8 +7,6 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 # Specify your gem's dependencies in dodo.gemspec
 gemspec
 
-gem 'timecop'
-
 group :development, :test do
   gem 'activesupport'
   gem 'rubocop'

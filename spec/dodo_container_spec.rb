@@ -100,4 +100,35 @@ RSpec.describe Dodo::Container do
       it_behaves_like 'a method that allows additional windows be added to a container'
     end
   end
+
+  describe '#enum' do
+    subject { container.enum }
+    context 'without opts' do
+      it 'should create and return a new ContainerEnumerator' do
+        expect(subject).to be_a Dodo::ContainerEnumerator
+      end
+      it 'should create a ContainerEnumerator with an empty hash as opts' do
+        expect(Dodo::ContainerEnumerator).to receive(:new).with(container, {})
+        subject
+      end
+    end
+    context 'with opts' do
+      let(:opts) { { stretch: 4, cram: 4 }}
+      subject { container.enum opts }
+      it 'should create and return a new ContainerEnumerator' do
+        expect(subject).to be_a Dodo::ContainerEnumerator
+      end
+      it 'should create a ContainerEnumerator with an empty hash as opts' do
+        expect(Dodo::ContainerEnumerator).to receive(:new).with(container, opts)
+        subject
+      end
+    end
+  end
+
+  describe '#scales?' do
+    subject { container.scales? }
+    it 'returns false' do
+      expect(subject).to be false
+    end
+  end
 end
