@@ -9,11 +9,11 @@ gemspec
 
 group :development, :test do
   gem 'activesupport'
+  gem 'factory_bot'
   gem 'rubocop'
   gem 'simplecov', require: false
   gem 'travis'
   gem 'travis-lint'
-  gem 'factory_bot'
 end
 
 group :development do

@@ -2,7 +2,6 @@ require 'active_support/core_ext/numeric/time'
 require 'factory_bot'
 
 FactoryBot.define do
-
   factory :moment, class: Dodo::Moment do
     transient do
       block { proc { true } }

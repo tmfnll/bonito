@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'dodo/happening'
 require 'dodo/scalable'
 
@@ -19,8 +20,6 @@ module Dodo
       true
     end
     end
-
-
 
   class MomentEnumerator
     include Enumerable

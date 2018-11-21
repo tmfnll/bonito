@@ -117,7 +117,7 @@ RSpec.describe Dodo::Container do
       end
     end
     context 'with opts' do
-      let(:opts) { { stretch: 4, cram: 4 }}
+      let(:opts) { { stretch: 4, cram: 4 } }
       subject { container.enum distribution, opts }
       it 'should create and return a new ContainerEnumerator' do
         expect(subject).to be_a Dodo::ContainerEnumerator
