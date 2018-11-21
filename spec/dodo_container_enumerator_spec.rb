@@ -3,7 +3,11 @@ require 'active_support/core_ext/numeric/time'
 
 RSpec.describe Dodo::ContainerEnumerator do
   let(:duration) { 2.weeks }
-  let(:opts) { { scale: 2, cram: 3 } }
+  let(:opts) { {} }
+  let(:after) { 2.days }
+
+  let(:starting_offset) { 0.seconds }
+
   let(:moments) { build_list :moment, 5 }
   let(:offset_moments) do
     moments.map do |moment|
@@ -14,22 +18,37 @@ RSpec.describe Dodo::ContainerEnumerator do
   let(:more_moments) { build_list :moment, 5 }
   let(:more_offset_moments) do
     more_moments.map do |moment|
-      Dodo::OffsetHappening.new(moment, rand(10).days)
+      Dodo::OffsetHappening.new(moment, rand(7).days)
     end.sort
   end
 
-  let(:sorted_offset_moments) { (offset_moments + more_offset_moments).sort }
+  let(:window) do
+    window = build :window
+    moments.each { |moment| window << moment }
+    window
+  end
+  let(:another_window) do
+    window = build :window
+    more_moments.each { |moment| window << moment }
+    window
+  end
 
-  let(:window) { build :window }
-  let(:another_window) { build :window }
+  let(:distribution) { moments.map { rand(10).days }.sort.each }
+  let(:another_distribution) { more_moments.map { rand(7).days + after }.sort.each }
 
-  let(:window_enumerator) { Dodo::WindowEnumerator.new window }
-  let(:another_window_enumerator) { Dodo::WindowEnumerator.new another_window }
+  let(:window_enumerator) do
+    enum = window.enum([starting_offset].each, opts)
+    allow(enum).to receive(:distribute).and_return distribution
+    enum
+  end
+
+  let(:another_window_enumerator) do
+    enum = another_window.enum([starting_offset + after].each, opts)
+    allow(enum).to receive(:distribute).and_return another_distribution
+    enum
+  end
 
   before do
-    allow(window_enumerator).to receive(:each).and_return(offset_moments.each)
-    allow(another_window_enumerator).to receive(:each).and_return(more_offset_moments.each)
-
     allow(window).to receive(:enum).and_return(window_enumerator)
     allow(another_window).to receive(:enum).and_return(another_window_enumerator)
   end
@@ -37,11 +56,13 @@ RSpec.describe Dodo::ContainerEnumerator do
   let(:container) do
     allow(Dodo::Window).to receive(:new).and_return(window, another_window)
     container = Dodo::Container.new(over: window.duration) {}
-    container.also after: 3.days, over: another_window.duration {}
+    container.also after: after, over: another_window.duration {}
     container
   end
 
-  let(:container_enumerator) { Dodo::ContainerEnumerator.new container, opts }
+  let(:container_enumerator) do
+    Dodo::ContainerEnumerator.new container, [starting_offset].each, opts
+  end
 
   describe '#each' do
     subject { container_enumerator.each }
@@ -52,20 +73,37 @@ RSpec.describe Dodo::ContainerEnumerator do
       end
     end
 
-    context 'without any opts' do
+    context 'without opts' do
+      let(:expected_moments) do
+        [[*distribution], moments].transpose.map do |offset, moment|
+          Dodo::OffsetHappening.new moment, (starting_offset + offset)
+        end
+      end
+      let(:more_expected_moments) do
+        [[*another_distribution], more_moments].transpose.map do |offset, moment|
+          Dodo::OffsetHappening.new moment, (starting_offset + offset)
+        end
+      end
+
+      let(:expected) do
+        (expected_moments + more_expected_moments).sort
+      end
+
       it 'should provide any opts to the underlying window enumerators' do
-        expect(window).to receive(:enum).with(nil, opts)
+        expect(window).to receive(:enum).with(
+          satisfy { |dist| dist.next == starting_offset }, opts
+        )
         subject
       end
 
       it 'should yield the expected number of moments' do
-        expect(subject.to_a.size).to eq sorted_offset_moments.size
+        expect(subject.to_a.size).to eq expected.size
       end
       it 'should yield all offset moments' do
-        expect(Set[*subject]).to eq Set[*sorted_offset_moments]
+        expect(Set[*subject]).to eq Set[*expected]
       end
       it 'should yield offset moments in chronological order' do
-        expect(subject.to_a.map(&:offset)).to eq sorted_offset_moments.map(&:offset)
+        expect(subject.to_a.map(&:offset)).to eq expected.map(&:offset)
       end
       it 'should not store more than 1 moment per window in the heap' do
         subject.each do

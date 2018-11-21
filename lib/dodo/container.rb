@@ -31,8 +31,8 @@ module Dodo
       false
     end
 
-    def enum(opts = {})
-      ContainerEnumerator.new self, opts
+    def enum(distribution, opts = {})
+      ContainerEnumerator.new self, distribution, opts
     end
   end
 
@@ -40,12 +40,13 @@ module Dodo
     include Enumerable
     include Scalable
 
-    def initialize(container, opts = {})
+    def initialize(container, distribution, opts = {})
       @container = container
+      @starting_offset = distribution.next
       @opts = opts
       @moment_heap = Containers::MinHeap.new []
       @window_enumerators = container.windows.map do |window|
-        window.enum(nil, opts).each
+        window.enum([@starting_offset + window.offset].each, opts).each
       end
       @window_enumerators.each { |enum| push_moment_from_enum enum }
     end

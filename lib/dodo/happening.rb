@@ -14,6 +14,10 @@ module Dodo
       super happening
     end
 
+    def self.adjust(offset_happening, offset)
+      new offset_happening.__getobj__, offset
+    end
+
     def ==(other)
       offset == other.offset && __getobj__ == other.__getobj__
     end
