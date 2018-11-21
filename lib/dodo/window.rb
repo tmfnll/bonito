@@ -64,8 +64,6 @@ module Dodo
     def each
       return to_enum(:each) unless block_given?
 
-      distribution = distribute
-
       @window.happenings.each do |happening|
         happening.enum(distribution, @opts).map do |moment|
           yield moment
@@ -81,7 +79,7 @@ module Dodo
       end
     end
 
-    def distribute
+    def distribution
       Array.new(total_crammed_happenings) do
         offset = SecureRandom.random_number((@window.duration - @window.total_child_duration).floor)
         offset *= stretch

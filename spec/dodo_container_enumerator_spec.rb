@@ -38,13 +38,13 @@ RSpec.describe Dodo::ContainerEnumerator do
 
   let(:window_enumerator) do
     enum = window.enum([starting_offset].each, opts)
-    allow(enum).to receive(:distribute).and_return distribution
+    allow(enum).to receive(:distribution).and_return distribution
     enum
   end
 
   let(:another_window_enumerator) do
     enum = another_window.enum([starting_offset + after].each, opts)
-    allow(enum).to receive(:distribute).and_return another_distribution
+    allow(enum).to receive(:distribution).and_return another_distribution
     enum
   end
 

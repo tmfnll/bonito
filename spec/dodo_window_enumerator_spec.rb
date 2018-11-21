@@ -73,8 +73,8 @@ RSpec.describe Dodo::WindowEnumerator do
     end
   end
 
-  describe '#distribute' do
-    subject { enumerator.send(:distribute) }
+  describe '#distribution' do
+    subject { enumerator.send(:distribution) }
 
     context 'with a total of :k happenings queued' do
       before do
@@ -109,7 +109,7 @@ RSpec.describe Dodo::WindowEnumerator do
     context 'with a total of :k happenings queued' do
       let(:distribution) { random_numbers.each }
       before do
-        allow(enumerator).to receive(:distribute).and_return(distribution)
+        allow(enumerator).to receive(:distribution).and_return(distribution)
       end
 
       before do
