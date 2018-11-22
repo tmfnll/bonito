@@ -1,4 +1,4 @@
-![build](https://travis-ci.org/TomFinill/dodo.svg?branch=master)
+![build](https://travis-ci.org/TomFinill/dodo.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/TomFinill/dodo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/TomFinill/dodo/test_coverage)
 
 ## Welcome to GitHub Pages
 
