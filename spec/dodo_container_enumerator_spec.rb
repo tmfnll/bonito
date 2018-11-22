@@ -74,7 +74,7 @@ RSpec.describe Dodo::ContainerEnumerator do
     end
 
     context 'without opts' do
-      let(:expected_moments) do
+      let(:some_expected_moments) do
         [[*distribution], moments].transpose.map do |offset, moment|
           Dodo::OffsetHappening.new moment, (starting_offset + offset)
         end
@@ -85,8 +85,8 @@ RSpec.describe Dodo::ContainerEnumerator do
         end
       end
 
-      let(:expected) do
-        (expected_moments + more_expected_moments).sort
+      let(:all_expected_moments) do
+        (some_expected_moments + more_expected_moments).sort
       end
 
       it 'should provide any opts to the underlying window enumerators' do
@@ -97,13 +97,15 @@ RSpec.describe Dodo::ContainerEnumerator do
       end
 
       it 'should yield the expected number of moments' do
-        expect(subject.to_a.size).to eq expected.size
+        expect(subject.to_a.size).to eq all_expected_moments.size
       end
-      it 'should yield all offset moments' do
-        expect(Set[*subject]).to eq Set[*expected]
+      it 'should yield all moments' do
+        expected = Set[*all_expected_moments.map(&:__getobj__)]
+        actual = Set[*subject(&:__getobj__)]
+        expect(actual).to eq expected
       end
       it 'should yield offset moments in chronological order' do
-        expect(subject.to_a.map(&:offset)).to eq expected.map(&:offset)
+        expect(subject.to_a.map(&:offset)).to eq all_expected_moments.map(&:offset)
       end
       it 'should not store more than 1 moment per window in the heap' do
         subject.each do
