@@ -55,9 +55,9 @@ module Dodo
     include Enumerable
     include Scalable
 
-    def initialize(window, parent_distribution = nil, opts = {})
+    def initialize(window, parent_distribution, opts = {})
       @window = window
-      @starting_offset = parent_distribution&.next || 0
+      @parent_distribution = parent_distribution
       @opts = opts
     end
 
@@ -79,11 +79,15 @@ module Dodo
       end
     end
 
+    def starting_offset
+      @starting_offset ||= @parent_distribution.next
+    end
+
     def distribution
-      Array.new(total_crammed_happenings) do
+      @distribution ||= Array.new(total_crammed_happenings) do
         offset = SecureRandom.random_number((@window.duration - @window.total_child_duration).floor)
         offset *= stretch
-        offset + @starting_offset
+        offset + starting_offset
       end.sort.each
     end
   end

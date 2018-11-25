@@ -80,7 +80,9 @@ RSpec.describe Dodo::Runner do
       subject { runner.call window, start, context, enum_opts }
 
       it 'should invoke window.enum with nil and opts' do
-        expect(window).to receive(:enum).with(nil, enum_opts)
+        expect(window).to receive(:enum).with(
+          satisfy { |enum| enum.next == 0 }, enum_opts
+        )
         subject
       end
       it 'should make a call to occurring_at once for each yielded moment' do

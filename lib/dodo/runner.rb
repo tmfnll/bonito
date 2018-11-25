@@ -19,8 +19,8 @@ module Dodo
     def call(window, start, context = nil, enum_opts = {})
       Process.daemon if daemonise?
       context = Context.new if context.nil?
-
-      window.enum(nil, enum_opts).each do |moment|
+      parent_distribution = [0].each
+      window.enum(parent_distribution, enum_opts).each do |moment|
         occurring_at(start + moment.offset) do
           context.instance_eval(&moment.block)
           @progress += 1

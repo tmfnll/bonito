@@ -28,7 +28,7 @@ RSpec.describe Dodo::WindowEnumerator do
 
     context 'with a distribution' do
       it 'should set the starting offset to the first value in the parent distribution' do
-        expect(subject.instance_variable_get(:@starting_offset)).to eq starting_offset
+        expect(subject.send(:starting_offset)).to eq starting_offset
       end
       it 'should set the cram factor to n' do
         expect(subject.cram).to eq n
@@ -36,14 +36,6 @@ RSpec.describe Dodo::WindowEnumerator do
 
       it 'should set the stretch factor to m' do
         expect(subject.stretch).to eq m
-      end
-    end
-
-    context 'without a distribution' do
-      let(:parent_distribution) { nil }
-      let(:starting_offset) { nil }
-      it 'should set the starting offset to 0' do
-        expect(subject.instance_variable_get(:@starting_offset)).to eq 0
       end
     end
   end
