@@ -5,6 +5,7 @@ module Dodo
   class Runner
     def initialize(opts = {})
       @opts = opts
+      @progress = opts.fetch(:progress) { 0 }
     end
 
     def live?
@@ -22,6 +23,7 @@ module Dodo
       window.enum(nil, enum_opts).each do |moment|
         occurring_at(start + moment.offset) do
           context.instance_eval(&moment.block)
+          @progress += 1
         end
       end
     end

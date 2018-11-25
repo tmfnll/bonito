@@ -6,7 +6,12 @@ require 'active_support/core_ext/numeric/time'
 RSpec.describe Dodo::Runner do
   let(:live) { false }
   let(:daemonise) { false }
-  let(:opts) { { live: live, daemonise: daemonise } }
+  let(:progress) do
+    progress = double
+    allow(progress).to receive(:+).and_return(progress)
+    progress
+  end
+  let(:opts) { { live: live, daemonise: daemonise, progress: progress } }
   let(:n) { 5 }
   let(:block) { proc { true } }
   let(:moments) do
@@ -94,6 +99,10 @@ RSpec.describe Dodo::Runner do
             expect(blk).to be moment.block
           end.ordered
         end
+        subject
+      end
+      it 'should update the progress each time it calls a moment' do
+        expect(progress).to receive(:+).exactly(moments.size).times
         subject
       end
       context 'with daemonize = false' do
