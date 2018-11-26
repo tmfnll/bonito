@@ -15,18 +15,17 @@ module Dodo
     end
 
     def to_s
-      "#{prefix} #{current}#{total.nil? ? "" : " / #{total}" }"
+      "#{prefix} #{current}#{total.nil? ? '' : " / #{total}"}"
     end
 
     private
 
     def prefix
-      @prefix ||= "#{self.class}{#{self.object_id}} : Progress Made :"
+      @prefix ||= "#{self.class}{#{object_id}} : Progress Made :"
     end
   end
 
   class ProgressLogger
-
     include Progress
 
     def initialize(logger, total: nil, prefix: nil)
