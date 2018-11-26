@@ -5,6 +5,10 @@ module Dodo
     def initialize(duration)
       @duration = duration
     end
+
+    private
+
+    attr_writer :duration
   end
 
   class OffsetHappening < SimpleDelegator

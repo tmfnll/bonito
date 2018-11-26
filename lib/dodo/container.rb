@@ -14,7 +14,7 @@ module Dodo
 
     def <<(offset_window)
       @windows << offset_window
-      @duration = [@duration, offset_window.offset + offset_window.duration].max
+      self.duration = [duration, offset_window.offset + offset_window.duration].max
       self
     end
 

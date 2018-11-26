@@ -70,33 +70,45 @@ module Dodo
     def initialize(window, starting_offset)
       @window = window
       @starting_offset = starting_offset
+      @distribution = Distribution.new window, starting_offset
     end
 
     def each
       return to_enum(:each) unless block_given?
 
-      @window.happenings.each do |happening|
-        happening.enum(distribution.next).map do |moment|
+      @distribution.each do |happening|
+        happening.enum(happening.offset).map do |moment|
           yield moment
         end
       end
     end
 
+  end
+
+  class Distribution
+
+    include Enumerable
+
+    def initialize(window, starting_offset)
+      @window = window
+      @starting_offset = starting_offset
+    end
+
+    def each
+      current_offset = 0
+      [@window.happenings, offsets].transpose.each do |happening, offset|
+        combined_offset = @starting_offset + current_offset + offset
+        yield OffsetHappening.new happening, combined_offset
+        current_offset += happening.duration
+      end
+    end
+
     private
 
-    # This is a bit too mad now
-    def distribution
-      @distribution ||= begin
-        offsets = Array.new(@window.happenings.size) do
-          SecureRandom.random_number(@window.unused_duration)
-        end.sort
-        current_offset = 0
-        [@window.happenings, offsets].transpose.map do |happening, offset|
-          actual_offset = @starting_offset + current_offset + offset
-          current_offset += happening.duration
-          actual_offset
-        end
-      end.each
+    def offsets
+      @offsets ||= Array.new(@window.happenings.size) do
+        SecureRandom.random_number(@window.unused_duration)
+      end.sort
     end
   end
 end

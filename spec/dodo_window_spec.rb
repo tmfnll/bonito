@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/numeric/time'
-require 'securerandom'
-
 RSpec.describe Dodo::Window do
   let(:duration) { 2.weeks }
   let(:window) { Dodo::Window.new(duration) {} }

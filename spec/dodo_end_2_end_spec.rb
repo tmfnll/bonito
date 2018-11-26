@@ -85,7 +85,7 @@ RSpec.describe 'End to end' do
           author = @authors.sample
           title = Faker::Company.bs
           @article = Article.new(title, author)
-          @articles << @article
+         @articles << @article
         end
 
         repeat times: rand(10), over: 5.hour do
@@ -161,6 +161,7 @@ RSpec.describe 'End to end' do
   end
 
   it 'should yield comments in order' do
+    subject
     comments = context.instance_variable_get(:@comments)
     expect(comments.sort_by(&:created_at)).to eq comments
   end

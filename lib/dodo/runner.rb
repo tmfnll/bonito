@@ -22,8 +22,8 @@ module Dodo
       window.enum(0).each do |moment|
         occurring_at(start + moment.offset) do
           context.instance_eval(&moment.block)
-          @progress += 1
         end
+        @progress += 1
       end
     end
 

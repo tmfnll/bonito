@@ -9,8 +9,9 @@ module Dodo
       @current = 0
     end
 
-    def +(increment)
-      self.current = (current + increment)
+    def +(other)
+      self.current = (current + other)
+      self
     end
 
     def to_s
@@ -35,7 +36,7 @@ module Dodo
 
     def current=(value)
       super value
-      @logger.info self.to_s
+      @logger.info to_s
     end
   end
 end
