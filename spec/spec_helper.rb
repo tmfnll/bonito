@@ -6,6 +6,8 @@ SimpleCov.start
 require 'bundler/setup'
 require 'dodo'
 require 'factory_bot'
+require 'logger'
+require 'faker'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

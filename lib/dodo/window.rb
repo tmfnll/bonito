@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'dodo/happening'
 require 'dodo/moment'
 require 'securerandom'
@@ -6,25 +7,37 @@ require 'timecop'
 
 module Dodo
   class Window < Happening
-    attr_reader :happenings, :total_child_duration
+    attr_reader :happenings
 
-    def initialize(duration, &block)
+    def initialize(duration, parent = nil, &block)
+      @parent = parent
       @happenings = []
       @total_child_duration = 0
       super duration
       instance_eval(&block)
     end
 
+    def unused_duration
+      duration - @total_child_duration
+    end
+
     def over(duration, &block)
-      self.class.new(duration, &block).tap { |window| self << window }
+      self.class.new(duration, self, &block).tap { |window| self << window }
     end
 
     def please(&block)
       Moment.new(&block).tap { |moment| self << moment }
     end
 
-    def repeat(times: 2, &block)
-      Array.new(times) { please(&block) }
+    def repeat(times: 2, over: duration, &block)
+      return if times.zero?
+
+      duration_per_window = (over / times).floor
+      Array.new(times) { over(duration_per_window, &block) }
+    end
+
+    def simultaneously(over:, &block)
+      Container.new(over: over, &block).tap { |container| self << container }
     end
 
     def enum(distribution, opts = {})
@@ -73,9 +86,9 @@ module Dodo
 
     private
 
-    def total_crammed_happenings
-      @window.happenings.reduce(0) do |sum, happening|
-        sum + (happening.scales? ? cram : 1)
+    def crammed_happenings
+      @window.happenings do |happening|
+        (happening.scales? ? cram : 1).times { yield happening }
       end
     end
 
@@ -83,10 +96,14 @@ module Dodo
       @starting_offset ||= @parent_distribution.next
     end
 
+    # This is a bit too mad now
     def distribution
-      @distribution ||= Array.new(total_crammed_happenings) do
-        offset = SecureRandom.random_number((@window.duration - @window.total_child_duration).floor)
+      accumulation = 0
+      @distribution ||= crammed_happenings.map do |happening|
+        offset = SecureRandom.random_number @window.unused_duration
+        offset += accumulation
         offset *= stretch
+        accumulation += happening.duration
         offset + starting_offset
       end.sort.each
     end
