@@ -12,8 +12,8 @@ module Dodo
       super 0
     end
 
-    def enum(distribution, opts = {})
-      MomentEnumerator.new self, distribution, opts
+    def enum(starting_offset)
+      MomentEnumerator.new self, starting_offset
     end
 
     def scales?
@@ -23,21 +23,16 @@ module Dodo
 
   class MomentEnumerator
     include Enumerable
-    include Scalable
 
-    def initialize(moment, distribution, opts)
+    def initialize(moment, offset)
       @moment = moment
-      @distribution = distribution
-      @opts = opts
+      @offset = offset
     end
 
     def each
       return to_enum(:each) unless block_given?
 
-      cram.times do
-        dec = OffsetHappening.new(@moment, @distribution.next)
-        yield dec
-      end
+      yield OffsetHappening.new(@moment, @offset)
     end
   end
 end

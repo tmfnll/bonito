@@ -16,11 +16,10 @@ module Dodo
       @opts.fetch(:daemonise) { false }
     end
 
-    def call(window, start, context = nil, enum_opts = {})
+    def call(window, start, context = nil)
       Process.daemon if daemonise?
       context = Context.new if context.nil?
-      parent_distribution = [0].each
-      window.enum(parent_distribution, enum_opts).each do |moment|
+      window.enum(0).each do |moment|
         occurring_at(start + moment.offset) do
           context.instance_eval(&moment.block)
           @progress += 1

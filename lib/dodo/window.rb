@@ -40,8 +40,8 @@ module Dodo
       Container.new(over: over, &block).tap { |container| self << container }
     end
 
-    def enum(distribution, opts = {})
-      WindowEnumerator.new self, distribution, opts
+    def enum(starting_offset)
+      WindowEnumerator.new self, starting_offset
     end
 
     def scales?
@@ -66,19 +66,17 @@ module Dodo
 
   class WindowEnumerator
     include Enumerable
-    include Scalable
 
-    def initialize(window, parent_distribution, opts = {})
+    def initialize(window, starting_offset)
       @window = window
-      @parent_distribution = parent_distribution
-      @opts = opts
+      @starting_offset = starting_offset
     end
 
     def each
       return to_enum(:each) unless block_given?
 
       @window.happenings.each do |happening|
-        happening.enum(distribution, @opts).map do |moment|
+        happening.enum(distribution.next).map do |moment|
           yield moment
         end
       end
@@ -86,26 +84,19 @@ module Dodo
 
     private
 
-    def crammed_happenings
-      @window.happenings do |happening|
-        (happening.scales? ? cram : 1).times { yield happening }
-      end
-    end
-
-    def starting_offset
-      @starting_offset ||= @parent_distribution.next
-    end
-
     # This is a bit too mad now
     def distribution
-      accumulation = 0
-      @distribution ||= crammed_happenings.map do |happening|
-        offset = SecureRandom.random_number @window.unused_duration
-        offset += accumulation
-        offset *= stretch
-        accumulation += happening.duration
-        offset + starting_offset
-      end.sort.each
+      @distribution ||= begin
+        offsets = Array.new(@window.happenings.size) do
+          SecureRandom.random_number(@window.unused_duration)
+        end.sort
+        current_offset = 0
+        [@window.happenings, offsets].transpose.map do |happening, offset|
+          actual_offset = @starting_offset + current_offset + offset
+          current_offset += happening.duration
+          actual_offset
+        end
+      end.each
     end
   end
 end
