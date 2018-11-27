@@ -1,5 +1,5 @@
 module Dodo
-  module Progress
+  class BaseProgress
     attr_reader :total
     attr_accessor :current
 
@@ -25,8 +25,7 @@ module Dodo
     end
   end
 
-  class ProgressLogger
-    include Progress
+  class ProgressLogger < BaseProgress
 
     def initialize(logger, total: nil, prefix: nil)
       @logger = logger
