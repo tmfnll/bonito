@@ -16,4 +16,12 @@ FactoryBot.define do
     duration { rand(14).days }
     initialize_with { new(duration, &block) }
   end
+
+  factory :container, class: Dodo::Container do
+    transient do
+      block { proc { true } }
+    end
+    duration { rand(14).days }
+    initialize_with { new(over: duration, &block) }
+  end
 end

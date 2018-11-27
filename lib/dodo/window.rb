@@ -89,9 +89,10 @@ module Dodo
 
     include Enumerable
 
-    def initialize(window, starting_offset)
+    def initialize(window, starting_offset, scale_opts = {})
       @window = window
       @starting_offset = starting_offset
+      @scale_opts = scale_opts
     end
 
     def each
@@ -101,6 +102,14 @@ module Dodo
         yield OffsetHappening.new happening, combined_offset
         current_offset += happening.duration
       end
+    end
+
+    def cram
+      @cram ||= @scale_opts.fetch(:scale) {  @scale_opts.fetch(:cram) { 1 } }.ceil
+    end
+
+    def stretch
+      @stretch ||= @scale_opts.fetch(:scale) { @scale_opts.fetch(:stretch) { 1 } }
     end
 
     private
