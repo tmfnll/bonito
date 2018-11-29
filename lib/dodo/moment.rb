@@ -16,10 +16,10 @@ module Dodo
       MomentEnumerator.new self, starting_offset
     end
 
-    def scales?
-      true
+    def crammed(factor:)
+      Array.new(factor) { self }
     end
-    end
+  end
 
   class MomentEnumerator
     include Enumerable

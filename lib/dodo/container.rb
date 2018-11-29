@@ -27,8 +27,8 @@ module Dodo
       self << OffsetHappening.new(window, after)
     end
 
-    def scales?
-      false
+    def crammed(*)
+      [self]
     end
 
     def enum(starting_offset)

@@ -7,7 +7,10 @@ RSpec.describe Dodo::Distribution do
   let(:happenings) { [child_window, child_container] + moments }
 
   let(:random_numbers) do
-    random_numbers = Array.new(happenings.size - 2) { rand window.unused_duration }
+    random_numbers = distribution.send(:crammed_happenings).map do |_|
+      rand(window.unused_duration)
+    end
+    2.times { random_numbers.pop }
     random_numbers.unshift 0 # ensure that the distribution achieves its lower
     random_numbers << window.unused_duration # and upper bounds
   end
@@ -98,7 +101,7 @@ RSpec.describe Dodo::Distribution do
         end
 
         it 'should yield happenings within a range equal to that of the stretched duration' do
-          expect(subject.last.offset - subject.first.offset).to eq (
+          expect(subject.last.offset - subject.first.offset).to eq(
             window.duration * distribution.stretch
           )
         end
@@ -118,21 +121,21 @@ RSpec.describe Dodo::Distribution do
     end
 
     context 'with a non-trivial cram parameter provided in scale_opts' do
-      let(:cram) { rand 1..5 + rand }
+      let(:cram) { rand 2..5 + rand }
       let(:scale_opts) { { cram: cram } }
 
       it_behaves_like 'an enumerator of offset moments'
     end
 
     context 'with a stretch parameter provided in scale_opts' do
-      let(:stretch) { rand 1..5 + rand }
+      let(:stretch) { rand 2..5 }
       let(:scale_opts) { { stretch: stretch } }
 
       it_behaves_like 'an enumerator of offset moments'
     end
 
     context 'with a scale parameter provided in scale_opts' do
-      let(:scale) { rand 1..5 + rand }
+      let(:scale) { rand 2..5 }
       let(:scale_opts) { { scale: scale } }
 
       it_behaves_like 'an enumerator of offset moments'

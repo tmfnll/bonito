@@ -44,8 +44,8 @@ module Dodo
       WindowEnumerator.new self, starting_offset
     end
 
-    def scales?
-      false
+    def crammed(*)
+      [self]
     end
 
     def <<(happening)
@@ -82,11 +82,9 @@ module Dodo
         end
       end
     end
-
   end
 
   class Distribution
-
     include Enumerable
 
     def initialize(window, starting_offset, scale_opts = {})
@@ -96,11 +94,8 @@ module Dodo
     end
 
     def each
-      current_offset = 0
-      [@window.happenings, offsets].transpose.each do |happening, offset|
-        combined_offset = @starting_offset + current_offset + offset
-        yield OffsetHappening.new happening, combined_offset
-        current_offset += happening.duration
+      happenings_with_offsets do |happening, offset|
+        yield OffsetHappening.new happening, offset
       end
     end
 
@@ -114,10 +109,24 @@ module Dodo
 
     private
 
+    def crammed_happenings
+      @crammed_happenings ||= @window.happenings.map do |happening|
+        happening.crammed(factor: cram)
+      end.flatten
+    end
+
     def offsets
-      @offsets ||= Array.new(@window.happenings.size) do
+      @offsets ||= crammed_happenings.map do
         SecureRandom.random_number(@window.unused_duration)
       end.sort
+    end
+
+    def happenings_with_offsets
+      consumed_duration = 0
+      crammed_happenings.zip(offsets).each do |happening, offset|
+        yield happening, @starting_offset + (stretch * (offset + consumed_duration))
+        consumed_duration += happening.duration
+      end
     end
   end
 end
