@@ -12,7 +12,7 @@ module Dodo
       super 0
     end
 
-    def enum(starting_offset, opts)
+    def enum(starting_offset, opts = {})
       MomentEnumerator.new self, starting_offset, opts
     end
 

@@ -103,7 +103,7 @@ RSpec.describe Dodo::Container do
 
   describe '#enum' do
     let(:starting_offset) { 2.days }
-    let(:distribution) { [starting_offset].each }
+    let(:distribution) { starting_offset }
     subject { container.enum distribution }
     context 'without opts' do
       it 'should create and return a new ContainerEnumerator' do
@@ -111,7 +111,7 @@ RSpec.describe Dodo::Container do
       end
       it 'should create a ContainerEnumerator with an empty hash as opts' do
         expect(Dodo::ContainerEnumerator).to receive(:new).with(
-          container, satisfy { |dist| dist.next == starting_offset }, {}
+          container, starting_offset, {}
         )
         subject
       end
@@ -124,17 +124,11 @@ RSpec.describe Dodo::Container do
       end
       it 'should create a ContainerEnumerator with an empty hash as opts' do
         expect(Dodo::ContainerEnumerator).to receive(:new).with(
-          container, satisfy { |dist| dist.next == starting_offset }, opts
+          container, starting_offset, opts
         )
         subject
       end
     end
   end
 
-  describe '#scales?' do
-    subject { container.scales? }
-    it 'returns false' do
-      expect(subject).to be false
-    end
-  end
 end

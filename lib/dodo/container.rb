@@ -31,7 +31,7 @@ module Dodo
       [self]
     end
 
-    def enum(starting_offset, opts)
+    def enum(starting_offset, opts = {})
       ContainerEnumerator.new self, starting_offset, opts
     end
   end

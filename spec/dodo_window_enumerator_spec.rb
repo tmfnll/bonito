@@ -10,11 +10,21 @@ RSpec.describe Dodo::WindowEnumerator do
   let(:moment) { Dodo::Moment.new }
   let(:child_window) { Dodo::Window.new(1.day) {} }
 
-  let(:parent_distribution) { [1, 2, 3].each }
   let!(:starting_offset) { parent_distribution.peek }
   let(:n) { 2 }
   let(:m) { 3 }
   let(:opts) { { cram: n, stretch: m } }
+
+  let(:moments) { build_list :moment, 5 }
+
+  let(:distribution) do
+    distribution = Dodo::Distribution.new window, starting_offset
+    patched = allow(distribution).to receive(:each)
+    distributed_moments.each do |moment|
+      patched.and_yield moment
+    end
+    distribution
+  end
 
   let(:enumerator) { described_class.new window, parent_distribution, opts }
 
@@ -23,83 +33,9 @@ RSpec.describe Dodo::WindowEnumerator do
   end
   let(:k) { random_numbers.size }
 
-  describe '#initialize' do
-    subject { enumerator }
-
-    context 'with a distribution' do
-      it 'should set the starting offset to the first value in the parent distribution' do
-        expect(subject.send(:starting_offset)).to eq starting_offset
-      end
-      it 'should set the cram factor to n' do
-        expect(subject.cram).to eq n
-      end
-
-      it 'should set the stretch factor to m' do
-        expect(subject.stretch).to eq m
-      end
-    end
-  end
-
-  describe '#total_crammed_happenings' do
-    subject { enumerator.send(:total_crammed_happenings) }
-
-    context 'with a single moment and a single child window' do
-      before do
-        window << moment
-        window << child_window
-      end
-
-      context 'with a cram factor of 1' do
-        let(:n) { 1 }
-        it 'should return 2' do
-          expect(subject).to eq 2
-        end
-      end
-
-      context 'with a cram factor of n' do
-        let(:n) {  SecureRandom.random_number 100 }
-        it 'should return n + 1' do
-          expect(subject).to eq (n + 1)
-        end
-      end
-    end
-  end
-
-  describe '#distribution' do
-    subject { enumerator.send(:distribution) }
-
-    context 'with a total of :k happenings queued' do
-      before do
-        allow(enumerator).to receive(:total_crammed_happenings).and_return(random_numbers.size)
-        allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
-      end
-
-      context 'with a child window' do
-        before do
-          window << child_window
-          (k - 1).times { window << moment }
-        end
-
-        it 'should call SecureRandom::random_number :k times, with a limit of window.duration - window.@total_child_duration' do
-          enum = random_numbers.each
-          expect(SecureRandom).to receive(:random_number) do |limit|
-            expect(limit).to eq(window.duration - window.total_child_duration)
-            enum.next
-          end.exactly(k).times
-          subject
-        end
-
-        it 'should return a sorted array of integers, each stretched by a factor of m, each offset by the staring offset' do
-          expected = random_numbers.sort.map { |i| (i * m) + starting_offset }
-          expect([*subject]).to eq expected
-        end
-      end
-    end
-  end
-
   describe '#each' do
     context 'with a total of :k happenings queued' do
-      let(:distribution) { random_numbers.each }
+      let(:starting_offset) { rand(10).days }
       before do
         allow(enumerator).to receive(:distribution).and_return(distribution)
       end
@@ -132,8 +68,8 @@ RSpec.describe Dodo::WindowEnumerator do
         end
 
         it 'should invoke each happening\'s enum method' do
-          expect(child_window).to receive(:enum).once.with(distribution, opts)
-          expect(moment).to receive(:enum).exactly(k - 1).times.with(distribution, opts)
+          expect(child_window).to receive(:enum).once.with(starting_offset, opts)
+          expect(moment).to receive(:enum).exactly(k - 1).times.with(starting_offset, opts)
           subject
         end
 

@@ -3,16 +3,12 @@
 require 'rspec'
 RSpec.describe Dodo::MomentEnumerator do
   let(:block) { -> { true } }
-  let(:distribution) { double }
+  let(:starting_offset) { rand(10).days }
   let(:cram) { 2 }
   let(:stretch) { 2 }
   let(:opts) { { cram: cram, stretch: stretch } }
   let(:moment) { Dodo::Moment.new &block }
-  let(:enum) { Dodo::MomentEnumerator.new moment, distribution, opts }
-
-  before do
-    allow(distribution).to receive(:next).and_return(*(1..cram))
-  end
+  let(:enum) { Dodo::MomentEnumerator.new moment, starting_offset, opts }
 
   describe '#initialize' do
     subject { enum }
@@ -32,16 +28,11 @@ RSpec.describe Dodo::MomentEnumerator do
     context 'with a block' do
       subject { enum }
       it 'should yield according to the cram factor' do
-        expect { |b| subject.each(&b) }.to yield_control.exactly(cram).times
+        expect { |b| subject.each(&b) }.to yield_control.once
       end
       it 'should yield the (decorated) moment cram times' do
-        expect { |b| subject.each(&b) }.to yield_successive_args(
-          *Array.new(cram) { have_attributes __getobj__: moment }
-        )
-      end
-      it 'should offset these moments according to the distribution' do
-        expect { |b| subject.each(&b) }.to yield_successive_args(
-          *(1..cram).map { |offset| have_attributes offset: offset }
+        expect { |b| subject.each(&b) }.to yield_with_args(
+          have_attributes(__getobj__: moment, offset: starting_offset )
         )
       end
     end

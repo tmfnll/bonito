@@ -149,13 +149,6 @@ RSpec.describe Dodo::Window do
     end
   end
 
-  describe '#scales?' do
-    subject { window.scales? }
-    it 'returns false' do
-      expect(subject).to be false
-    end
-  end
-
   describe '#enum' do
     let(:distribution) { double }
     let(:opts) { double }

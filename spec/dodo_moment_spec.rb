@@ -24,27 +24,25 @@ RSpec.describe Dodo::Moment do
     end
   end
   describe '#enum' do
-    let(:distribution) { double }
+    let(:starting_offset) { rand(10).days }
     let(:opts) { double }
-    subject { moment.enum distribution, opts }
+    subject { moment.enum starting_offset, opts }
     context 'with opts' do
       it 'should create a new MomentEnumerator with opts included' do
-        expect(Dodo::MomentEnumerator).to receive(:new).with(moment, distribution, opts)
+        expect(Dodo::MomentEnumerator).to receive(:new).with(
+          moment, starting_offset, opts
+        )
         subject
       end
     end
     context 'without opts' do
-      subject { moment.enum distribution }
+      subject { moment.enum starting_offset }
       it 'should create a new MomentEnumerator with an empty ahs as opts' do
-        expect(Dodo::MomentEnumerator).to receive(:new).with(moment, distribution, {})
+        expect(Dodo::MomentEnumerator).to receive(:new).with(
+          moment, starting_offset, {}
+        )
         subject
       end
-    end
-  end
-  describe '#scales?' do
-    subject { moment.scales? }
-    it 'returns true' do
-      expect(subject).to be true
     end
   end
 end
