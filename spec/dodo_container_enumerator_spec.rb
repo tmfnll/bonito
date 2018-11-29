@@ -33,18 +33,44 @@ RSpec.describe Dodo::ContainerEnumerator do
     window
   end
 
-  let(:distribution) { moments.map { rand(10).days }.sort.each }
-  let(:another_distribution) { more_moments.map { rand(7).days + after }.sort.each }
+  let(:distributed_moments) do
+    moments.map do |moment|
+      Dodo::OffsetHappening.new moment, rand(10).days
+    end.sort
+  end
+  let(:more_distributed_moments) do
+    more_moments.map do |moment|
+      Dodo::OffsetHappening.new moment, rand(7).days + after
+    end.sort
+  end
+
+  let(:distribution) do
+    distribution = Dodo::Distribution.new window, starting_offset
+    patched = allow(distribution).to receive(:each)
+    distributed_moments.each do |moment|
+      patched.and_yield moment
+    end
+    distribution
+  end
+
+  let(:another_distribution) do
+    distribution = Dodo::Distribution.new another_window, starting_offset
+    patched = allow(distribution).to receive(:each)
+    more_distributed_moments.each do |moment|
+      patched.and_yield moment
+    end
+    distribution
+  end
 
   let(:window_enumerator) do
-    enum = window.enum([starting_offset].each, opts)
-    allow(enum).to receive(:distribution).and_return distribution
+    enum = window.enum(starting_offset, opts)
+    enum.instance_variable_set :@distribution, distribution
     enum
   end
 
   let(:another_window_enumerator) do
-    enum = another_window.enum([starting_offset + after].each, opts)
-    allow(enum).to receive(:distribution).and_return another_distribution
+    enum = another_window.enum(starting_offset + after, opts)
+    enum.instance_variable_set :@distribution, another_distribution
     enum
   end
 
@@ -61,7 +87,7 @@ RSpec.describe Dodo::ContainerEnumerator do
   end
 
   let(:container_enumerator) do
-    Dodo::ContainerEnumerator.new container, [starting_offset].each, opts
+    Dodo::ContainerEnumerator.new container, starting_offset, opts
   end
 
   describe '#each' do
@@ -74,38 +100,26 @@ RSpec.describe Dodo::ContainerEnumerator do
     end
 
     context 'without opts' do
-      let(:some_expected_moments) do
-        [[*distribution], moments].transpose.map do |offset, moment|
-          Dodo::OffsetHappening.new moment, (starting_offset + offset)
-        end
-      end
-      let(:more_expected_moments) do
-        [[*another_distribution], more_moments].transpose.map do |offset, moment|
-          Dodo::OffsetHappening.new moment, (starting_offset + offset)
-        end
-      end
 
-      let(:all_expected_moments) do
-        (some_expected_moments + more_expected_moments).sort
+      let(:expected_moments) do
+        (distributed_moments + more_distributed_moments).sort
       end
 
       it 'should provide any opts to the underlying window enumerators' do
-        expect(window).to receive(:enum).with(
-          satisfy { |dist| dist.next == starting_offset }, opts
-        )
+        expect(window).to receive(:enum).with(starting_offset, opts)
         subject
       end
 
       it 'should yield the expected number of moments' do
-        expect(subject.to_a.size).to eq all_expected_moments.size
+        expect(subject.to_a.size).to eq expected_moments.size
       end
       it 'should yield all moments' do
-        expected = Set[*all_expected_moments.map(&:__getobj__)]
+        expected = Set[*expected_moments.map(&:__getobj__)]
         actual = Set[*subject(&:__getobj__)]
         expect(actual).to eq expected
       end
       it 'should yield offset moments in chronological order' do
-        expect(subject.to_a.map(&:offset)).to eq all_expected_moments.map(&:offset)
+        expect(subject.to_a.map(&:offset)).to eq expected_moments.map(&:offset)
       end
       it 'should not store more than 1 moment per window in the heap' do
         subject.each do

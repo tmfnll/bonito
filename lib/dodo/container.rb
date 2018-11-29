@@ -31,20 +31,20 @@ module Dodo
       [self]
     end
 
-    def enum(starting_offset)
-      ContainerEnumerator.new self, starting_offset
+    def enum(starting_offset, opts)
+      ContainerEnumerator.new self, starting_offset, opts
     end
   end
 
   class ContainerEnumerator
     include Enumerable
 
-    def initialize(container, starting_offset)
+    def initialize(container, starting_offset, opts = {})
       @container = container
       @starting_offset = starting_offset
       @moment_heap = Containers::MinHeap.new []
       @window_enumerators = container.windows.map do |window|
-        window.enum(@starting_offset + window.offset).each
+        window.enum(@starting_offset + window.offset, opts).each
       end
       @window_enumerators.each { |enum| push_moment_from_enum enum }
     end

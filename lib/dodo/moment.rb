@@ -12,8 +12,8 @@ module Dodo
       super 0
     end
 
-    def enum(starting_offset)
-      MomentEnumerator.new self, starting_offset
+    def enum(starting_offset, opts)
+      MomentEnumerator.new self, starting_offset, opts
     end
 
     def crammed(factor:)
@@ -24,7 +24,7 @@ module Dodo
   class MomentEnumerator
     include Enumerable
 
-    def initialize(moment, offset)
+    def initialize(moment, offset, _opts = {})
       @moment = moment
       @offset = offset
     end

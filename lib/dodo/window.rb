@@ -40,8 +40,8 @@ module Dodo
       Container.new(over: over, &block).tap { |container| self << container }
     end
 
-    def enum(starting_offset)
-      WindowEnumerator.new self, starting_offset
+    def enum(starting_offset, opts = {})
+      WindowEnumerator.new self, starting_offset, opts
     end
 
     def crammed(*)
@@ -67,17 +67,18 @@ module Dodo
   class WindowEnumerator
     include Enumerable
 
-    def initialize(window, starting_offset)
+    def initialize(window, starting_offset, opts = {})
       @window = window
       @starting_offset = starting_offset
-      @distribution = Distribution.new window, starting_offset
+      @distribution = Distribution.new window, starting_offset, opts
+      @opts = opts
     end
 
     def each
       return to_enum(:each) unless block_given?
 
       @distribution.each do |happening|
-        happening.enum(happening.offset).map do |moment|
+        happening.enum(happening.offset, @opts).map do |moment|
           yield moment
         end
       end
