@@ -70,42 +70,25 @@ module Dodo
     def initialize(window, starting_offset, opts = {})
       @window = window
       @starting_offset = starting_offset
-      @distribution = Distribution.new window, starting_offset, opts
       @opts = opts
     end
 
     def each
       return to_enum(:each) unless block_given?
 
-      @distribution.each do |happening|
-        happening.enum(happening.offset, @opts).map do |moment|
+      happenings_with_offsets do |happening, offset|
+        happening.enum(offset, @opts).map do |moment|
           yield moment
         end
       end
     end
-  end
-
-  class Distribution
-    include Enumerable
-
-    def initialize(window, starting_offset, scale_opts = {})
-      @window = window
-      @starting_offset = starting_offset
-      @scale_opts = scale_opts
-    end
-
-    def each
-      happenings_with_offsets do |happening, offset|
-        yield OffsetHappening.new happening, offset
-      end
-    end
 
     def cram
-      @cram ||= @scale_opts.fetch(:scale) {  @scale_opts.fetch(:cram) { 1 } }.ceil
+      @cram ||= @opts.fetch(:scale) {  @opts.fetch(:cram) { 1 } }.ceil
     end
 
     def stretch
-      @stretch ||= @scale_opts.fetch(:scale) { @scale_opts.fetch(:stretch) { 1 } }
+      @stretch ||= @opts.fetch(:scale) { @opts.fetch(:stretch) { 1 } }
     end
 
     private
