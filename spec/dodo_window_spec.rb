@@ -117,35 +117,40 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#repeat' do
-    before do
-      allow(window).to receive(:please).and_return(moment)
-    end
+    let(:repeat_duration) { duration - 1 }
 
     context 'with no args and passing block' do
-      subject { window.repeat &block }
-      it 'should invoke #please twice passing block' do
-        expect(window).to receive(:please) do |&blk|
+      subject { window.repeat over: repeat_duration, &block }
+      it 'should invoke #over twice passing block' do
+        expect(window).to receive(:over) do |&blk|
           expect(blk).to eq block
-        end.exactly(2).times
+        end.twice
         subject
       end
 
-      it 'should return an array of Moments' do
-        expect(subject).to eq [moment, moment]
+      it 'should invoke #over each time with a duration equal to repeat_duration over 2' do
+        expect(window).to receive(:over).with((repeat_duration / 2).floor).twice
+        subject
       end
     end
 
     context 'with an integer as the :times argument and passing block' do
       let(:k) { 3 }
 
-      subject { window.repeat times: k, &block }
+      subject { window.repeat times: k, over: repeat_duration, &block }
 
-      it 'should invoke #please :repetitions times passing block' do
-        expect(window).to receive(:please) do |&blk|
+      it 'should invoke #over :repetitions times passing block' do
+        expect(window).to receive(:over) do |&blk|
           expect(blk).to eq block
         end.exactly(k).times
         subject
       end
+
+      it 'should invoke #over each time with a duration equal to repeat_duration over k' do
+        expect(window).to receive(:over).with((repeat_duration / k).floor).exactly(k).times
+        subject
+      end
+
     end
   end
 
