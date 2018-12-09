@@ -3,7 +3,7 @@ require 'active_support/core_ext/numeric/time'
 RSpec.describe Dodo::Container do
   let(:duration) { 2.weeks }
   let(:block) { proc { true } }
-  let(:container) { described_class.new over: duration, &block }
+  let(:container) { described_class.new }
   let(:window_duration) { 1.week }
   let(:window) { Dodo::Window.new window_duration, &block }
   let(:offset) { 3.days }
@@ -13,24 +13,8 @@ RSpec.describe Dodo::Container do
     subject { container }
 
     context 'with a block defining a Dodo::Window' do
-      it 'should append to the windows array' do
-        expect(subject.windows.size).to eq 1
-      end
-
-      it 'should append an offset happening' do
-        expect(subject.windows.first).to be_a Dodo::OffsetHappening
-      end
-
-      it 'should append an offset happening with a duration specified by the over arg' do
-        expect(subject.windows.first.duration).to eq duration
-      end
-
-      it 'should append an offset happening with an offset of 0' do
-        expect(subject.windows.first.offset).to eq 0
-      end
-
-      it 'should have a duration equal to the over arg' do
-        expect(subject.duration).to eq duration
+      it 'should have an initial duration of 0' do
+        expect(subject.duration).to eq 0
       end
     end
   end
@@ -51,8 +35,21 @@ RSpec.describe Dodo::Container do
 
   shared_examples 'a method that allows additional windows be added to a container' do
     context 'when passed a single OffsetHappening as an argument' do
+
+      context 'with a newly initialized container' do
+        it_behaves_like 'an appender of windows'
+
+        it 'should update the container duration to that of the appended window' do
+          subject
+          expect(container.duration).to eq offset_window.duration + offset_window.offset
+        end
+      end
+
       context 'with the sum of the duration of the appended window and' \
               'its offset LESS than that of the containers duration' do
+        before do
+          allow(container).to receive(:duration).and_return(3.weeks)
+        end
 
         it_behaves_like 'an appender of windows'
 

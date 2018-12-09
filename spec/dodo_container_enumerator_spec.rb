@@ -69,7 +69,8 @@ RSpec.describe Dodo::ContainerEnumerator do
 
   let(:container) do
     allow(Dodo::Window).to receive(:new).and_return(window, another_window)
-    container = Dodo::Container.new(over: window.duration) {}
+    container = Dodo::Container.new
+    container.also after: 0, over: window.duration {}
     container.also after: after, over: another_window.duration {}
     container
   end

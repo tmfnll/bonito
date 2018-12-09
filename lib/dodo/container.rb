@@ -5,11 +5,9 @@ require 'algorithms'
 module Dodo
   class Container < Happening
     attr_reader :windows
-    def initialize(over:, &block)
+    def initialize
       @windows = []
       super 0
-      window = Dodo::Window.new(over, &block)
-      self << OffsetHappening.new(window, 0)
     end
 
     def <<(offset_window)

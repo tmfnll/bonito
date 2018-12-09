@@ -37,7 +37,10 @@ module Dodo
     end
 
     def simultaneously(over:, &block)
-      Container.new(over: over, &block).tap { |container| self << container }
+      Container.new.tap do |container|
+        container.also(after: 0, over: over, &block)
+        self << container
+      end
     end
 
     def enum(starting_offset, opts = {})
