@@ -44,33 +44,21 @@ RSpec.describe Dodo::ContainerEnumerator do
     end.sort
   end
 
-  let(:distribution) do
-    distribution = Dodo::Distribution.new window, starting_offset
-    patched = allow(distribution).to receive(:each)
-    distributed_moments.each do |moment|
-      patched.and_yield moment
-    end
-    distribution
-  end
-
-  let(:another_distribution) do
-    distribution = Dodo::Distribution.new another_window, starting_offset
-    patched = allow(distribution).to receive(:each)
-    more_distributed_moments.each do |moment|
-      patched.and_yield moment
-    end
-    distribution
-  end
-
   let(:window_enumerator) do
     enum = window.enum(starting_offset, opts)
-    enum.instance_variable_set :@distribution, distribution
+    allowed = allow(enum).to(receive(:happenings_with_offsets))
+    distributed_moments.reduce(allowed) do |accumulated, moment|
+      accumulated.and_yield moment, moment.offset
+    end
     enum
   end
 
   let(:another_window_enumerator) do
     enum = another_window.enum(starting_offset + after, opts)
-    enum.instance_variable_set :@distribution, another_distribution
+    allowed = allow(enum).to receive(:happenings_with_offsets)
+    more_distributed_moments.reduce(allowed) do |accumulated, moment|
+      accumulated.and_yield moment, moment.offset
+    end
     enum
   end
 
