@@ -88,7 +88,7 @@ RSpec.describe 'End to end' do
          @articles << @article
         end
 
-        repeat times: rand(10), over: 5.hour do
+        repeat times: 2, over: 5.hour do
           please do
             user = @users.sample
             content = Faker::Lorem.sentence
@@ -99,70 +99,72 @@ RSpec.describe 'End to end' do
     end
   end
 
-  # let(:window) do
-  #   Dodo.over(1.week) do
-  #     repeat times: 6 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     x = 2
-  #   end
-  # end
-
-  # let(:window) do
-  #   Dodo.over(1.week) do
-  #     over 100_800 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     over 100_800 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     over 100_800 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     over 100_800 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     over 100_800 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     over 100_800 do
-  #       please do
-  #         @authors << Author.new(Faker::Name.name)
-  #       end
-  #     end
-  #     x=2
-  #   end
-  # end
-
   let(:logger) { Logger.new STDOUT }
   let(:progress) { Dodo::ProgressLogger.new logger }
   let(:runner) { Dodo::Runner.new progress: progress }
-  subject { runner.call window, 3.weeks.ago, context }
+
+  let(:users_and_authors) { context.instance_variable_get(:@users_and_authors) }
+  let(:authors) { context.instance_variable_get(:@authors) }
+  let(:users) { context.instance_variable_get(:@users) }
+  let(:articles) { context.instance_variable_get(:@articles) }
+  let(:comments) { context.instance_variable_get(:@comments) }
+  let(:comments_by_article) { comments.group_by { |comment| comment.article } }
+
+  subject! { runner.call window, 3.weeks.ago, context }
+
+
   it 'should complete successfully' do
-    subject
   end
 
-  it 'should yield users and authors in order' do
-    subject
-    users_and_authors = context.instance_variable_get(:@users_and_authors)
+  it 'should create users and authors in order' do
     expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
   end
 
-  it 'should yield comments in order' do
-    subject
-    comments = context.instance_variable_get(:@comments)
+  it 'should create users and authors over 1 day' do
+    diff = users_and_authors.last.created_at - users_and_authors.last.created_at
+    expect(diff).to be <= (1.day + 2.hours)
+  end
+
+  it 'should create authors over 1 day' do
+    diff = authors.last.created_at - authors.last.created_at
+    expect(diff).to be <= 1.day
+  end
+
+  it 'should create users and authors over 1 day' do
+    diff = users.last.created_at - users.last.created_at
+    expect(diff).to be <= 1.day
+  end
+
+  it "should create all users and authors before any articles" do
+    expect(users_and_authors.last.created_at).to be < articles.first.created_at
+  end
+
+  it 'should create comments in order' do
     expect(comments.sort_by(&:created_at)).to eq comments
+  end
+
+  it 'should create articles and comments over a period of 5 days' do
+    diff = comments.last.created_at - articles.first.created_at
+    expect(diff).to be <= 5.days
+  end
+
+  it 'should create comments over a period of 5 hours' do
+    comments_by_article.each_value do |article_comments|
+      diff = article_comments.last.created_at - article_comments.first.created_at
+      expect(diff).to be <= 5.hours
+    end
+  end
+
+  it 'should create all models over the course of a week' do
+    diff = comments.last.created_at - users_and_authors.first.created_at
+    expect(diff).to be <= 1.week
+  end
+
+  it 'should create no models before 3 weeks ago' do
+    expect(users_and_authors.first.created_at).to be >= 3.weeks.ago
+  end
+
+  it 'should create no models after 2 weeks ago' do
+    expect(comments.last.created_at).to be <= 2.weeks.ago
   end
 end
