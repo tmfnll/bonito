@@ -116,6 +116,14 @@ RSpec.describe 'End to end' do
   it 'should complete successfully' do
   end
 
+  it "should create 5 authors" do
+    expect(authors.size).to eq 5
+  end
+
+  it "should create 10 users" do
+    expect(users.size).to eq 10
+  end
+
   it 'should create users and authors in order' do
     expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
   end
@@ -141,6 +149,10 @@ RSpec.describe 'End to end' do
 
   it 'should create comments in order' do
     expect(comments.sort_by(&:created_at)).to eq comments
+  end
+
+  it "should create a total of 5 articles" do
+    expect(articles.size).to eq 5
   end
 
   it 'should create articles and comments over a period of 5 days' do

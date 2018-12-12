@@ -9,20 +9,22 @@ module Dodo
   class Window < Happening
     attr_reader :happenings
 
-    def initialize(duration, parent = nil, &block)
+    def initialize(duration, parent = nil, repeat: 1, &block)
       @parent = parent
       @happenings = []
       @total_child_duration = 0
       super duration
-      instance_eval(&block)
+      repeat.times { instance_eval(&block) }
     end
 
     def unused_duration
       duration - @total_child_duration
     end
 
-    def over(duration, &block)
-      self.class.new(duration, self, &block).tap { |window| self << window }
+    def over(duration, repeat: 1, &block)
+      self.class.new(duration, self, repeat: repeat, &block).tap do |window|
+        self << window
+      end
     end
 
     def please(&block)
@@ -30,10 +32,7 @@ module Dodo
     end
 
     def repeat(times: 2, over: duration, &block)
-      return if times.zero?
-
-      duration_per_window = (over / times).floor
-      Array.new(times) { over(duration_per_window, &block) }
+      over(over, repeat: times, &block)
     end
 
     def simultaneously(over:, &block)
@@ -54,13 +53,21 @@ module Dodo
     def <<(happening)
       tap do
         @total_child_duration += happening.duration
-        raise Exception if @total_child_duration > duration
+        if @total_child_duration > duration
+          raise WindowDurationExceeded, "#{@total_child_duration} > #{duration}"
+        end
 
         @happenings << happening
       end
     end
 
     alias use <<
+  end
+
+  class DodoException < StandardError
+  end
+
+  class WindowDurationExceeded < DodoException
   end
 
   def self.over(duration, &block)
