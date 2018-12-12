@@ -101,6 +101,9 @@ RSpec.describe 'End to end' do
 
   let(:logger) { Logger.new STDOUT }
   let(:progress) { Dodo::ProgressLogger.new logger }
+  let(:cram) { 1 }
+  let(:stretch) { 1 }
+  let(:opts) { {cram: cram, stretch: stretch } }
   let(:runner) { Dodo::Runner.new progress: progress }
 
   let(:users_and_authors) { context.instance_variable_get(:@users_and_authors) }
@@ -110,127 +113,254 @@ RSpec.describe 'End to end' do
   let(:comments) { context.instance_variable_get(:@comments) }
   let(:comments_by_article) { comments.group_by { |comment| comment.article } }
 
-  subject! { runner.call window, 3.weeks.ago, context }
+  subject! { runner.call window, 3.weeks.ago, context, opts }
 
+  context "without scaling" do
+    it 'should complete successfully' do
+    end
 
-  it 'should complete successfully' do
-  end
+    it "should add 2 happenings to the top level window" do
+      expect(window.happenings.size).to eq 2
+    end
 
-  it "should add 2 happenings to the top level window" do
-    expect(window.happenings.size).to eq 2
-  end
+    let(:container) { window.happenings.first }
+    it "should first add a container to the top level window" do
+      expect(container).to be_a Dodo::Container
+    end
 
-  let(:container) { window.happenings.first }
-  it "should first add a container to the top level window" do
-    expect(container).to be_a Dodo::Container
-  end
+    it "should add two windows to the container" do
+      expect(container.windows.size).to eq 2
+    end
 
-  it "should add two windows to the container" do
-    expect(container.windows.size).to eq 2
-  end
+    it "should add a single happening to the first of these window" do
+      expect(container.windows.first.happenings.size).to eq 1
+    end
 
-  it "should add a single happening to the first of these window" do
-    expect(container.windows.first.happenings.size).to eq 1
-  end
+    it "should add a window to the first of these windows" do
+      expect(container.windows.first.happenings.first).to be_a Dodo::Window
+    end
 
-  it "should add a window to the first of these windows" do
-    expect(container.windows.first.happenings.first).to be_a Dodo::Window
-  end
+    it "it should add 5 happenings to this window" do
+      expect(container.windows.first.happenings.first.happenings.size).to eq 5
+    end
 
-  it "it should add 5 happenings to this window" do
-    expect(container.windows.first.happenings.first.happenings.size).to eq 5
-  end
+    it "it should add only moments to this window" do
+      expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
+    end
 
-  it "it should add only moments to this window" do
-    expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
-  end
+    it "should add a single happening to the second of these window" do
+      expect(container.windows.last.happenings.size).to eq 1
+    end
 
-  it "should add a single happening to the second of these window" do
-    expect(container.windows.last.happenings.size).to eq 1
-  end
+    it "should add a window to the second of these windows" do
+      expect(container.windows.last.happenings.first).to be_a Dodo::Window
+    end
 
-  it "should add a window to the second of these windows" do
-    expect(container.windows.last.happenings.first).to be_a Dodo::Window
-  end
+    it "it should add 10 happenings to this window" do
+      expect(container.windows.last.happenings.first.happenings.size).to eq 10
+    end
 
-  it "it should add 10 happenings to this window" do
-    expect(container.windows.last.happenings.first.happenings.size).to eq 10
-  end
+    it "it should add only moments to this window" do
+      expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
+    end
 
-  it "it should add only moments to this window" do
-    expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
-  end
+    let(:child_window) { window.happenings.last }
+    it "should then add a window to the top level window" do
+      expect(child_window).to be_a Dodo::Window
+    end
 
-  let(:child_window) { window.happenings.last }
-  it "should then add a window to the top level window" do
-    expect(child_window).to be_a Dodo::Window
-  end
+    it "should add 10 happenings to this child_window" do
+      expect(child_window.happenings.size).to eq 10
+    end
 
-  it "should add 10 happenings to this child_window" do
-    expect(child_window.happenings.size).to eq 10
-  end
+    it "should create 5 authors" do
+      expect(authors.size).to eq 5
+    end
 
-  it "should create 5 authors" do
-    expect(authors.size).to eq 5
-  end
+    it "should create 10 users" do
+      expect(users.size).to eq 10
+    end
 
-  it "should create 10 users" do
-    expect(users.size).to eq 10
-  end
+    it 'should create users and authors in order' do
+      expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
+    end
 
-  it 'should create users and authors in order' do
-    expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
-  end
+    it 'should create users and authors over 1 day' do
+      diff = users_and_authors.last.created_at - users_and_authors.last.created_at
+      expect(diff).to be <= (1.day + 2.hours)
+    end
 
-  it 'should create users and authors over 1 day' do
-    diff = users_and_authors.last.created_at - users_and_authors.last.created_at
-    expect(diff).to be <= (1.day + 2.hours)
-  end
+    it 'should create authors over 1 day' do
+      diff = authors.last.created_at - authors.last.created_at
+      expect(diff).to be <= 1.day
+    end
 
-  it 'should create authors over 1 day' do
-    diff = authors.last.created_at - authors.last.created_at
-    expect(diff).to be <= 1.day
-  end
+    it 'should create users and authors over 1 day' do
+      diff = users.last.created_at - users.last.created_at
+      expect(diff).to be <= 1.day
+    end
 
-  it 'should create users and authors over 1 day' do
-    diff = users.last.created_at - users.last.created_at
-    expect(diff).to be <= 1.day
-  end
+    it "should create all users and authors before any articles" do
+      expect(users_and_authors.last.created_at).to be < articles.first.created_at
+    end
 
-  it "should create all users and authors before any articles" do
-    expect(users_and_authors.last.created_at).to be < articles.first.created_at
-  end
+    it 'should create comments in order' do
+      expect(comments.sort_by(&:created_at)).to eq comments
+    end
 
-  it 'should create comments in order' do
-    expect(comments.sort_by(&:created_at)).to eq comments
-  end
+    it "should create a total of 5 articles" do
+      expect(articles.size).to eq 5
+    end
 
-  it "should create a total of 5 articles" do
-    expect(articles.size).to eq 5
-  end
+    it 'should create articles and comments over a period of 5 days' do
+      diff = comments.last.created_at - articles.first.created_at
+      expect(diff).to be <= 5.days
+    end
 
-  it 'should create articles and comments over a period of 5 days' do
-    diff = comments.last.created_at - articles.first.created_at
-    expect(diff).to be <= 5.days
-  end
+    it 'should create comments over a period of 5 hours' do
+      comments_by_article.each_value do |article_comments|
+        diff = article_comments.last.created_at - article_comments.first.created_at
+        expect(diff).to be <= 5.hours
+      end
+    end
 
-  it 'should create comments over a period of 5 hours' do
-    comments_by_article.each_value do |article_comments|
-      diff = article_comments.last.created_at - article_comments.first.created_at
-      expect(diff).to be <= 5.hours
+    it 'should create all models over the course of a week' do
+      diff = comments.last.created_at - users_and_authors.first.created_at
+      expect(diff).to be <= 1.week
+    end
+
+    it 'should create no models before 3 weeks ago' do
+      expect(users_and_authors.first.created_at).to be >= 3.weeks.ago
+    end
+
+    it 'should create no models after 2 weeks ago' do
+      expect(comments.last.created_at).to be <= 2.weeks.ago
     end
   end
 
-  it 'should create all models over the course of a week' do
-    diff = comments.last.created_at - users_and_authors.first.created_at
-    expect(diff).to be <= 1.week
-  end
+  context "with a cram factor of 2" do
 
-  it 'should create no models before 3 weeks ago' do
-    expect(users_and_authors.first.created_at).to be >= 3.weeks.ago
-  end
+    let(:cram) { 2 }
 
-  it 'should create no models after 2 weeks ago' do
-    expect(comments.last.created_at).to be <= 2.weeks.ago
+    it 'should complete successfully' do
+    end
+
+    it "should add 2 happenings to the top level window" do
+      expect(window.happenings.size).to eq 2
+    end
+
+    let(:container) { window.happenings.first }
+    it "should first add a container to the top level window" do
+      expect(container).to be_a Dodo::Container
+    end
+
+    it "should add two windows to the container" do
+      expect(container.windows.size).to eq 2
+    end
+
+    it "should add a single happening to the first of these window" do
+      expect(container.windows.first.happenings.size).to eq 1
+    end
+
+    it "should add a window to the first of these windows" do
+      expect(container.windows.first.happenings.first).to be_a Dodo::Window
+    end
+
+    it "it should add 5 happenings to this window" do
+      expect(container.windows.first.happenings.first.happenings.size).to eq 5
+    end
+
+    it "it should add only moments to this window" do
+      expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
+    end
+
+    it "should add a single happening to the second of these window" do
+      expect(container.windows.last.happenings.size).to eq 1
+    end
+
+    it "should add a window to the second of these windows" do
+      expect(container.windows.last.happenings.first).to be_a Dodo::Window
+    end
+
+    it "it should add 10 happenings to this window" do
+      expect(container.windows.last.happenings.first.happenings.size).to eq 10
+    end
+
+    it "it should add only moments to this window" do
+      expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
+    end
+
+    let(:child_window) { window.happenings.last }
+    it "should then add a window to the top level window" do
+      expect(child_window).to be_a Dodo::Window
+    end
+
+    it "should add 10 happenings to this child_window" do
+      expect(child_window.happenings.size).to eq 10
+    end
+
+    it "should create 10 authors" do
+      expect(authors.size).to eq 10
+    end
+
+    it "should create 20 users" do
+      expect(users.size).to eq 20
+    end
+
+    it 'should create users and authors in order' do
+      expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
+    end
+
+    it 'should create users and authors over 1 day' do
+      diff = users_and_authors.last.created_at - users_and_authors.last.created_at
+      expect(diff).to be <= (1.day + 2.hours)
+    end
+
+    it 'should create authors over 1 day' do
+      diff = authors.last.created_at - authors.last.created_at
+      expect(diff).to be <= 1.day
+    end
+
+    it 'should create users and authors over 1 day' do
+      diff = users.last.created_at - users.last.created_at
+      expect(diff).to be <= 1.day
+    end
+
+    it "should create all users and authors before any articles" do
+      expect(users_and_authors.last.created_at).to be < articles.first.created_at
+    end
+
+    it 'should create comments in order' do
+      expect(comments.sort_by(&:created_at)).to eq comments
+    end
+
+    it "should create a total of 10 articles" do
+      expect(articles.size).to eq 10
+    end
+
+    it 'should create articles and comments over a period of 5 days' do
+      diff = comments.last.created_at - articles.first.created_at
+      expect(diff).to be <= 5.days
+    end
+
+    it 'should create comments over a period of 5 hours' do
+      comments_by_article.each_value do |article_comments|
+        diff = article_comments.last.created_at - article_comments.first.created_at
+        expect(diff).to be <= 5.hours
+      end
+    end
+
+    it 'should create all models over the course of a week' do
+      diff = comments.last.created_at - users_and_authors.first.created_at
+      expect(diff).to be <= 1.week
+    end
+
+    it 'should create no models before 3 weeks ago' do
+      expect(users_and_authors.first.created_at).to be >= 3.weeks.ago
+    end
+
+    it 'should create no models after 2 weeks ago' do
+      expect(comments.last.created_at).to be <= 2.weeks.ago
+    end
   end
 end

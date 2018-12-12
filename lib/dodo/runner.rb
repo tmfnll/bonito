@@ -16,10 +16,10 @@ module Dodo
       @opts.fetch(:daemonise) { false }
     end
 
-    def call(window, start, context = nil)
+    def call(window, start, context = nil, opts = {})
       Process.daemon if daemonise?
       context = Context.new if context.nil?
-      window.enum(0).each do |moment|
+      window.enum(0, opts).each do |moment|
         occurring_at(start + moment.offset) do
           context.instance_eval(&moment.block)
         end
