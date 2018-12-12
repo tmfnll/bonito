@@ -88,7 +88,7 @@ RSpec.describe 'End to end' do
          @articles << @article
         end
 
-        repeat times: 2, over: 5.hour do
+        repeat times: 2, over: 5.hours do
           please do
             user = @users.sample
             content = Faker::Lorem.sentence
@@ -114,6 +114,60 @@ RSpec.describe 'End to end' do
 
 
   it 'should complete successfully' do
+  end
+
+  it "should add 2 happenings to the top level window" do
+    expect(window.happenings.size).to eq 2
+  end
+
+  let(:container) { window.happenings.first }
+  it "should first add a container to the top level window" do
+    expect(container).to be_a Dodo::Container
+  end
+
+  it "should add two windows to the container" do
+    expect(container.windows.size).to eq 2
+  end
+
+  it "should add a single happening to the first of these window" do
+    expect(container.windows.first.happenings.size).to eq 1
+  end
+
+  it "should add a window to the first of these windows" do
+    expect(container.windows.first.happenings.first).to be_a Dodo::Window
+  end
+
+  it "it should add 5 happenings to this window" do
+    expect(container.windows.first.happenings.first.happenings.size).to eq 5
+  end
+
+  it "it should add only moments to this window" do
+    expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
+  end
+
+  it "should add a single happening to the second of these window" do
+    expect(container.windows.last.happenings.size).to eq 1
+  end
+
+  it "should add a window to the second of these windows" do
+    expect(container.windows.last.happenings.first).to be_a Dodo::Window
+  end
+
+  it "it should add 10 happenings to this window" do
+    expect(container.windows.last.happenings.first.happenings.size).to eq 10
+  end
+
+  it "it should add only moments to this window" do
+    expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
+  end
+
+  let(:child_window) { window.happenings.last }
+  it "should then add a window to the top level window" do
+    expect(child_window).to be_a Dodo::Window
+  end
+
+  it "should add 10 happenings to this child_window" do
+    expect(child_window.happenings.size).to eq 10
   end
 
   it "should create 5 authors" do
