@@ -9,20 +9,20 @@ module Dodo
   class Window < Happening
     attr_reader :happenings
 
-    def initialize(duration, parent = nil, repeat: 1, &block)
+    def initialize(duration, parent = nil, &block)
       @parent = parent
       @happenings = []
       @total_child_duration = 0
       super duration
-      repeat.times { instance_eval(&block) }
+      instance_eval(&block)
     end
 
     def unused_duration
       duration - @total_child_duration
     end
 
-    def over(duration, repeat: 1, &block)
-      self.class.new(duration, self, repeat: repeat, &block).tap do |window|
+    def over(duration, &block)
+      self.class.new(duration, self, &block).tap do |window|
         self << window
       end
     end
@@ -32,7 +32,8 @@ module Dodo
     end
 
     def repeat(times: 2, over: duration, &block)
-      over(over, repeat: times, &block)
+      repeated_block = proc { times.times { instance_eval(&block) } }
+      over(over, &repeated_block)
     end
 
     def simultaneously(over:, &block)
