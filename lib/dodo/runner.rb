@@ -53,5 +53,52 @@ module Dodo
     runner.call window, start, nil, with
   end
 
-  class Context; end
+  class Context
+    def initialize(parent=nil)
+      @parent = parent
+    end
+    
+    def push
+      Context.new self
+    end
+
+    protected
+
+    attr_reader :parent
+
+    private
+
+    def method_missing(symbol, *args)
+      if is_assignment? symbol
+        set symbol, args.fetch(0)
+      else
+        get symbol
+      end
+    end
+
+    def is_assignment?(symbol)
+      symbol.to_s.match? /\w+=/
+    end
+
+    def instance_var_for(symbol)
+      :"@#{symbol.to_s.delete_suffix("=")}"
+    end
+
+    def get(symbol)
+      context = self
+      instance_var = instance_var_for symbol
+      until context.nil?
+        if context.instance_variable_defined? instance_var
+          return context.instance_variable_get instance_var
+        else
+          context = context.parent
+        end
+      end
+      nil
+    end
+
+    def set(attr, value)
+      instance_variable_set instance_var_for(attr), value
+    end
+  end
 end
