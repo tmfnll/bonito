@@ -5,7 +5,6 @@ require 'dodo/scalable'
 
 module Dodo
   class Moment < Happening
-    attr_reader :block
 
     def initialize(&block)
       @block = block
@@ -14,6 +13,10 @@ module Dodo
 
     def enum(starting_offset, context, opts = {})
       MomentEnumerator.new self, starting_offset, context, opts
+    end
+
+    def to_proc
+      @block
     end
 
     def crammed(factor:)

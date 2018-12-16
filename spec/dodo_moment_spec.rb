@@ -18,8 +18,8 @@ RSpec.describe Dodo::Moment do
       expect(subject).to eq 0
     end
   end
-  describe '#block' do
-    subject { moment.block }
+  describe '#to_proc' do
+    subject { moment.to_proc }
     it 'should return block' do
       expect(subject).to eq block
     end

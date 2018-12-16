@@ -39,7 +39,7 @@ module Dodo
     end
 
     def evaluate
-      freeze { @context.instance_eval(&block) }
+      freeze { @context.instance_eval(&self) }
     end
   end
 end
