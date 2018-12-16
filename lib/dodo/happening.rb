@@ -18,10 +18,6 @@ module Dodo
       super happening
     end
 
-    def freeze
-      Timecop.freeze(offset) { yield }
-    end
-
     def ==(other)
       offset == other.offset && __getobj__ == other.__getobj__
     end
@@ -32,7 +28,6 @@ module Dodo
   end
 
   class ContextualMoment < OffsetHappening
-    attr_reader :context
     def initialize(moment, offset, context)
       @context = context
       super moment, offset
@@ -41,5 +36,12 @@ module Dodo
     def evaluate
       freeze { @context.instance_eval(&self) }
     end
+
+    private
+
+    def freeze
+      Timecop.freeze(offset) { yield }
+    end
+
   end
 end
