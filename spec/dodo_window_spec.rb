@@ -117,41 +117,37 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#repeat' do
+    let(:block) { proc { please { true } } }
     let(:repeat_duration) { duration - 1 }
+    let(:k) { 2 }
+    let(:params) { { times: k, over: repeat_duration } }
 
-    context 'with no args and passing block' do
-      subject { window.repeat over: repeat_duration, &block }
-      it 'should invoke #over twice passing block' do
-        expect(window).to receive(:over) do |&blk|
-          expect(blk).to eq block
-        end.twice
-        subject
-      end
-
-      it 'should invoke #over each time with a duration equal to repeat_duration over 2' do
-        expect(window).to receive(:over).with((repeat_duration / 2).floor).twice
-        subject
-      end
-    end
+    subject { window.repeat params, &block }
 
     context 'with an integer as the :times argument and passing block' do
-      let(:k) { 3 }
 
-      subject { window.repeat times: k, over: repeat_duration, &block }
-
-      it 'should invoke #over :repetitions times passing block' do
-        expect(window).to receive(:over) do |&blk|
-          expect(blk).to eq block
-        end.exactly(k).times
+      it 'should invoke #over once with :repeat_duration as an arg' do
+        expect(window).to receive(:over).with(repeat_duration).once
         subject
       end
 
-      it 'should invoke #over each time with a duration equal to repeat_duration over k' do
-        expect(window).to receive(:over).with((repeat_duration / k).floor).exactly(k).times
-        subject
+      it "should return a Window" do
+        expect(subject).to be_a Dodo::Window
       end
 
+      it "should return a window with two happenings" do
+        expect(subject.happenings.size).to be k
+      end
     end
+
+    context "without a provided :over param" do
+      before { params.delete :over}
+      it "should invoke #over once with window.unused_duration as an arg" do
+        expect(window).to receive(:over).with(window.unused_duration).once
+        subject
+      end
+    end
+
   end
 
   describe '#enum' do
