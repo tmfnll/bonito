@@ -74,11 +74,11 @@ module Dodo
     end
 
     def is_assignment?(symbol)
-      symbol.to_s.match? /\w+=/
+      !!symbol.to_s.match(/\w+=/)
     end
 
     def instance_var_for(symbol)
-      :"@#{symbol.to_s.delete_suffix("=")}"
+      :"@#{symbol.to_s.chomp("=")}"
     end
 
     def get(symbol)
