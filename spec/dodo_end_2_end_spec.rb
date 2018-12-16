@@ -491,11 +491,6 @@ RSpec.describe 'End to end' do
     end
 
     context "with rand achieving its upper bound" do
-      before do
-        allow(SecureRandom).to receive(:random_number) do |max|
-          max
-        end
-      end
 
       it 'should create users and authors over a period greater than 1 days and 2 hours' do
         diff = users_and_authors.last.created_at - users_and_authors.first.created_at
