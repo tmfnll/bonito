@@ -438,29 +438,14 @@ RSpec.describe 'End to end' do
       expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
     end
 
-    it 'should create users and authors over a period greater than 1 days and 2 hours' do
-      diff = users_and_authors.last.created_at - users_and_authors.first.created_at
-      expect(diff).to be > (1.day + 2.hours)
-    end
-
     it 'should create users and authors over 2 days and 4 hours' do
       diff = users_and_authors.last.created_at - users_and_authors.first.created_at
       expect(diff).to be <= (2.days + 4.hours)
     end
 
-    it "should create authors over a period greater than 1 day" do
-      diff = authors.last.created_at - authors.first.created_at
-      expect(diff).to be > 1.day
-    end
-
     it 'should create authors over 2 days' do
       diff = authors.last.created_at - authors.last.created_at
       expect(diff).to be <= 2.days
-    end
-
-    it "should create users over a period greater than 1 day" do
-      diff = users.last.created_at - users.first.created_at
-      expect(diff).to be > 1.day
     end
 
     it 'should create users over a period less than 2 days' do
@@ -478,12 +463,6 @@ RSpec.describe 'End to end' do
 
     it "should create a total of 5 articles" do
       expect(articles.size).to eq 5
-    end
-
-    # There is a slim chance this test will fail
-    it 'should create articles and comments over a period greater than 5 days' do
-      diff = comments.last.created_at - articles.first.created_at
-      expect(diff).to be > 5.days
     end
 
     it 'should create articles and comments over a period of 10 days' do
@@ -507,13 +486,40 @@ RSpec.describe 'End to end' do
       expect(users_and_authors.first.created_at).to be >= 3.weeks.ago
     end
 
-    # There is a slim chance this test will fail
-    it 'should create the final model after 2 weeks ago' do
-      expect(comments.last.created_at).to be > 2.weeks.ago
-    end
-
     it 'should create no models after 1 week ago' do
       expect(comments.last.created_at).to be <= 1.week.ago
+    end
+
+    context "with rand achieving its upper bound" do
+      before do
+        allow(SecureRandom).to receive(:random_number) do |max|
+          max
+        end
+      end
+
+      it 'should create users and authors over a period greater than 1 days and 2 hours' do
+        diff = users_and_authors.last.created_at - users_and_authors.first.created_at
+        expect(diff).to be > (1.day + 2.hours)
+      end
+
+      it "should create authors over a period greater than 1 day" do
+        diff = authors.last.created_at - authors.first.created_at
+        expect(diff).to be > 1.day
+      end
+
+      it "should create users over a period greater than 1 day" do
+        diff = users.last.created_at - users.first.created_at
+        expect(diff).to be > 1.day
+      end
+
+      it 'should create articles and comments over a period greater than 5 days' do
+        diff = comments.last.created_at - articles.first.created_at
+        expect(diff).to be > 5.days
+      end
+
+      it 'should create the final model after 2 weeks ago' do
+        expect(comments.last.created_at).to be > 2.weeks.ago
+      end
     end
   end
 
