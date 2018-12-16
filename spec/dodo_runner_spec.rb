@@ -76,10 +76,10 @@ RSpec.describe Dodo::Runner do
     end
 
     context 'with a context provided' do
-      subject { runner.call window, start, context }
+      subject { runner.call window, start, context, opts }
 
-      it 'should invoke window.enum with nil and opts' do
-        expect(window).to receive(:enum).with(0)
+      it 'should invoke window.enum with start' do
+        expect(window).to receive(:enum).with(start, opts)
         subject
       end
       it 'should make a call to occurring_at once for each yielded moment' do
@@ -88,7 +88,7 @@ RSpec.describe Dodo::Runner do
       end
       it 'should pass an offset of start + moment.offset into occurring_at, for each moment' do
         moments.map do |moment|
-          expect(runner).to receive(:occurring_at).with(start + moment.offset).ordered
+          expect(runner).to receive(:occurring_at).with(moment.offset).ordered
         end
         subject
       end
