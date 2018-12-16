@@ -52,8 +52,8 @@ RSpec.describe Dodo::Context do
       end
     end
     context "when foo has not been set on any context" do
-      it "should return nil" do
-        expect(subject).to be_nil
+      it "should raise NoMethodError" do
+        expect{ subject }.to raise_exception(NoMethodError)
       end
     end
   end

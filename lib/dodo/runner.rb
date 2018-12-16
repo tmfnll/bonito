@@ -74,6 +74,8 @@ module Dodo
       else
         get symbol
       end
+    rescue NoMethodError
+      super
     end
 
     def is_assignment?(symbol)
@@ -94,7 +96,7 @@ module Dodo
           context = context.parent
         end
       end
-      nil
+      raise NoMethodError
     end
 
     def set(attr, value)
