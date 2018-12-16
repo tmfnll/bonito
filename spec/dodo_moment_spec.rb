@@ -3,6 +3,7 @@
 RSpec.describe Dodo::Moment do
   let(:block) { proc { p 'some block' } }
   let(:moment) { Dodo::Moment.new &block }
+  let(:context) { Dodo::Context.new }
   describe '#initialize' do
     subject { moment }
     context 'when passed a block' do
@@ -26,20 +27,20 @@ RSpec.describe Dodo::Moment do
   describe '#enum' do
     let(:starting_offset) { rand(10).days }
     let(:opts) { double }
-    subject { moment.enum starting_offset, opts }
+    subject { moment.enum starting_offset, context, opts }
     context 'with opts' do
       it 'should create a new MomentEnumerator with opts included' do
         expect(Dodo::MomentEnumerator).to receive(:new).with(
-          moment, starting_offset, opts
+          moment, starting_offset, context, opts
         )
         subject
       end
     end
     context 'without opts' do
-      subject { moment.enum starting_offset }
+      subject { moment.enum starting_offset, context }
       it 'should create a new MomentEnumerator with an empty ahs as opts' do
         expect(Dodo::MomentEnumerator).to receive(:new).with(
-          moment, starting_offset, {}
+          moment, starting_offset, context, {}
         )
         subject
       end

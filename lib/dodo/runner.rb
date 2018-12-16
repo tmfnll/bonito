@@ -19,23 +19,18 @@ module Dodo
     def call(window, start, context = nil, opts = {})
       Process.daemon if daemonise?
       context = Context.new if context.nil?
-      window.enum(start, opts).each do |moment|
-        occurring_at(moment.offset) do
-          context.instance_eval(&moment.block)
-        end
+      window.enum(start, context, opts).each do |moment|
+        maybe_sleep moment
+        moment.evaluate
         @progress += 1
       end
     end
 
     private
 
-    def occurring_at(instant)
-      if live? && instant > Time.now
-        nap_time = [instant - Time.now, 0].max
+    def maybe_sleep(moment)
+      if live? && ((nap_time = moment.offset - Time.now) > 0)
         sleep nap_time
-        yield
-      else
-        Timecop.freeze(instant) { yield }
       end
     end
   end

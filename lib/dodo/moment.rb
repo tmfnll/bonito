@@ -12,8 +12,8 @@ module Dodo
       super 0
     end
 
-    def enum(starting_offset, opts = {})
-      MomentEnumerator.new self, starting_offset, opts
+    def enum(starting_offset, context, opts = {})
+      MomentEnumerator.new self, starting_offset, context, opts
     end
 
     def crammed(factor:)
@@ -24,15 +24,16 @@ module Dodo
   class MomentEnumerator
     include Enumerable
 
-    def initialize(moment, offset, _opts = {})
+    def initialize(moment, offset, context, _opts = {})
       @moment = moment
       @offset = offset
+      @context = context
     end
 
     def each
       return to_enum(:each) unless block_given?
 
-      yield OffsetHappening.new(@moment, @offset)
+      yield ContextualMoment.new(@moment, @offset, @context)
     end
   end
 end

@@ -44,16 +44,18 @@ RSpec.describe 'End to end' do
     end
   end
 
-  class Context
-    def initialize
-      @authors = []
-      @articles = []
-      @users = []
-      @comments = []
-      @users_and_authors = []
+
+  let(:context) do
+    Dodo::Context.new.tap do |context|
+      context.instance_eval do
+        self.authors = []
+        self.articles = []
+        self.users = []
+        self.comments = []
+        self.users_and_authors = []
+      end
     end
   end
-  let(:context) { Context.new }
 
   let(:window) do
     Dodo.over 1.week do
@@ -63,8 +65,8 @@ RSpec.describe 'End to end' do
           please do
             name = Faker::Name.name
             author = Author.new(name)
-            @authors << author
-            @users_and_authors << author
+            self.authors << author
+            self.users_and_authors << author
           end
         end
       end.also over: 1.day, after: 2.hours do
@@ -74,25 +76,25 @@ RSpec.describe 'End to end' do
             name = Faker::Name.name
             email = Faker::Internet.safe_email(name)
             user = User.new(name, email)
-            @users << user
-            @users_and_authors << user
+            self.users << user
+            self.users_and_authors << user
           end
         end
       end
 
       repeat times: 5, over: 5.days do
         please do
-          author = @authors.sample
+          author = authors.sample
           title = Faker::Company.bs
-          @article = Article.new(title, author)
-         @articles << @article
+          self.article = Article.new(title, author)
+          self.articles << article
         end
 
         repeat times: 2, over: 5.hours do
           please do
-            user = @users.sample
+            user = users.sample
             content = Faker::Lorem.sentence
-            @comments << Comment.new(content, @article, user)
+            self.comments << Comment.new(content, article, user)
           end
         end
       end
@@ -106,11 +108,11 @@ RSpec.describe 'End to end' do
   let(:opts) { {cram: cram, stretch: stretch } }
   let(:runner) { Dodo::Runner.new progress: progress }
 
-  let(:users_and_authors) { context.instance_variable_get(:@users_and_authors) }
-  let(:authors) { context.instance_variable_get(:@authors) }
-  let(:users) { context.instance_variable_get(:@users) }
-  let(:articles) { context.instance_variable_get(:@articles) }
-  let(:comments) { context.instance_variable_get(:@comments) }
+  let(:users_and_authors) { context.users_and_authors }
+  let(:authors) { context.authors }
+  let(:users) { context.users }
+  let(:articles) { context.articles }
+  let(:comments) { context.comments }
   let(:comments_by_article) { comments.group_by { |comment| comment.article } }
 
   subject! { runner.call window, 3.weeks.ago, context, opts }

@@ -28,7 +28,8 @@ RSpec.describe Dodo::WindowEnumerator do
   let(:scale_opts) { {} }
 
   let(:starting_offset) { rand(10).days }
-  let(:enumerator) { described_class.new window, starting_offset, scale_opts }
+  let(:context) { Dodo::Context.new }
+  let(:enumerator) { described_class.new window, starting_offset, context, scale_opts }
 
   before do
     allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
@@ -94,7 +95,7 @@ RSpec.describe Dodo::WindowEnumerator do
     shared_examples 'an enumerator of offset moments' do
       context 'where the last happening in window.happenings has a duration of 0' do
         it 'should return an enumerator of offset happenings' do
-          expect(Set[*subject.map(&:class)]).to eq Set[Dodo::OffsetHappening]
+          expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
         end
 
         it 'should yield multiple moments according to the cram factor' do

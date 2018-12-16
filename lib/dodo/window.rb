@@ -43,8 +43,8 @@ module Dodo
       end
     end
 
-    def enum(starting_offset, opts = {})
-      WindowEnumerator.new self, starting_offset, opts
+    def enum(starting_offset, context, opts = {})
+      WindowEnumerator.new self, starting_offset, context, opts
     end
 
     def crammed(*)
@@ -78,9 +78,10 @@ module Dodo
   class WindowEnumerator
     include Enumerable
 
-    def initialize(window, starting_offset, opts = {})
+    def initialize(window, starting_offset, parent_context, opts = {})
       @window = window
       @starting_offset = starting_offset
+      @context = parent_context.push
       @opts = opts
     end
 
@@ -88,7 +89,7 @@ module Dodo
       return to_enum(:each) unless block_given?
 
       happenings_with_offsets do |happening, offset|
-        happening.enum(offset, @opts).map do |moment|
+        happening.enum(offset, @context, @opts).map do |moment|
           yield moment
         end
       end

@@ -8,6 +8,8 @@ RSpec.describe Dodo::ContainerEnumerator do
 
   let(:starting_offset) { 0.seconds }
 
+  let(:context) { Dodo::Context.new }
+
   let(:moments) { build_list :moment, 5 }
   let(:offset_moments) do
     moments.map do |moment|
@@ -45,7 +47,7 @@ RSpec.describe Dodo::ContainerEnumerator do
   end
 
   let(:window_enumerator) do
-    enum = window.enum(starting_offset, opts)
+    enum = window.enum(starting_offset, context, opts)
     allowed = allow(enum).to(receive(:happenings_with_offsets))
     distributed_moments.reduce(allowed) do |accumulated, moment|
       accumulated.and_yield moment, moment.offset
@@ -54,7 +56,7 @@ RSpec.describe Dodo::ContainerEnumerator do
   end
 
   let(:another_window_enumerator) do
-    enum = another_window.enum(starting_offset + after, opts)
+    enum = another_window.enum(starting_offset + after, context, opts)
     allowed = allow(enum).to receive(:happenings_with_offsets)
     more_distributed_moments.reduce(allowed) do |accumulated, moment|
       accumulated.and_yield moment, moment.offset
@@ -76,7 +78,7 @@ RSpec.describe Dodo::ContainerEnumerator do
   end
 
   let(:container_enumerator) do
-    Dodo::ContainerEnumerator.new container, starting_offset, opts
+    Dodo::ContainerEnumerator.new container, starting_offset, context, opts
   end
 
   describe '#each' do
@@ -95,7 +97,7 @@ RSpec.describe Dodo::ContainerEnumerator do
       end
 
       it 'should provide any opts to the underlying window enumerators' do
-        expect(window).to receive(:enum).with(starting_offset, opts)
+        expect(window).to receive(:enum).with(starting_offset, context, opts)
         subject
       end
 
