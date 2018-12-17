@@ -1,6 +1,6 @@
 module Dodo
   class BaseProgress
-    attr_reader :total
+    attr_accessor :total
     attr_accessor :current
 
     def initialize(total: nil, prefix: nil)
