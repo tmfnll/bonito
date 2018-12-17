@@ -7,9 +7,10 @@ RSpec.describe Dodo::Runner do
   let(:live) { false }
   let(:daemonise) { false }
   let(:progress) do
-    progress = double
-    allow(progress).to receive(:+).and_return(progress)
-    progress
+    double.tap do |progress|
+      allow(progress).to receive(:total=)
+      allow(progress).to receive(:+).and_return(progress)
+    end
   end
   let(:opts) { { live: live, daemonise: daemonise, progress: progress } }
   let(:n) { 5 }
