@@ -1,9 +1,9 @@
 module Dodo
-  class BaseProgress
+   module ProgressCounter
     attr_accessor :total
     attr_accessor :current
 
-    def initialize(total: nil, prefix: nil)
+    def setup(total: nil, prefix: nil)
       @total = total
       @prefix = prefix
       @current = 0
@@ -25,16 +25,33 @@ module Dodo
     end
   end
 
-  class ProgressLogger < BaseProgress
+  class ProgressLogger
+    include ProgressCounter
 
     def initialize(logger, total: nil, prefix: nil)
       @logger = logger
-      super total: total, prefix: prefix
+      setup total: total, prefix: prefix
     end
 
     def current=(value)
-      super value
+      @current = value
       @logger.info to_s
+    end
+  end
+
+  class ProgressDecorator < SimpleDelegator
+    def initialize(enumerable, progress)
+      @enumerable = enumerable
+      @progress = progress
+      super enumerable
+    end
+
+    def each
+      return to_enum(:each) unless block_given?
+      @enumerable.each do |item|
+        yield item
+        @progress += 1
+      end
     end
   end
 end

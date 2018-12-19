@@ -3,9 +3,9 @@
 require 'timecop'
 module Dodo
   class Runner
-    def initialize(opts = {})
+    def initialize(enumerable, opts = {})
+      @enumerable = enumerable
       @opts = opts
-      @progress = opts.fetch(:progress) { 0 }
     end
 
     def live?
@@ -16,15 +16,11 @@ module Dodo
       @opts.fetch(:daemonise) { false }
     end
 
-    def call(window, start, context = nil, opts = {})
+    def call
       Process.daemon if daemonise?
-      context = Context.new if context.nil?
-      enum =  window.enum([start].to_enum, context, opts).each
-      @progress.total = enum.count
-      enum.each do |moment|
+      @enumerable.each do |moment|
         maybe_sleep moment
         moment.evaluate
-        @progress += 1
       end
     end
 

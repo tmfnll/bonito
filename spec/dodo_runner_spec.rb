@@ -28,12 +28,15 @@ RSpec.describe Dodo::Runner do
   end
   let(:start) { 2.weeks.ago }
   let(:context) { Dodo::Context.new }
-  let(:runner) { described_class.new opts }
+  let(:distribution) { Dodo::Distribution.new start }
+  let(:enumerator) { window.enum(distribution, context)}
+  let(:decorated_enum) { Dodo::ProgressDecorator.new enumerator, progress }
+  let(:runner) { described_class.new decorated_enum, opts }
 
   describe '#initialize' do
     subject { runner }
     context 'without any opts' do
-      let(:runner) { described_class.new }
+      let(:runner) { described_class.new decorated_enum }
       it 'should initialise successfully' do
         subject
       end
@@ -47,7 +50,7 @@ RSpec.describe Dodo::Runner do
   describe '#live?' do
     subject { runner.live? }
     context 'when initialised without any opts' do
-      let(:runner) { described_class.new }
+      let(:runner) { described_class.new decorated_enum }
       it 'should return false' do
         expect(subject).to be false
       end
@@ -61,7 +64,7 @@ RSpec.describe Dodo::Runner do
   describe '#daemonise?' do
     subject { runner.daemonise? }
     context 'when initialised without any opts' do
-      let(:runner) { described_class.new }
+      let(:runner) { described_class.new decorated_enum }
       it 'should return false' do
         expect(subject).to be false
       end
@@ -77,16 +80,10 @@ RSpec.describe Dodo::Runner do
       allow(window).to receive(:enum).and_return moments
     end
 
-    subject { runner.call window, start, context, opts }
+    subject { runner.call }
 
     context 'with a context provided' do
 
-      it 'should invoke window.enum with start' do
-        expect(window).to receive(:enum).with(
-          satisfy { |enum| enum.next == start }, context, opts
-        )
-        subject
-      end
       it 'should evaluate each moment within context' do
         moments.map do |moment|
           expect(moment).to receive(:evaluate).ordered

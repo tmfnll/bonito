@@ -119,7 +119,7 @@ module Dodo
 
   class Distribution
 
-    def initialize(start, interval, count, stretch: 1)
+    def initialize(start, interval = 0, count = 1, stretch: 1)
       @start = start
       @interval = interval
       @count = count
@@ -148,7 +148,7 @@ module Dodo
 
     def generate
      Array.new(@count) do
-       SecureRandom.random_number(@interval)
+       @interval > 0 ? SecureRandom.random_number(@interval) : 0
      end.sort
     end
 
