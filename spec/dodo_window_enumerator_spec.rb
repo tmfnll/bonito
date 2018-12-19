@@ -29,7 +29,8 @@ RSpec.describe Dodo::WindowEnumerator do
 
   let(:starting_offset) { rand(10).days }
   let(:context) { Dodo::Context.new }
-  let(:enumerator) { described_class.new window, starting_offset, context, scale_opts }
+  let(:parent_distribution) { [starting_offset].to_enum }
+  let(:enumerator) { described_class.new window, parent_distribution, context, scale_opts }
 
   before do
     allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)

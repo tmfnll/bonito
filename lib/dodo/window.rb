@@ -43,8 +43,8 @@ module Dodo
       end
     end
 
-    def enum(starting_offset, context, opts = {})
-      WindowEnumerator.new self, starting_offset, context, opts
+    def enum(distribution, context, opts = {})
+      WindowEnumerator.new self, distribution, context, opts
     end
 
     def crammed(*)
@@ -78,20 +78,25 @@ module Dodo
   class WindowEnumerator
     include Enumerable
 
-    def initialize(window, starting_offset, parent_context, opts = {})
+    def initialize(window, parent_distribution, parent_context, opts = {})
       @window = window
-      @starting_offset = starting_offset
+      @starting_offset = parent_distribution.next
       @context = parent_context.push
       @opts = opts
     end
 
     def each
       return to_enum(:each) unless block_given?
+      distribution = Distribution.new(
+        @starting_offset, @window.unused_duration, crammed_happenings.size,
+        stretch: stretch
+      )
 
-      happenings_with_offsets do |happening, offset|
-        happening.enum(offset, @context, @opts).map do |moment|
+      @window.happenings.each do |happening|
+        happening.enum(distribution, @context, @opts).map do |moment|
           yield moment
         end
+        distribution.consume happening.duration
       end
     end
 
@@ -110,19 +115,42 @@ module Dodo
         happening.crammed(factor: cram)
       end.flatten
     end
+  end
 
-    def offsets
-      @offsets ||= crammed_happenings.map do
-        SecureRandom.random_number(@window.unused_duration)
-      end.sort
+  class Distribution
+
+    def initialize(start, interval, count, stretch: 1)
+      @start = start
+      @interval = interval
+      @count = count
+      @stretch = stretch
+      @distribution = generate
+      @consumed = 0
+      @current = 0
     end
 
-    def happenings_with_offsets
-      consumed_duration = 0
-      crammed_happenings.zip(offsets).each do |happening, offset|
-        yield happening, @starting_offset + (stretch * (offset + consumed_duration))
-        consumed_duration += happening.duration
+    attr_reader :count
+
+    def next
+      if @current == @count
+        raise StopIteration
       end
+      offset = @start + (@stretch * (@distribution[@current] + @consumed))
+      @current += 1
+      offset
     end
+
+    def consume(duration)
+      @consumed += duration
+    end
+
+    private
+
+    def generate
+     Array.new(@count) do
+       SecureRandom.random_number(@interval)
+     end.sort
+    end
+
   end
 end

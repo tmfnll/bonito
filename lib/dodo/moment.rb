@@ -11,8 +11,8 @@ module Dodo
       super 0
     end
 
-    def enum(starting_offset, context, opts = {})
-      MomentEnumerator.new self, starting_offset, context, opts
+    def enum(distribution, context, opts = {})
+      MomentEnumerator.new self, distribution, context, opts
     end
 
     def to_proc
@@ -27,16 +27,20 @@ module Dodo
   class MomentEnumerator
     include Enumerable
 
-    def initialize(moment, offset, context, _opts = {})
+    def initialize(moment, distribution, context, opts = {})
       @moment = moment
-      @offset = offset
+      @distribution = distribution
       @context = context
+      @opts = opts
+    end
+
+    def cram
+      @cram ||= @opts.fetch(:scale) {  @opts.fetch(:cram) { 1 } }.ceil
     end
 
     def each
       return to_enum(:each) unless block_given?
-
-      yield ContextualMoment.new(@moment, @offset, @context)
+      cram.times { yield ContextualMoment.new(@moment, @distribution.next, @context) }
     end
   end
 end

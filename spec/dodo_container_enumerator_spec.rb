@@ -48,19 +48,13 @@ RSpec.describe Dodo::ContainerEnumerator do
 
   let(:window_enumerator) do
     enum = window.enum(starting_offset, context, opts)
-    allowed = allow(enum).to(receive(:happenings_with_offsets))
-    distributed_moments.reduce(allowed) do |accumulated, moment|
-      accumulated.and_yield moment, moment.offset
-    end
+    allow(enum).to(receive(:each)).and_return distributed_moments.to_enum
     enum
   end
 
   let(:another_window_enumerator) do
     enum = another_window.enum(starting_offset + after, context, opts)
-    allowed = allow(enum).to receive(:happenings_with_offsets)
-    more_distributed_moments.reduce(allowed) do |accumulated, moment|
-      accumulated.and_yield moment, moment.offset
-    end
+    allow(enum).to receive(:each).and_return more_distributed_moments.to_enum
     enum
   end
 
@@ -77,8 +71,10 @@ RSpec.describe Dodo::ContainerEnumerator do
     container
   end
 
+  let(:distribution) { [starting_offset].to_enum }
+
   let(:container_enumerator) do
-    Dodo::ContainerEnumerator.new container, starting_offset, context, opts
+    Dodo::ContainerEnumerator.new container, distribution, context, opts
   end
 
   describe '#each' do
@@ -97,7 +93,9 @@ RSpec.describe Dodo::ContainerEnumerator do
       end
 
       it 'should provide any opts to the underlying window enumerators' do
-        expect(window).to receive(:enum).with(starting_offset, context, opts)
+        expect(window).to receive(:enum).with(
+          satisfy { |enum| enum.next == starting_offset }, context, opts
+        )
         subject
       end
 

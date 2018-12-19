@@ -19,7 +19,7 @@ module Dodo
     def call(window, start, context = nil, opts = {})
       Process.daemon if daemonise?
       context = Context.new if context.nil?
-      enum =  window.enum(start, context, opts).each
+      enum =  window.enum([start].to_enum, context, opts).each
       @progress.total = enum.count
       enum.each do |moment|
         maybe_sleep moment

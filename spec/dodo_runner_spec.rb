@@ -82,7 +82,9 @@ RSpec.describe Dodo::Runner do
     context 'with a context provided' do
 
       it 'should invoke window.enum with start' do
-        expect(window).to receive(:enum).with(start, context, opts)
+        expect(window).to receive(:enum).with(
+          satisfy { |enum| enum.next == start }, context, opts
+        )
         subject
       end
       it 'should evaluate each moment within context' do
