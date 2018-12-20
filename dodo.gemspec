@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'algorithms', '~> 0.5'
   spec.add_dependency 'timecop'
+  spec.add_dependency 'ruby-progressbar'
 
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'faker', '~> 1.9.1'

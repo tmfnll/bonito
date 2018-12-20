@@ -33,19 +33,6 @@ module Dodo
     end
   end
 
-  def self.starting(start, with = {}, &block)
-    window = module_eval(&block)
-    runner = Runner.new with
-    runner.call window, start, nil, with
-  end
-
-  def self.ending(end_, with = {}, &block)
-    window = module_eval(&block)
-    start = end_ - window.duration
-    runner = Runner.new with
-    runner.call window, start, nil, with
-  end
-
   class Context
     def initialize(parent=nil)
       @parent = parent

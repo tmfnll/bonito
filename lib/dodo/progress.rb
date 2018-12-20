@@ -1,3 +1,4 @@
+require 'ruby-progressbar'
 module Dodo
    module ProgressCounter
     attr_accessor :total
@@ -39,10 +40,31 @@ module Dodo
     end
   end
 
+   class Bar
+     include ProgressCounter
+
+     def initialize(opts = {})
+       @bar = ProgressBar.create opts
+       setup opts
+     end
+
+     def total=(value)
+       @bar.total = value
+     end
+
+     def current=(value)
+       incr = [(value - @current), 0].max
+       @current = value
+       incr.times { @bar.increment }
+     end
+
+   end
+
   class ProgressDecorator < SimpleDelegator
     def initialize(enumerable, progress)
       @enumerable = enumerable
       @progress = progress
+      @progress.total = enumerable.count
       super enumerable
     end
 
