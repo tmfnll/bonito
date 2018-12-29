@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe 'End to end' do
-  class SimpleModel
+  class SimpleModel # :nodoc:
     attr_reader :created_at
     def initialize
       @created_at = Time.now
     end
   end
 
-  class Author < SimpleModel
+  class Author < SimpleModel # :nodoc:
     attr_reader :name
     def initialize(name)
       @name = name
@@ -16,7 +16,7 @@ RSpec.describe 'End to end' do
     end
   end
 
-  class User < SimpleModel
+  class User < SimpleModel # :nodoc:
     attr_reader :name, :email
     def initialize(name, email)
       @name = name
@@ -25,7 +25,7 @@ RSpec.describe 'End to end' do
     end
   end
 
-  class Article < SimpleModel
+  class Article < SimpleModel # :nodoc:
     attr_reader :title, :author
     def initialize(title, author)
       @title = title
@@ -34,7 +34,7 @@ RSpec.describe 'End to end' do
     end
   end
 
-  class Comment < SimpleModel
+  class Comment < SimpleModel # :nodoc:
     attr_reader :content, :article, :user
     def initialize(content, article, user)
       @content = content

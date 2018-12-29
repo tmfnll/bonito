@@ -43,11 +43,11 @@ module Dodo
       end
     end
 
-    def scheduler(distribution, context, opts = {})
+    def scheduler(distribution, context, opts = {}) # :nodoc:
       WindowScheduler.new self, distribution, context, opts
     end
 
-    def crammed(*)
+    def crammed(*) # :nodoc:
       [self]
     end
 
@@ -75,7 +75,7 @@ module Dodo
     Window.new duration, &block
   end
 
-  class WindowScheduler
+  class WindowScheduler # :nodoc:
     include Enumerable
 
     def initialize(window, parent_distribution, parent_context, opts = {})

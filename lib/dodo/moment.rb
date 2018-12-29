@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 require 'dodo/happening'
-require 'dodo/scalable'
 
 module Dodo
-  class Moment < Happening
+  class Moment < Happening # :nodoc:
 
     def initialize(&block)
       @block = block
@@ -24,7 +23,7 @@ module Dodo
     end
   end
 
-  class MomentScheduler
+  class MomentScheduler # :nodoc:
     include Enumerable
 
     def initialize(moment, distribution, context, opts = {})

@@ -1,5 +1,5 @@
 module Dodo
-  class Happening
+  class Happening # :nodoc:
     attr_reader :duration
 
     def initialize(duration)
@@ -11,7 +11,7 @@ module Dodo
     attr_writer :duration
   end
 
-  class OffsetHappening < SimpleDelegator
+  class OffsetHappening < SimpleDelegator # :nodoc:
     attr_reader :offset
     def initialize(happening, offset)
       @offset = offset
@@ -27,7 +27,7 @@ module Dodo
     end
   end
 
-  class ContextualMoment < OffsetHappening
+  class ContextualMoment < OffsetHappening # :nodoc:
     def initialize(moment, offset, context)
       @context = context
       super moment, offset

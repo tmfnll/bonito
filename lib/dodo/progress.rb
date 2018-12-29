@@ -60,7 +60,7 @@ module Dodo
 
    end
 
-  class ProgressDecorator < SimpleDelegator
+  class ProgressDecorator < SimpleDelegator # :nodoc:
     def initialize(enumerable, progress)
       @enumerable = enumerable
       @progress = progress

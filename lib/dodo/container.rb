@@ -3,7 +3,7 @@ require 'dodo/window'
 require 'algorithms'
 
 module Dodo
-  class Container < Happening
+  class Container < Happening # :nodoc:
     attr_reader :windows
     def initialize
       @windows = []
@@ -34,7 +34,7 @@ module Dodo
     end
   end
 
-  class ContainerScheduler
+  class ContainerScheduler # :nodoc:
     include Enumerable
 
     def initialize(container, distribution, context, opts = {})
