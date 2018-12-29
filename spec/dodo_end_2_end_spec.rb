@@ -47,13 +47,11 @@ RSpec.describe 'End to end' do
 
   let(:context) do
     Dodo::Context.new.tap do |context|
-      context.instance_eval do
-        self.authors = []
-        self.articles = []
-        self.users = []
-        self.comments = []
-        self.users_and_authors = []
-      end
+      context.authors = []
+      context.articles = []
+      context.users = []
+      context.comments = []
+      context.users_and_authors = []
     end
   end
 
