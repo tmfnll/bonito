@@ -90,7 +90,7 @@ RSpec.describe 'End to end' do
           self.articles << article
         end
 
-        repeat times: 2, over: 5.hours do
+        repeat times: rand(10), over: 5.hours do
           please do
             user = users.sample
             content = Faker::Lorem.sentence
