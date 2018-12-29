@@ -38,9 +38,9 @@ module Dodo
     progress: ProgressLogger.new(Logger.new(STDOUT)), **opts
   )
     distribution = Distribution.new starting
-    enum = window.enum(distribution, context, opts)
-    enum = ProgressDecorator.new enum, progress
-    runner = Runner.new enum, opts
+    scheduler = window.scheduler(distribution, context, opts)
+    scheduler = ProgressDecorator.new scheduler, progress
+    runner = Runner.new scheduler, opts
     runner.call
   end
 

@@ -43,8 +43,8 @@ module Dodo
       end
     end
 
-    def enum(distribution, context, opts = {})
-      WindowEnumerator.new self, distribution, context, opts
+    def scheduler(distribution, context, opts = {})
+      WindowScheduler.new self, distribution, context, opts
     end
 
     def crammed(*)
@@ -75,7 +75,7 @@ module Dodo
     Window.new duration, &block
   end
 
-  class WindowEnumerator
+  class WindowScheduler
     include Enumerable
 
     def initialize(window, parent_distribution, parent_context, opts = {})
@@ -93,7 +93,7 @@ module Dodo
       )
 
       @window.happenings.each do |happening|
-        happening.enum(distribution, @context, @opts).map do |moment|
+        happening.scheduler(distribution, @context, @opts).map do |moment|
           yield moment
         end
         distribution.consume happening.duration

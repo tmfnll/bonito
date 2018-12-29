@@ -29,8 +29,8 @@ RSpec.describe Dodo::Runner do
   let(:start) { 2.weeks.ago }
   let(:context) { Dodo::Context.new }
   let(:distribution) { Dodo::Distribution.new start }
-  let(:enumerator) { window.enum(distribution, context)}
-  let(:decorated_enum) { Dodo::ProgressDecorator.new enumerator, progress }
+  let(:scheduler) { window.scheduler(distribution, context)}
+  let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
   let(:runner) { described_class.new decorated_enum, opts }
 
   describe '#initialize' do
@@ -77,7 +77,7 @@ RSpec.describe Dodo::Runner do
   end
   describe '#call' do
     before do
-      allow(window).to receive(:enum).and_return moments
+      allow(window).to receive(:scheduler).and_return moments
     end
 
     subject { runner.call }

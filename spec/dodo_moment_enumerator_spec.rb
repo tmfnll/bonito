@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rspec'
-RSpec.describe Dodo::MomentEnumerator do
+RSpec.describe Dodo::MomentScheduler do
   let(:block) { -> { true } }
   let(:distribution) { double }
   let(:cram) { 2 }
@@ -9,14 +9,14 @@ RSpec.describe Dodo::MomentEnumerator do
   let(:opts) { { cram: cram, stretch: stretch } }
   let(:moment) { Dodo::Moment.new &block }
   let(:context) { Dodo::Context.new }
-  let(:enum) { Dodo::MomentEnumerator.new moment, distribution, context, opts }
+  let(:scheduler) { Dodo::MomentScheduler.new moment, distribution, context, opts }
 
   before do
     allow(distribution).to receive(:next).and_return(*(1..cram))
   end
 
   describe '#initialize' do
-    subject { enum }
+    subject { scheduler }
     context 'with distribution and opts' do
       it 'should initialise successfully' do
         subject
@@ -25,13 +25,13 @@ RSpec.describe Dodo::MomentEnumerator do
   end
   describe '#each' do
     context 'without a block' do
-      subject { enum.each }
+      subject { scheduler.each }
       it 'should return an Enumerator' do
         expect(subject).to be_an Enumerator
       end
     end
     context 'with a block' do
-      subject { enum }
+      subject { scheduler }
       it 'should yield according to the cram factor' do
         expect { |b| subject.each(&b) }.to yield_control.exactly(cram).times
       end

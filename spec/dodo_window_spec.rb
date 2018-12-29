@@ -150,21 +150,21 @@ RSpec.describe Dodo::Window do
 
   end
 
-  describe '#enum' do
+  describe '#scheduler' do
     let(:offset) { 2.days.from_now }
     let(:context) { Dodo::Context.new }
     let(:opts) { double }
-    subject { window.enum offset, context, opts }
+    subject { window.scheduler offset, context, opts }
     context 'with opts' do
-      it 'should create a new WindowEnumerator with opts included' do
-        expect(Dodo::WindowEnumerator).to receive(:new).with(window, offset, context, opts)
+      it 'should create a new WindowScheduler with opts included' do
+        expect(Dodo::WindowScheduler).to receive(:new).with(window, offset, context, opts)
         subject
       end
     end
     context 'without opts' do
-      subject { window.enum offset, context }
-      it 'should create a new WindowEnumerator with an empty hash as opts' do
-        expect(Dodo::WindowEnumerator).to receive(:new).with(window, offset, context, {})
+      subject { window.scheduler offset, context }
+      it 'should create a new WindowScheduler with an empty hash as opts' do
+        expect(Dodo::WindowScheduler).to receive(:new).with(window, offset, context, {})
         subject
       end
     end

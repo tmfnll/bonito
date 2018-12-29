@@ -29,12 +29,12 @@ module Dodo
       [self]
     end
 
-    def enum(distribution, context, opts = {})
-      ContainerEnumerator.new self, distribution, context, opts
+    def scheduler(distribution, context, opts = {})
+      ContainerScheduler.new self, distribution, context, opts
     end
   end
 
-  class ContainerEnumerator
+  class ContainerScheduler
     include Enumerable
 
     def initialize(container, distribution, context, opts = {})
@@ -42,10 +42,10 @@ module Dodo
       @starting_offset = distribution.next
       @context = context
       @moment_heap = Containers::MinHeap.new []
-      @window_enumerators = container.windows.map do |window|
-        window.enum([@starting_offset + window.offset].to_enum, @context, opts).each
+      @window_schedulers = container.windows.map do |window|
+        window.scheduler([@starting_offset + window.offset].to_enum, @context, opts).each
       end
-      @window_enumerators.each { |enum| push_moment_from_enum enum }
+      @window_schedulers.each { |scheduler| push_moment_from_enum scheduler }
     end
 
     def each
@@ -53,16 +53,16 @@ module Dodo
 
       until @moment_heap.empty?
         moment = @moment_heap.next_key
-        enum = @moment_heap.pop
+        scheduler = @moment_heap.pop
         yield moment
-        push_moment_from_enum enum
+        push_moment_from_enum scheduler
       end
     end
 
     private
 
-    def push_moment_from_enum(enum)
-      @moment_heap.push enum.next, enum
+    def push_moment_from_enum(scheduler)
+      @moment_heap.push scheduler.next, scheduler
     rescue StopIteration
       # ignore
     end

@@ -11,8 +11,8 @@ module Dodo
       super 0
     end
 
-    def enum(distribution, context, opts = {})
-      MomentEnumerator.new self, distribution, context, opts
+    def scheduler(distribution, context, opts = {})
+      MomentScheduler.new self, distribution, context, opts
     end
 
     def to_proc
@@ -24,7 +24,7 @@ module Dodo
     end
   end
 
-  class MomentEnumerator
+  class MomentScheduler
     include Enumerable
 
     def initialize(moment, distribution, context, opts = {})

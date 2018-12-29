@@ -24,22 +24,22 @@ RSpec.describe Dodo::Moment do
       expect(subject).to eq block
     end
   end
-  describe '#enum' do
+  describe '#scheduler' do
     let(:starting_offset) { rand(10).days }
     let(:opts) { double }
-    subject { moment.enum starting_offset, context, opts }
+    subject { moment.scheduler starting_offset, context, opts }
     context 'with opts' do
-      it 'should create a new MomentEnumerator with opts included' do
-        expect(Dodo::MomentEnumerator).to receive(:new).with(
+      it 'should create a new MomentScheduler with opts included' do
+        expect(Dodo::MomentScheduler).to receive(:new).with(
           moment, starting_offset, context, opts
         )
         subject
       end
     end
     context 'without opts' do
-      subject { moment.enum starting_offset, context }
-      it 'should create a new MomentEnumerator with an empty ahs as opts' do
-        expect(Dodo::MomentEnumerator).to receive(:new).with(
+      subject { moment.scheduler starting_offset, context }
+      it 'should create a new MomentScheduler with an empty ahs as opts' do
+        expect(Dodo::MomentScheduler).to receive(:new).with(
           moment, starting_offset, context, {}
         )
         subject

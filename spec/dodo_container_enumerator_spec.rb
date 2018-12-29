@@ -1,7 +1,7 @@
 require 'rspec'
 require 'active_support/core_ext/numeric/time'
 
-RSpec.describe Dodo::ContainerEnumerator do
+RSpec.describe Dodo::ContainerScheduler do
   let(:duration) { 2.weeks }
   let(:opts) { {} }
   let(:after) { 2.days }
@@ -46,21 +46,21 @@ RSpec.describe Dodo::ContainerEnumerator do
     end.sort
   end
 
-  let(:window_enumerator) do
-    enum = window.enum(starting_offset, context, opts)
-    allow(enum).to(receive(:each)).and_return distributed_moments.to_enum
-    enum
+  let(:window_scheduler) do
+    scheduler = window.scheduler(starting_offset, context, opts)
+    allow(scheduler).to(receive(:each)).and_return distributed_moments.to_enum
+    scheduler
   end
 
-  let(:another_window_enumerator) do
-    enum = another_window.enum(starting_offset + after, context, opts)
-    allow(enum).to receive(:each).and_return more_distributed_moments.to_enum
-    enum
+  let(:another_window_scheduler) do
+    scheduler = another_window.scheduler(starting_offset + after, context, opts)
+    allow(scheduler).to receive(:each).and_return more_distributed_moments.to_enum
+    scheduler
   end
 
   before do
-    allow(window).to receive(:enum).and_return(window_enumerator)
-    allow(another_window).to receive(:enum).and_return(another_window_enumerator)
+    allow(window).to receive(:scheduler).and_return(window_scheduler)
+    allow(another_window).to receive(:scheduler).and_return(another_window_scheduler)
   end
 
   let(:container) do
@@ -73,12 +73,12 @@ RSpec.describe Dodo::ContainerEnumerator do
 
   let(:distribution) { [starting_offset].to_enum }
 
-  let(:container_enumerator) do
-    Dodo::ContainerEnumerator.new container, distribution, context, opts
+  let(:container_scheduler) do
+    Dodo::ContainerScheduler.new container, distribution, context, opts
   end
 
   describe '#each' do
-    subject { container_enumerator.each }
+    subject { container_scheduler.each }
 
     context 'without a block provided' do
       it 'should return an enumerator' do
@@ -92,9 +92,9 @@ RSpec.describe Dodo::ContainerEnumerator do
         (distributed_moments + more_distributed_moments).sort
       end
 
-      it 'should provide any opts to the underlying window enumerators' do
-        expect(window).to receive(:enum).with(
-          satisfy { |enum| enum.next == starting_offset }, context, opts
+      it 'should provide any opts to the underlying window schedulers' do
+        expect(window).to receive(:scheduler).with(
+          satisfy { |scheduler| scheduler.next == starting_offset }, context, opts
         )
         subject
       end
@@ -113,7 +113,7 @@ RSpec.describe Dodo::ContainerEnumerator do
       it 'should not store more than 1 moment per window in the heap' do
         subject.each do
           expect(
-            container_enumerator.instance_variable_get(:@moment_heap).size
+            container_scheduler.instance_variable_get(:@moment_heap).size
           ).to be <= 2
         end
       end

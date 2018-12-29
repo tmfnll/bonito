@@ -3,14 +3,14 @@
 require 'active_support/core_ext/numeric/time'
 require 'securerandom'
 
-RSpec.describe Dodo::WindowEnumerator do
+RSpec.describe Dodo::WindowScheduler do
   let(:moments) { build_list :moment, 3 }
   let(:child_window) { build :window }
   let(:child_container) { build :container }
   let(:happenings) { [child_window, child_container] + moments }
 
   let(:random_numbers) do
-    random_numbers = enumerator.send(:crammed_happenings).map do |_|
+    random_numbers = scheduler.send(:crammed_happenings).map do |_|
       rand(window.unused_duration)
     end.sort
     2.times { random_numbers.pop }
@@ -30,14 +30,14 @@ RSpec.describe Dodo::WindowEnumerator do
   let(:starting_offset) { rand(10).days }
   let(:context) { Dodo::Context.new }
   let(:parent_distribution) { [starting_offset].to_enum }
-  let(:enumerator) { described_class.new window, parent_distribution, context, scale_opts }
+  let(:scheduler) { described_class.new window, parent_distribution, context, scale_opts }
 
   before do
     allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
   end
 
   describe '#cram' do
-    subject { enumerator.cram }
+    subject { scheduler.cram }
     context 'without opts' do
       it 'should have a default value of 1' do
         expect(subject).to eq 1
@@ -68,7 +68,7 @@ RSpec.describe Dodo::WindowEnumerator do
   end
 
   describe '#stretch' do
-    subject { enumerator.stretch }
+    subject { scheduler.stretch }
     context 'without opts' do
       it 'should have a default value of 1' do
         expect(subject).to eq 1
@@ -91,28 +91,28 @@ RSpec.describe Dodo::WindowEnumerator do
   end
 
   describe '#each' do
-    subject { enumerator.to_a }
+    subject { scheduler.to_a }
 
-    shared_examples 'an enumerator of offset moments' do
+    shared_examples 'an scheduler of offset moments' do
       context 'where the last happening in window.happenings has a duration of 0' do
-        it 'should return an enumerator of offset happenings' do
+        it 'should return an scheduler of offset happenings' do
           expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
         end
 
         it 'should yield multiple moments according to the cram factor' do
-          expect(subject.size).to eq((moments * enumerator.cram).size)
+          expect(subject.size).to eq((moments * scheduler.cram).size)
         end
 
         it 'should yield happenings within a range equal to that of the stretched duration' do
           expect(subject.last.offset - subject.first.offset).to eq(
-            (window.unused_duration - random_numbers[2]) * enumerator.stretch
+            (window.unused_duration - random_numbers[2]) * scheduler.stretch
           )
         end
 
         it 'should yield happenings offset by the accumulated duration and a random value' do
           random_numbers[2..random_numbers.size].each_with_index do |rnd, index|
             expect(subject[index].offset).to eq(
-              starting_offset + (enumerator.stretch * (child_window.duration + child_container.duration + rnd))
+              starting_offset + (scheduler.stretch * (child_window.duration + child_container.duration + rnd))
             )
           end
         end
@@ -124,28 +124,28 @@ RSpec.describe Dodo::WindowEnumerator do
     end
 
     context 'without any scale_opts' do
-      it_behaves_like 'an enumerator of offset moments'
+      it_behaves_like 'an scheduler of offset moments'
     end
 
     context 'with a non-trivial cram parameter provided in scale_opts' do
       let(:cram) { rand 2..5 + rand }
       let(:scale_opts) { { cram: cram } }
 
-      it_behaves_like 'an enumerator of offset moments'
+      it_behaves_like 'an scheduler of offset moments'
     end
 
     context 'with a stretch parameter provided in scale_opts' do
       let(:stretch) { rand 2..5 }
       let(:scale_opts) { { stretch: stretch } }
 
-      it_behaves_like 'an enumerator of offset moments'
+      it_behaves_like 'an scheduler of offset moments'
     end
 
     context 'with a scale parameter provided in scale_opts' do
       let(:scale) { rand 2..5 }
       let(:scale_opts) { { scale: scale } }
 
-      it_behaves_like 'an enumerator of offset moments'
+      it_behaves_like 'an scheduler of offset moments'
     end
 
     context 'where the only happening with non-zero duration appears last in window.happenings' do

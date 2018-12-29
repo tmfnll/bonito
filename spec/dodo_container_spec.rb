@@ -98,17 +98,17 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  describe '#enum' do
+  describe '#scheduler' do
     let(:starting_offset) { 2.days }
     let(:context) { Dodo::Context.new }
     let(:distribution) { starting_offset }
-    subject { container.enum starting_offset, context }
+    subject { container.scheduler starting_offset, context }
     context 'without opts' do
-      it 'should create and return a new ContainerEnumerator' do
-        expect(subject).to be_a Dodo::ContainerEnumerator
+      it 'should create and return a new ContainerScheduler' do
+        expect(subject).to be_a Dodo::ContainerScheduler
       end
-      it 'should create a ContainerEnumerator with an empty hash as opts' do
-        expect(Dodo::ContainerEnumerator).to receive(:new).with(
+      it 'should create a ContainerScheduler with an empty hash as opts' do
+        expect(Dodo::ContainerScheduler).to receive(:new).with(
           container, starting_offset, context, {}
         )
         subject
@@ -116,12 +116,12 @@ RSpec.describe Dodo::Container do
     end
     context 'with opts' do
       let(:opts) { { stretch: 4, cram: 4 } }
-      subject { container.enum starting_offset, context, opts }
-      it 'should create and return a new ContainerEnumerator' do
-        expect(subject).to be_a Dodo::ContainerEnumerator
+      subject { container.scheduler starting_offset, context, opts }
+      it 'should create and return a new ContainerScheduler' do
+        expect(subject).to be_a Dodo::ContainerScheduler
       end
-      it 'should create a ContainerEnumerator with an empty hash as opts' do
-        expect(Dodo::ContainerEnumerator).to receive(:new).with(
+      it 'should create a ContainerScheduler with an empty hash as opts' do
+        expect(Dodo::ContainerScheduler).to receive(:new).with(
           container, starting_offset, context, opts
         )
         subject
