@@ -7,9 +7,11 @@ RSpec.describe Dodo::MomentScheduler do
   let(:cram) { 2 }
   let(:stretch) { 2 }
   let(:opts) { { cram: cram, stretch: stretch } }
-  let(:moment) { Dodo::Moment.new &block }
+  let(:moment) { Dodo::Moment.new(&block) }
   let(:context) { Dodo::Context.new }
-  let(:scheduler) { Dodo::MomentScheduler.new moment, distribution, context, opts }
+  let(:scheduler) do
+    Dodo::MomentScheduler.new moment, distribution, context, opts
+  end
 
   before do
     allow(distribution).to receive(:next).and_return(*(1..cram))

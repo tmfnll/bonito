@@ -2,7 +2,7 @@
 
 RSpec.describe Dodo::Moment do
   let(:block) { proc { p 'some block' } }
-  let(:moment) { Dodo::Moment.new &block }
+  let(:moment) { Dodo::Moment.new(&block) }
   let(:context) { Dodo::Context.new }
   describe '#initialize' do
     subject { moment }

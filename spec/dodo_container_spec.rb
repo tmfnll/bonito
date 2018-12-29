@@ -33,15 +33,18 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'a method that allows additional windows be added to a container' do
+  shared_examples 'a method that allows additional windows be ' +
+                  'added to a container' do
     context 'when passed a single OffsetHappening as an argument' do
-
       context 'with a newly initialized container' do
         it_behaves_like 'an appender of windows'
 
-        it 'should update the container duration to that of the appended window' do
+        it 'should update the container duration to that of the
+            appended window' do
           subject
-          expect(container.duration).to eq offset_window.duration + offset_window.offset
+          expect(
+            container.duration
+          ).to eq offset_window.duration + offset_window.offset
         end
       end
 
@@ -54,7 +57,7 @@ RSpec.describe Dodo::Container do
         it_behaves_like 'an appender of windows'
 
         it 'should not change the duration of the container' do
-          expect { subject }.not_to change { container.duration }
+          expect { subject }.not_to(change { container.duration })
         end
       end
 
@@ -65,9 +68,11 @@ RSpec.describe Dodo::Container do
 
         it_behaves_like 'an appender of windows'
 
-        it 'should change the duration of the container to the sum of the appended' \
-           'window and its offset' do
-          expect(subject.duration).to eq(offset_window.duration + offset_window.offset)
+        it 'should change the duration of the container to the sum of the ' +
+           'appended window and its offset' do
+          expect(subject.duration).to eq(
+            offset_window.duration + offset_window.offset
+          )
         end
       end
     end
@@ -75,7 +80,9 @@ RSpec.describe Dodo::Container do
 
   describe '#<<' do
     subject { container << offset_window }
-    it_behaves_like 'a method that allows additional windows be added to a container'
+    it_behaves_like(
+      'a method that allows additional windows be added to a container'
+    )
   end
 
   describe '#also' do
@@ -87,14 +94,18 @@ RSpec.describe Dodo::Container do
     end
 
     context 'with an integer provided' do
-      it_behaves_like 'a method that allows additional windows be added to a container'
+      it_behaves_like(
+        'a method that allows additional windows be added to a container'
+      )
     end
   end
 
   describe '#also_use' do
     context 'with a pre-baked window provided' do
       subject { container.also_use window, after: offset }
-      it_behaves_like 'a method that allows additional windows be added to a container'
+      it_behaves_like(
+        'a method that allows additional windows be added to a container'
+      )
     end
   end
 
@@ -128,5 +139,4 @@ RSpec.describe Dodo::Container do
       end
     end
   end
-
 end

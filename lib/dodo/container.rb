@@ -12,7 +12,9 @@ module Dodo
 
     def <<(offset_window)
       @windows << offset_window
-      self.duration = [duration, offset_window.offset + offset_window.duration].max
+      self.duration = [
+        duration, offset_window.offset + offset_window.duration
+      ].max
       self
     end
 
@@ -43,7 +45,9 @@ module Dodo
       @context = context
       @moment_heap = Containers::MinHeap.new []
       @window_schedulers = container.windows.map do |window|
-        window.scheduler([@starting_offset + window.offset].to_enum, @context, opts).each
+        window.scheduler(
+          [@starting_offset + window.offset].to_enum, @context, opts
+        ).each
       end
       @window_schedulers.each { |scheduler| push_moment_from_enum scheduler }
     end

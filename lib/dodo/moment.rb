@@ -4,7 +4,6 @@ require 'dodo/happening'
 
 module Dodo
   class Moment < Happening # :nodoc:
-
     def initialize(&block)
       @block = block
       super 0
@@ -34,12 +33,15 @@ module Dodo
     end
 
     def cram
-      @cram ||= @opts.fetch(:scale) {  @opts.fetch(:cram) { 1 } }.ceil
+      @cram ||= @opts.fetch(:scale) { @opts.fetch(:cram) { 1 } }.ceil
     end
 
     def each
       return to_enum(:each) unless block_given?
-      cram.times { yield ContextualMoment.new(@moment, @distribution.next, @context) }
+
+      cram.times do
+        yield ContextualMoment.new(@moment, @distribution.next, @context)
+      end
     end
   end
 end

@@ -42,6 +42,5 @@ module Dodo
     def freeze
       Timecop.freeze(offset) { yield }
     end
-
   end
 end

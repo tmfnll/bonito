@@ -1,6 +1,6 @@
 require 'ruby-progressbar'
 module Dodo
-   module ProgressCounter
+  module ProgressCounter
     attr_accessor :total
     attr_accessor :current
 
@@ -40,25 +40,24 @@ module Dodo
     end
   end
 
-   class Bar
-     include ProgressCounter
+  class Bar
+    include ProgressCounter
 
-     def initialize(opts = {})
-       @bar = ProgressBar.create opts
-       setup opts
-     end
+    def initialize(opts = {})
+      @bar = ProgressBar.create opts
+      setup opts
+    end
 
-     def total=(value)
-       @bar.total = value
-     end
+    def total=(value)
+      @bar.total = value
+    end
 
-     def current=(value)
-       incr = [(value - @current), 0].max
-       @current = value
-       incr.times { @bar.increment }
-     end
-
-   end
+    def current=(value)
+      incr = [(value - @current), 0].max
+      @current = value
+      incr.times { @bar.increment }
+    end
+  end
 
   class ProgressDecorator < SimpleDelegator # :nodoc:
     def initialize(enumerable, progress)
@@ -70,6 +69,7 @@ module Dodo
 
     def each
       return to_enum(:each) unless block_given?
+
       @enumerable.each do |item|
         yield item
         @progress += 1

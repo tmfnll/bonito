@@ -44,7 +44,6 @@ RSpec.describe 'End to end' do
     end
   end
 
-
   let(:context) do
     Dodo::Context.new.tap do |context|
       context.authors = []
@@ -57,14 +56,13 @@ RSpec.describe 'End to end' do
 
   let(:window) do
     Dodo.over 1.week do
-
       simultaneously over: 1.day do
         repeat times: 5 do
           please do
             name = Faker::Name.name
             author = Author.new(name)
-            self.authors << author
-            self.users_and_authors << author
+            authors << author
+            users_and_authors << author
           end
         end
       end.also over: 1.day, after: 2.hours do
@@ -74,8 +72,8 @@ RSpec.describe 'End to end' do
             name = Faker::Name.name
             email = Faker::Internet.safe_email(name)
             user = User.new(name, email)
-            self.users << user
-            self.users_and_authors << user
+            users << user
+            users_and_authors << user
           end
         end
       end
@@ -85,14 +83,14 @@ RSpec.describe 'End to end' do
           author = authors.sample
           title = Faker::Company.bs
           self.article = Article.new(title, author)
-          self.articles << article
+          articles << article
         end
 
         repeat times: rand(10), over: 5.hours do
           please do
             user = users.sample
             content = Faker::Lorem.sentence
-            self.comments << Comment.new(content, article, user)
+            comments << Comment.new(content, article, user)
           end
         end
       end
@@ -103,9 +101,9 @@ RSpec.describe 'End to end' do
   let(:progress) { Dodo::Bar.new }
   let(:cram) { 1 }
   let(:stretch) { 1 }
-  let(:opts) { {cram: cram, stretch: stretch } }
+  let(:opts) { { cram: cram, stretch: stretch } }
   let(:distribution) { Dodo::Distribution.new 3.weeks.ago }
-  let(:scheduler) { window.scheduler(distribution, context, opts)}
+  let(:scheduler) { window.scheduler(distribution, context, opts) }
   let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
 
   let(:users_and_authors) { context.users_and_authors }
@@ -113,73 +111,80 @@ RSpec.describe 'End to end' do
   let(:users) { context.users }
   let(:articles) { context.articles }
   let(:comments) { context.comments }
-  let(:comments_by_article) { comments.group_by { |comment| comment.article } }
+  let(:comments_by_article) { comments.group_by(&:article) }
 
-  subject! { Dodo.run window, starting: 3.weeks.ago, context: context, progress: progress, **opts }
+  subject! do
+    Dodo.run window, starting: 3.weeks.ago, context: context,
+             progress: progress, **opts
+  end
 
-  context "without scaling" do
+  context 'without scaling' do
     it 'should complete successfully' do
     end
 
-    it "should add 2 happenings to the top level window" do
+    it 'should add 2 happenings to the top level window' do
       expect(window.happenings.size).to eq 2
     end
 
     let(:container) { window.happenings.first }
-    it "should first add a container to the top level window" do
+    it 'should first add a container to the top level window' do
       expect(container).to be_a Dodo::Container
     end
 
-    it "should add two windows to the container" do
+    it 'should add two windows to the container' do
       expect(container.windows.size).to eq 2
     end
 
-    it "should add a single happening to the first of these window" do
+    it 'should add a single happening to the first of these window' do
       expect(container.windows.first.happenings.size).to eq 1
     end
 
-    it "should add a window to the first of these windows" do
+    it 'should add a window to the first of these windows' do
       expect(container.windows.first.happenings.first).to be_a Dodo::Window
     end
 
-    it "it should add 5 happenings to this window" do
+    it 'it should add 5 happenings to this window' do
       expect(container.windows.first.happenings.first.happenings.size).to eq 5
     end
 
-    it "it should add only moments to this window" do
-      expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
+    it 'it should add only moments to this window' do
+      expect(
+        container.windows.first.happenings.first.happenings
+      ).to all(be_a Dodo::Moment)
     end
 
-    it "should add a single happening to the second of these window" do
+    it 'should add a single happening to the second of these window' do
       expect(container.windows.last.happenings.size).to eq 1
     end
 
-    it "should add a window to the second of these windows" do
+    it 'should add a window to the second of these windows' do
       expect(container.windows.last.happenings.first).to be_a Dodo::Window
     end
 
-    it "it should add 10 happenings to this window" do
+    it 'it should add 10 happenings to this window' do
       expect(container.windows.last.happenings.first.happenings.size).to eq 10
     end
 
-    it "it should add only moments to this window" do
-      expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
+    it 'it should add only moments to this window' do
+      expect(
+        container.windows.last.happenings.first.happenings
+      ).to all(be_a Dodo::Moment)
     end
 
     let(:child_window) { window.happenings.last }
-    it "should then add a window to the top level window" do
+    it 'should then add a window to the top level window' do
       expect(child_window).to be_a Dodo::Window
     end
 
-    it "should add 10 happenings to this child_window" do
+    it 'should add 10 happenings to this child_window' do
       expect(child_window.happenings.size).to eq 10
     end
 
-    it "should create 5 authors" do
+    it 'should create 5 authors' do
       expect(authors.size).to eq 5
     end
 
-    it "should create 10 users" do
+    it 'should create 10 users' do
       expect(users.size).to eq 10
     end
 
@@ -188,7 +193,9 @@ RSpec.describe 'End to end' do
     end
 
     it 'should create users and authors over 1 day' do
-      diff = users_and_authors.last.created_at - users_and_authors.first.created_at
+      diff = (
+        users_and_authors.last.created_at - users_and_authors.first.created_at
+      )
       expect(diff).to be <= (1.day + 2.hours)
     end
 
@@ -202,15 +209,17 @@ RSpec.describe 'End to end' do
       expect(diff).to be <= 1.day
     end
 
-    it "should create all users and authors before any articles" do
-      expect(users_and_authors.last.created_at).to be < articles.first.created_at
+    it 'should create all users and authors before any articles' do
+      expect(
+        users_and_authors.last.created_at
+      ).to be < articles.first.created_at
     end
 
     it 'should create comments in order' do
       expect(comments.sort_by(&:created_at)).to eq comments
     end
 
-    it "should create a total of 5 articles" do
+    it 'should create a total of 5 articles' do
       expect(articles.size).to eq 5
     end
 
@@ -221,7 +230,9 @@ RSpec.describe 'End to end' do
 
     it 'should create comments over a period of 5 hours' do
       comments_by_article.each_value do |article_comments|
-        diff = article_comments.last.created_at - article_comments.first.created_at
+        diff = (
+          article_comments.last.created_at - article_comments.first.created_at
+        )
         expect(diff).to be <= 5.hours
       end
     end
@@ -240,72 +251,73 @@ RSpec.describe 'End to end' do
     end
   end
 
-  context "with a cram factor of 2" do
-
+  context 'with a cram factor of 2' do
     let(:cram) { 2 }
 
     it 'should complete successfully' do
     end
 
-    it "should add 2 happenings to the top level window" do
+    it 'should add 2 happenings to the top level window' do
       expect(window.happenings.size).to eq 2
     end
 
     let(:container) { window.happenings.first }
-    it "should first add a container to the top level window" do
+    it 'should first add a container to the top level window' do
       expect(container).to be_a Dodo::Container
     end
 
-    it "should add two windows to the container" do
+    it 'should add two windows to the container' do
       expect(container.windows.size).to eq 2
     end
 
-    it "should add a single happening to the first of these window" do
+    it 'should add a single happening to the first of these window' do
       expect(container.windows.first.happenings.size).to eq 1
     end
 
-    it "should add a window to the first of these windows" do
+    it 'should add a window to the first of these windows' do
       expect(container.windows.first.happenings.first).to be_a Dodo::Window
     end
 
-    it "it should add 5 happenings to this window" do
+    it 'it should add 5 happenings to this window' do
       expect(container.windows.first.happenings.first.happenings.size).to eq 5
     end
 
-    it "it should add only moments to this window" do
-      expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
+    it 'it should add only moments to this window' do
+      expect(
+        container.windows.first.happenings.first.happenings
+      ).to all(be_a Dodo::Moment)
     end
 
-    it "should add a single happening to the second of these window" do
+    it 'should add a single happening to the second of these window' do
       expect(container.windows.last.happenings.size).to eq 1
     end
 
-    it "should add a window to the second of these windows" do
+    it 'should add a window to the second of these windows' do
       expect(container.windows.last.happenings.first).to be_a Dodo::Window
     end
 
-    it "it should add 10 happenings to this window" do
+    it 'it should add 10 happenings to this window' do
       expect(container.windows.last.happenings.first.happenings.size).to eq 10
     end
 
-    it "it should add only moments to this window" do
+    it 'it should add only moments to this window' do
       expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
     end
 
     let(:child_window) { window.happenings.last }
-    it "should then add a window to the top level window" do
+    it 'should then add a window to the top level window' do
       expect(child_window).to be_a Dodo::Window
     end
 
-    it "should add 10 happenings to this child_window" do
+    it 'should add 10 happenings to this child_window' do
       expect(child_window.happenings.size).to eq 10
     end
 
-    it "should create 10 authors" do
+    it 'should create 10 authors' do
       expect(authors.size).to eq 10
     end
 
-    it "should create 20 users" do
+    it 'should create 20 users' do
       expect(users.size).to eq 20
     end
 
@@ -314,7 +326,9 @@ RSpec.describe 'End to end' do
     end
 
     it 'should create users and authors over 1 day' do
-      diff = users_and_authors.last.created_at - users_and_authors.first.created_at
+      diff = (
+        users_and_authors.last.created_at - users_and_authors.first.created_at
+      )
       expect(diff).to be <= (1.day + 2.hours)
     end
 
@@ -328,7 +342,7 @@ RSpec.describe 'End to end' do
       expect(diff).to be <= 1.day
     end
 
-    it "should create all users and authors before any articles" do
+    it 'should create all users and authors before any articles' do
       expect(users_and_authors.last.created_at).to be < articles.first.created_at
     end
 
@@ -336,7 +350,7 @@ RSpec.describe 'End to end' do
       expect(comments.sort_by(&:created_at)).to eq comments
     end
 
-    it "should create a total of 10 articles" do
+    it 'should create a total of 10 articles' do
       expect(articles.size).to eq 10
     end
 
@@ -347,7 +361,9 @@ RSpec.describe 'End to end' do
 
     it 'should create comments over a period of 5 hours' do
       comments_by_article.each_value do |article_comments|
-        diff = article_comments.last.created_at - article_comments.first.created_at
+        diff = (
+          article_comments.last.created_at - article_comments.first.created_at
+        )
         expect(diff).to be <= 5.hours
       end
     end
@@ -365,72 +381,75 @@ RSpec.describe 'End to end' do
       expect(comments.last.created_at).to be <= 2.weeks.ago
     end
   end
-  context "with a stretch factor of 2" do
-
+  context 'with a stretch factor of 2' do
     let(:stretch) { 2 }
 
     it 'should complete successfully' do
     end
 
-    it "should add 2 happenings to the top level window" do
+    it 'should add 2 happenings to the top level window' do
       expect(window.happenings.size).to eq 2
     end
 
     let(:container) { window.happenings.first }
-    it "should first add a container to the top level window" do
+    it 'should first add a container to the top level window' do
       expect(container).to be_a Dodo::Container
     end
 
-    it "should add two windows to the container" do
+    it 'should add two windows to the container' do
       expect(container.windows.size).to eq 2
     end
 
-    it "should add a single happening to the first of these window" do
+    it 'should add a single happening to the first of these window' do
       expect(container.windows.first.happenings.size).to eq 1
     end
 
-    it "should add a window to the first of these windows" do
+    it 'should add a window to the first of these windows' do
       expect(container.windows.first.happenings.first).to be_a Dodo::Window
     end
 
-    it "it should add 5 happenings to this window" do
+    it 'it should add 5 happenings to this window' do
       expect(container.windows.first.happenings.first.happenings.size).to eq 5
     end
 
-    it "it should add only moments to this window" do
-      expect(container.windows.first.happenings.first.happenings).to all(be_a Dodo::Moment)
+    it 'it should add only moments to this window' do
+      expect(
+        container.windows.first.happenings.first.happenings
+      ).to all(be_a Dodo::Moment)
     end
 
-    it "should add a single happening to the second of these window" do
+    it 'should add a single happening to the second of these window' do
       expect(container.windows.last.happenings.size).to eq 1
     end
 
-    it "should add a window to the second of these windows" do
+    it 'should add a window to the second of these windows' do
       expect(container.windows.last.happenings.first).to be_a Dodo::Window
     end
 
-    it "it should add 10 happenings to this window" do
+    it 'it should add 10 happenings to this window' do
       expect(container.windows.last.happenings.first.happenings.size).to eq 10
     end
 
-    it "it should add only moments to this window" do
-      expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
+    it 'it should add only moments to this window' do
+      expect(
+        container.windows.last.happenings.first.happenings
+      ).to all(be_a Dodo::Moment)
     end
 
     let(:child_window) { window.happenings.last }
-    it "should then add a window to the top level window" do
+    it 'should then add a window to the top level window' do
       expect(child_window).to be_a Dodo::Window
     end
 
-    it "should add 10 happenings to this child_window" do
+    it 'should add 10 happenings to this child_window' do
       expect(child_window.happenings.size).to eq 10
     end
 
-    it "should create 5 authors" do
+    it 'should create 5 authors' do
       expect(authors.size).to eq 5
     end
 
-    it "should create 10 users" do
+    it 'should create 10 users' do
       expect(users.size).to eq 10
     end
 
@@ -439,7 +458,9 @@ RSpec.describe 'End to end' do
     end
 
     it 'should create users and authors over 2 days and 4 hours' do
-      diff = users_and_authors.last.created_at - users_and_authors.first.created_at
+      diff = (
+        users_and_authors.last.created_at - users_and_authors.first.created_at
+      )
       expect(diff).to be <= (2.days + 4.hours)
     end
 
@@ -453,15 +474,17 @@ RSpec.describe 'End to end' do
       expect(diff).to be <= 2.days
     end
 
-    it "should create all users and authors before any articles" do
-      expect(users_and_authors.last.created_at).to be < articles.first.created_at
+    it 'should create all users and authors before any articles' do
+      expect(
+        users_and_authors.last.created_at
+      ).to be < articles.first.created_at
     end
 
     it 'should create comments in order' do
       expect(comments.sort_by(&:created_at)).to eq comments
     end
 
-    it "should create a total of 5 articles" do
+    it 'should create a total of 5 articles' do
       expect(articles.size).to eq 5
     end
 
@@ -472,7 +495,9 @@ RSpec.describe 'End to end' do
 
     it 'should create comments over a period of 10 hours' do
       comments_by_article.each_value do |article_comments|
-        diff = article_comments.last.created_at - article_comments.first.created_at
+        diff = (
+          article_comments.last.created_at - article_comments.first.created_at
+        )
         expect(diff).to be <= 10.hours
       end
     end
@@ -490,8 +515,7 @@ RSpec.describe 'End to end' do
       expect(comments.last.created_at).to be <= 1.week.ago
     end
 
-    context "with rand achieving its upper bound" do
-
+    context 'with rand achieving its upper bound' do
       # For each of the following tests, it is possible that we could see
       # failures despite there being no errors in the code.  This is because it
       # is allows possible that the random numbers generated by the
@@ -501,22 +525,26 @@ RSpec.describe 'End to end' do
       # way to do this is to bump the cram factor.
       let(:cram) { 10 }
 
-      it 'should create users and authors over a period greater than 1 days and 2 hours' do
-        diff = users_and_authors.last.created_at - users_and_authors.first.created_at
+      it 'should create users and authors over a period
+          greater than 1 days and 2 hours' do
+        diff = (
+          users_and_authors.last.created_at - users_and_authors.first.created_at
+        )
         expect(diff).to be > (1.day + 2.hours)
       end
 
-      it "should create authors over a period greater than 1 day" do
+      it 'should create authors over a period greater than 1 day' do
         diff = authors.last.created_at - authors.first.created_at
         expect(diff).to be > 1.day
       end
 
-      it "should create users over a period greater than 1 day" do
+      it 'should create users over a period greater than 1 day' do
         diff = users.last.created_at - users.first.created_at
         expect(diff).to be > 1.day
       end
 
-      it 'should create articles and comments over a period greater than 5 days' do
+      it 'should create articles and comments over a period
+          greater than 5 days' do
         diff = comments.last.created_at - articles.first.created_at
         expect(diff).to be > 5.days
       end
@@ -526,5 +554,4 @@ RSpec.describe 'End to end' do
       end
     end
   end
-
 end

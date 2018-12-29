@@ -29,7 +29,7 @@ RSpec.describe Dodo::Runner do
   let(:start) { 2.weeks.ago }
   let(:context) { Dodo::Context.new }
   let(:distribution) { Dodo::Distribution.new start }
-  let(:scheduler) { window.scheduler(distribution, context)}
+  let(:scheduler) { window.scheduler(distribution, context) }
   let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
   let(:runner) { described_class.new decorated_enum, opts }
 
@@ -83,7 +83,6 @@ RSpec.describe Dodo::Runner do
     subject { runner.call }
 
     context 'with a context provided' do
-
       it 'should evaluate each moment within context' do
         moments.map do |moment|
           expect(moment).to receive(:evaluate).ordered
@@ -128,7 +127,9 @@ RSpec.describe Dodo::Runner do
 
         it 'should sleep until moment.offset' do
           moments.each do |moment|
-            expect(runner).to receive(:sleep).with(moment.offset - Time.now).ordered
+            expect(runner).to receive(:sleep).with(
+              moment.offset - Time.now
+            ).ordered
           end
           subject
         end

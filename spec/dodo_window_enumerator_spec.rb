@@ -30,7 +30,9 @@ RSpec.describe Dodo::WindowScheduler do
   let(:starting_offset) { rand(10).days }
   let(:context) { Dodo::Context.new }
   let(:parent_distribution) { [starting_offset].to_enum }
-  let(:scheduler) { described_class.new window, parent_distribution, context, scale_opts }
+  let(:scheduler) do
+    described_class.new window, parent_distribution, context, scale_opts
+  end
 
   before do
     allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
@@ -94,7 +96,8 @@ RSpec.describe Dodo::WindowScheduler do
     subject { scheduler.to_a }
 
     shared_examples 'an scheduler of offset moments' do
-      context 'where the last happening in window.happenings has a duration of 0' do
+      context 'where the last happening in window.happenings has a
+               duration of 0' do
         it 'should return an scheduler of offset happenings' do
           expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
         end
@@ -103,16 +106,21 @@ RSpec.describe Dodo::WindowScheduler do
           expect(subject.size).to eq((moments * scheduler.cram).size)
         end
 
-        it 'should yield happenings within a range equal to that of the stretched duration' do
+        it 'should yield happenings within a range equal to that of the
+            stretched duration' do
           expect(subject.last.offset - subject.first.offset).to eq(
             (window.unused_duration - random_numbers[2]) * scheduler.stretch
           )
         end
 
-        it 'should yield happenings offset by the accumulated duration and a random value' do
+        it 'should yield happenings offset by the accumulated duration and a
+            random value' do
           random_numbers[2..random_numbers.size].each_with_index do |rnd, index|
             expect(subject[index].offset).to eq(
-              starting_offset + (scheduler.stretch * (child_window.duration + child_container.duration + rnd))
+              starting_offset +
+              (scheduler.stretch * (
+                child_window.duration + child_container.duration + rnd
+              ))
             )
           end
         end
@@ -148,11 +156,15 @@ RSpec.describe Dodo::WindowScheduler do
       it_behaves_like 'an scheduler of offset moments'
     end
 
-    context 'where the only happening with non-zero duration appears last in window.happenings' do
+    context 'where the only happening with non-zero duration appears last in
+             window.happenings' do
       let(:happenings) { moments + [child_window] }
 
-      it 'should yield happenings within a range equal to that of the unused duration' do
-        expect(subject.last.offset - subject.first.offset).to eq random_numbers[-2]
+      it 'should yield happenings within a range equal to that of the
+          unused duration' do
+        expect(subject.last.offset - subject.first.offset).to eq(
+          random_numbers[-2]
+        )
       end
     end
   end

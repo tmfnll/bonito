@@ -87,6 +87,7 @@ module Dodo
 
     def each
       return to_enum(:each) unless block_given?
+
       distribution = Distribution.new(
         @starting_offset, @window.unused_duration, crammed_happenings.size,
         stretch: stretch
@@ -118,7 +119,6 @@ module Dodo
   end
 
   class Distribution
-
     def initialize(start, interval = 0, count = 1, stretch: 1)
       @start = start
       @interval = interval
@@ -132,9 +132,8 @@ module Dodo
     attr_reader :count
 
     def next
-      if @current == @count
-        raise StopIteration
-      end
+      raise StopIteration if @current == @count
+
       offset = @start + (@stretch * (@distribution[@current] + @consumed))
       @current += 1
       offset
@@ -147,10 +146,9 @@ module Dodo
     private
 
     def generate
-     Array.new(@count) do
-       @interval > 0 ? SecureRandom.random_number(@interval) : 0
-     end.sort
+      Array.new(@count) do
+        @interval > 0 ? SecureRandom.random_number(@interval) : 0
+      end.sort
     end
-
   end
 end

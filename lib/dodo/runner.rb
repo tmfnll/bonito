@@ -27,9 +27,9 @@ module Dodo
     private
 
     def maybe_sleep(moment)
-      if live? && ((nap_time = moment.offset - Time.now) > 0)
-        sleep nap_time
-      end
+      return unless live? && ((nap_time = moment.offset - Time.now) > 0)
+
+      sleep nap_time
     end
   end
 
@@ -45,10 +45,10 @@ module Dodo
   end
 
   class Context
-    def initialize(parent=nil)
+    def initialize(parent = nil)
       @parent = parent
     end
-    
+
     def push
       Context.new self
     end
@@ -60,21 +60,28 @@ module Dodo
     private
 
     def method_missing(symbol, *args)
-      if is_assignment? symbol
-        set symbol, args.fetch(0)
-      else
-        get symbol
-      end
+      return set symbol, args.fetch(0) if assignment? symbol
+
+      get symbol
     rescue NoMethodError
       super
     end
 
-    def is_assignment?(symbol)
+    def respond_to_missing?(symbol, respond_to_private = false)
+      return true if assignment? symbol
+
+      get symbol
+      true
+    rescue NoMethodError
+      super
+    end
+
+    def assignment?(symbol)
       !!symbol.to_s.match(/\w+=/)
     end
 
     def instance_var_for(symbol)
-      :"@#{symbol.to_s.chomp("=")}"
+      :"@#{symbol.to_s.chomp('=')}"
     end
 
     def get(symbol)
@@ -83,9 +90,9 @@ module Dodo
       until context.nil?
         if context.instance_variable_defined? instance_var
           return context.instance_variable_get instance_var
-        else
-          context = context.parent
         end
+
+        context = context.parent
       end
       raise NoMethodError
     end

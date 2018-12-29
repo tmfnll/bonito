@@ -7,7 +7,9 @@ RSpec.describe Dodo::ProgressLogger do
   let(:prefix) { 'Progress :' }
   let(:current) { 3 }
 
-  let(:progress) { Dodo::ProgressLogger.new logger, total: total, prefix: prefix }
+  let(:progress) do
+    Dodo::ProgressLogger.new logger, total: total, prefix: prefix
+  end
 
   before { allow(logger).to receive(:info) }
 
@@ -40,7 +42,8 @@ RSpec.describe Dodo::ProgressLogger do
       let(:progress) { Dodo::ProgressLogger.new logger, total: total }
       it 'should log the current progress with the default prefix' do
         expect(logger).to receive(:info).with(
-          "Dodo::ProgressLogger{#{progress.object_id}} : Progress Made : #{current} / #{total}"
+          "Dodo::ProgressLogger{#{progress.object_id}} : " +
+          "Progress Made : #{current} / #{total}"
         )
         subject
       end
@@ -58,12 +61,12 @@ RSpec.describe Dodo::ProgressLogger do
 
     it 'should add the value of increment to @current' do
       subject
-      expect(progress.current).to eq (current + increment)
+      expect(progress.current).to eq(current + increment)
     end
 
     it 'should return the incremented value' do
       subject
-      expect(progress.current).to eq (current + increment)
+      expect(progress.current).to eq(current + increment)
     end
   end
 end

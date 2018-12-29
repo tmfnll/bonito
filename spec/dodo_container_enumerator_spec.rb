@@ -54,13 +54,17 @@ RSpec.describe Dodo::ContainerScheduler do
 
   let(:another_window_scheduler) do
     scheduler = another_window.scheduler(starting_offset + after, context, opts)
-    allow(scheduler).to receive(:each).and_return more_distributed_moments.to_enum
+    allow(
+      scheduler
+    ).to receive(:each).and_return more_distributed_moments.to_enum
     scheduler
   end
 
   before do
     allow(window).to receive(:scheduler).and_return(window_scheduler)
-    allow(another_window).to receive(:scheduler).and_return(another_window_scheduler)
+    allow(another_window).to receive(:scheduler).and_return(
+      another_window_scheduler
+    )
   end
 
   let(:container) do
@@ -87,14 +91,14 @@ RSpec.describe Dodo::ContainerScheduler do
     end
 
     context 'without opts' do
-
       let(:expected_moments) do
         (distributed_moments + more_distributed_moments).sort
       end
 
       it 'should provide any opts to the underlying window schedulers' do
         expect(window).to receive(:scheduler).with(
-          satisfy { |scheduler| scheduler.next == starting_offset }, context, opts
+          satisfy { |scheduler| scheduler.next == starting_offset },
+          context, opts
         )
         subject
       end

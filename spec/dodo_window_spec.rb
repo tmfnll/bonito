@@ -48,7 +48,8 @@ RSpec.describe Dodo::Window do
       end
     end
 
-    context 'with a happening whose duration is greater than that of the window' do
+    context 'with a happening whose duration is greater than
+             that of the window' do
       let(:happening) { Dodo::Window.new(duration + 1) {} }
 
       it 'should successfully append the happening' do
@@ -125,29 +126,27 @@ RSpec.describe Dodo::Window do
     subject { window.repeat params, &block }
 
     context 'with an integer as the :times argument and passing block' do
-
       it 'should invoke #over once with :repeat_duration as an arg' do
         expect(window).to receive(:over).with(repeat_duration).once
         subject
       end
 
-      it "should return a Window" do
+      it 'should return a Window' do
         expect(subject).to be_a Dodo::Window
       end
 
-      it "should return a window with two happenings" do
+      it 'should return a window with two happenings' do
         expect(subject.happenings.size).to be k
       end
     end
 
-    context "without a provided :over param" do
-      before { params.delete :over}
-      it "should invoke #over once with window.unused_duration as an arg" do
+    context 'without a provided :over param' do
+      before { params.delete :over }
+      it 'should invoke #over once with window.unused_duration as an arg' do
         expect(window).to receive(:over).with(window.unused_duration).once
         subject
       end
     end
-
   end
 
   describe '#scheduler' do
@@ -157,14 +156,18 @@ RSpec.describe Dodo::Window do
     subject { window.scheduler offset, context, opts }
     context 'with opts' do
       it 'should create a new WindowScheduler with opts included' do
-        expect(Dodo::WindowScheduler).to receive(:new).with(window, offset, context, opts)
+        expect(Dodo::WindowScheduler).to receive(:new).with(
+          window, offset, context, opts
+        )
         subject
       end
     end
     context 'without opts' do
       subject { window.scheduler offset, context }
       it 'should create a new WindowScheduler with an empty hash as opts' do
-        expect(Dodo::WindowScheduler).to receive(:new).with(window, offset, context, {})
+        expect(Dodo::WindowScheduler).to receive(:new).with(
+          window, offset, context, {}
+        )
         subject
       end
     end
