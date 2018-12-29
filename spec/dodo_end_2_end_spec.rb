@@ -107,7 +107,6 @@ RSpec.describe 'End to end' do
   let(:distribution) { Dodo::Distribution.new 3.weeks.ago }
   let(:enumerator) { window.enum(distribution, context, opts)}
   let(:decorated_enum) { Dodo::ProgressDecorator.new enumerator, progress }
-  let(:runner) { Dodo::Runner.new decorated_enum }
 
   let(:users_and_authors) { context.users_and_authors }
   let(:authors) { context.authors }
@@ -116,7 +115,7 @@ RSpec.describe 'End to end' do
   let(:comments) { context.comments }
   let(:comments_by_article) { comments.group_by { |comment| comment.article } }
 
-  subject! { runner.call }
+  subject! { Dodo.run window, starting: 3.weeks.ago, context: context, progress: progress, **opts }
 
   context "without scaling" do
     it 'should complete successfully' do

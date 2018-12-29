@@ -33,6 +33,17 @@ module Dodo
     end
   end
 
+  def self.run(
+    window, starting:, context: Context.new,
+    progress: ProgressLogger.new(Logger.new(STDOUT)), **opts
+  )
+    distribution = Distribution.new starting
+    enum = window.enum(distribution, context, opts)
+    enum = ProgressDecorator.new enum, progress
+    runner = Runner.new enum, opts
+    runner.call
+  end
+
   class Context
     def initialize(parent=nil)
       @parent = parent
