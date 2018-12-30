@@ -1,39 +1,114 @@
+# Dodo
+
+
 ![build](https://travis-ci.org/TomFinill/dodo.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/TomFinill/dodo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/TomFinill/dodo/test_coverage)
 
-## Welcome to GitHub Pages
+## TL;DR
 
-You can use the [editor on GitHub](https://github.com/TomFinill/dodo/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+The **Demo Data Dodo** is a toolkit which provides a 
+family of data structures that can be used to simulate the occurrence of 
+interrelated events over a series of (nested) intervals.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+`Dodo` uses [Timecop](https://github.com/travisjeffery/timecop) to _freeze_ 
+time at points, defined by `Dodo` data structures.
 
-### Markdown
+### Example
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Suppose you work for a small media startup and you wish to create a set of data
+that can be loaded into a demo environment that will then be used by the sales 
+department when presenting to potential customers.
 
-```markdown
-Syntax highlighted code block
+This data should consist of models representing `Author`s and the `Article`s they 
+write, as well as readers (or `User`s) and `Comment`s they leave on the 
+aforementioned `Article`s.
 
-# Header 1
-## Header 2
-### Header 3
+Obviously, each `Article` should be created by an `Author` and each `Comment` 
+should come _after_ the creation of its associated `Article`.
 
-- Bulleted
-- List
+`Dodo` could be used as follows to define a demo data set:
 
-1. Numbered
-2. List
+```ruby
+Dodo.over 1.week do
+  simultaneously over: 1.day do
+    repeat times: 5 do
+      please do
+        name = Faker::Name.name
+        author = Author.new(name)
+        authors << author
+        users_and_authors << author
+      end
+    end
+  end.also over: 1.day do
 
-**Bold** and _Italic_ and `Code` text
+    repeat times: 10 do
+      please do
+        name = Faker::Name.name
+        email = Faker::Internet.safe_email(name)
+        user = User.new(name, email)
+        users << user
+        users_and_authors << user
+      end
+    end
+  end
 
-[Link](url) and ![Image](src)
+  repeat times: 5, over: 5.days do
+    please do
+      author = authors.sample
+      title = Faker::Company.bs
+      self.article = Article.new(title, author)
+      articles << article
+    end
+
+    repeat times: rand(10), over: 5.hours do
+      please do
+        user = users.sample
+        content = Faker::Lorem.sentence
+        comments << Comment.new(content, article, user)
+      end
+    end
+  end
+end
+```
+ 
+The above data structure (a `Dodo::Window` object, to be precise) will 
+simulate the creation of objects (i.e. `Author`s, `Article`s etc.) over a
+period of `1.week`:
+
+```ruby
+Dodo.over 1.week do
+  # ... 
+end
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+It will initially create 5 `Author`s and 10 `User`s, in some random order,
+over the course of `1.day`. 
 
-### Jekyll Themes
+Then it will create an `Article` followed by up to 10 `Comment`s on said article.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/TomFinill/dodo/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```ruby
+please do
+  author = authors.sample
+  title = Faker::Company.bs
+  self.article = Article.new(title, author)
+  articles << article
+end
 
-### Support or Contact
+repeat times: rand(10), over: 5.hours do
+  please do
+    user = users.sample
+    content = Faker::Lorem.sentence
+    comments << Comment.new(content, article, user)
+  end
+end
+```
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+This step will be repeated a total of five times over a period of
+`5.days`
+
+```ruby
+repeat times: 5, over: 5.days do
+  # ...  
+end
+```
+
+![dodo](https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Dodo_%28PSF%29.png/203px-Dodo_%28PSF%29.png)
