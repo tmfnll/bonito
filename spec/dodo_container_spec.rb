@@ -33,7 +33,7 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'a method that allows additional windows be ' +
+  shared_examples 'a method that allows additional windows be ' \
                   'added to a container' do
     context 'when passed a single OffsetHappening as an argument' do
       context 'with a newly initialized container' do
@@ -68,7 +68,7 @@ RSpec.describe Dodo::Container do
 
         it_behaves_like 'an appender of windows'
 
-        it 'should change the duration of the container to the sum of the ' +
+        it 'should change the duration of the container to the sum of the ' \
            'appended window and its offset' do
           expect(subject.duration).to eq(
             offset_window.duration + offset_window.offset
@@ -89,7 +89,8 @@ RSpec.describe Dodo::Container do
     subject { container.also after: offset, over: window_duration, &block }
 
     before do
-      container # Ensure the container is created before patching the window constructor
+      container # Ensure the container is created before patching the
+                # window constructor
       allow(Dodo::Window).to receive(:new).and_return(window)
     end
 

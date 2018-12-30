@@ -42,7 +42,7 @@ RSpec.describe Dodo::ProgressLogger do
       let(:progress) { Dodo::ProgressLogger.new logger, total: total }
       it 'should log the current progress with the default prefix' do
         expect(logger).to receive(:info).with(
-          "Dodo::ProgressLogger{#{progress.object_id}} : " +
+          "Dodo::ProgressLogger{#{progress.object_id}} : " \
           "Progress Made : #{current} / #{total}"
         )
         subject

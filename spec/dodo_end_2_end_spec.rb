@@ -114,8 +114,9 @@ RSpec.describe 'End to end' do
   let(:comments_by_article) { comments.group_by(&:article) }
 
   subject! do
-    Dodo.run window, starting: 3.weeks.ago, context: context,
-             progress: progress, **opts
+    Dodo.run window, starting: 3.weeks.ago,
+                     context: context,
+                     progress: progress, **opts
   end
 
   context 'without scaling' do
@@ -301,7 +302,9 @@ RSpec.describe 'End to end' do
     end
 
     it 'it should add only moments to this window' do
-      expect(container.windows.last.happenings.first.happenings).to all(be_a Dodo::Moment)
+      expect(
+        container.windows.last.happenings.first.happenings
+      ).to all(be_a Dodo::Moment)
     end
 
     let(:child_window) { window.happenings.last }
@@ -343,7 +346,9 @@ RSpec.describe 'End to end' do
     end
 
     it 'should create all users and authors before any articles' do
-      expect(users_and_authors.last.created_at).to be < articles.first.created_at
+      expect(
+        users_and_authors.last.created_at
+      ).to be < articles.first.created_at
     end
 
     it 'should create comments in order' do

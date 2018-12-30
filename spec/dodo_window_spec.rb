@@ -41,7 +41,8 @@ RSpec.describe Dodo::Window do
         expect(subject.instance_variable_get(:@happenings)).to eq [happening]
       end
 
-      it 'should increase the @total_child_duration by the duration of the happening' do
+      it 'should increase the @total_child_duration by the ' \
+         'duration of the happening' do
         expect { subject }.to change {
           window.instance_variable_get :@total_child_duration
         }.by happening.duration
