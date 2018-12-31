@@ -98,7 +98,7 @@ RSpec.describe 'End to end' do
   end
 
   let(:logger) { Logger.new STDOUT }
-  let(:progress) { Dodo::Bar.new }
+  let(:progress) { Dodo::ProgressBar.new }
   let(:cram) { 1 }
   let(:stretch) { 1 }
   let(:opts) { { cram: cram, stretch: stretch } }

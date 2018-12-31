@@ -40,11 +40,11 @@ module Dodo
     end
   end
 
-  class Bar
+  class ProgressBar
     include ProgressCounter
 
     def initialize(opts = {})
-      @bar = ProgressBar.create opts
+      @bar = ::ProgressBar.create opts
       setup opts
     end
 
