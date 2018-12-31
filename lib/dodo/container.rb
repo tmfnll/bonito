@@ -3,7 +3,7 @@ require 'dodo/window'
 require 'algorithms'
 
 module Dodo
-  class Container < Happening # :nodoc:
+  class Container < Happening
     attr_reader :windows
     def initialize
       @windows = []

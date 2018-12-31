@@ -3,7 +3,7 @@
 require 'dodo/happening'
 
 module Dodo
-  class Moment < Happening # :nodoc:
+  class Moment < Happening
     def initialize(&block)
       @block = block
       super 0

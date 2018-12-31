@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class Dodo::Distribution - RDoc Documentation</title>
+<title>class Dodo::Runner - RDoc Documentation</title>
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "../";
@@ -73,9 +73,11 @@
     
     <li ><a href="#method-c-new">::new</a>
     
-    <li ><a href="#method-i-consume">#consume</a>
+    <li ><a href="#method-i-call">#call</a>
     
-    <li ><a href="#method-i-next">#next</a>
+    <li ><a href="#method-i-daemonise-3F">#daemonise?</a>
+    
+    <li ><a href="#method-i-live-3F">#live?</a>
     
   </ul>
 </div>
@@ -83,9 +85,9 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-Dodo::Distribution">
-  <h1 id="class-Dodo::Distribution" class="class">
-    class Dodo::Distribution
+<main role="main" aria-labelledby="class-Dodo::Runner">
+  <h1 id="class-Dodo::Runner" class="class">
+    class Dodo::Runner
   </h1>
 
   <section class="description">
@@ -101,27 +103,6 @@
     
 
     
-    <section class="attribute-method-details" class="method-section">
-      <header>
-        <h3>Attributes</h3>
-      </header>
-
-      
-      <div id="attribute-i-count" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">count</span><span
-            class="attribute-access-type">[R]</span>
-        </div>
-
-        <div class="method-description">
-        
-        
-        
-        </div>
-      </div>
-      
-    </section>
-    
 
     
      <section id="public-class-5Buntitled-5D-method-details" class="method-section">
@@ -134,7 +115,7 @@
         
         <div class="method-heading">
           <span class="method-name">new</span><span
-            class="method-args">(start, interval = 0, count = 1, stretch: 1)</span>
+            class="method-args">(enumerable, opts = {})</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -149,15 +130,10 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 215</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">start</span>, <span class="ruby-identifier">interval</span> = <span class="ruby-value">0</span>, <span class="ruby-identifier">count</span> = <span class="ruby-value">1</span>, <span class="ruby-value">stretch:</span> <span class="ruby-value">1</span>)
-  <span class="ruby-ivar">@start</span> = <span class="ruby-identifier">start</span>
-  <span class="ruby-ivar">@interval</span> = <span class="ruby-identifier">interval</span>
-  <span class="ruby-ivar">@count</span> = <span class="ruby-identifier">count</span>
-  <span class="ruby-ivar">@stretch</span> = <span class="ruby-identifier">stretch</span>
-  <span class="ruby-ivar">@distribution</span> = <span class="ruby-identifier">generate</span>
-  <span class="ruby-ivar">@consumed</span> = <span class="ruby-value">0</span>
-  <span class="ruby-ivar">@current</span> = <span class="ruby-value">0</span>
+            <pre><span class="ruby-comment"># File lib/dodo/runner.rb, line 6</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">enumerable</span>, <span class="ruby-identifier">opts</span> = {})
+  <span class="ruby-ivar">@enumerable</span> = <span class="ruby-identifier">enumerable</span>
+  <span class="ruby-ivar">@opts</span> = <span class="ruby-identifier">opts</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -177,43 +153,10 @@
        </header>
 
     
-      <div id="method-i-consume" class="method-detail ">
+      <div id="method-i-call" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">consume</span><span
-            class="method-args">(duration)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="consume-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 235</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consume</span>(<span class="ruby-identifier">duration</span>)
-  <span class="ruby-ivar">@consumed</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">duration</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-next" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">next</span><span
+          <span class="method-name">call</span><span
             class="method-args">()</span>
           
           <span class="method-click-advice">click to toggle source</span>
@@ -228,14 +171,80 @@
           
 
           
-          <div class="method-source-code" id="next-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 227</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">next</span>
-  <span class="ruby-identifier ruby-title">raise</span> <span class="ruby-constant">StopIteration</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@current</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@count</span>
+          <div class="method-source-code" id="call-source">
+            <pre><span class="ruby-comment"># File lib/dodo/runner.rb, line 19</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>
+  <span class="ruby-constant">Process</span>.<span class="ruby-identifier">daemon</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">daemonise?</span>
+  <span class="ruby-ivar">@enumerable</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">moment</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">maybe_sleep</span> <span class="ruby-identifier">moment</span>
+    <span class="ruby-identifier">moment</span>.<span class="ruby-identifier">evaluate</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
 
-  <span class="ruby-identifier">offset</span> = <span class="ruby-ivar">@start</span> <span class="ruby-operator">+</span> (<span class="ruby-ivar">@stretch</span> <span class="ruby-operator">*</span> (<span class="ruby-ivar">@distribution</span>[<span class="ruby-ivar">@current</span>] <span class="ruby-operator">+</span> <span class="ruby-ivar">@consumed</span>))
-  <span class="ruby-ivar">@current</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
-  <span class="ruby-identifier">offset</span>
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-daemonise-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">daemonise?</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="daemonise-3F-source">
+            <pre><span class="ruby-comment"># File lib/dodo/runner.rb, line 15</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">daemonise?</span>
+  <span class="ruby-ivar">@opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:daemonise</span>) { <span class="ruby-keyword">false</span> }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-live-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">live?</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="live-3F-source">
+            <pre><span class="ruby-comment"># File lib/dodo/runner.rb, line 11</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">live?</span>
+  <span class="ruby-ivar">@opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:live</span>) { <span class="ruby-keyword">false</span> }
 <span class="ruby-keyword">end</span></pre>
           </div>
           

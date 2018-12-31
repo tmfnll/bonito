@@ -70,17 +70,23 @@
   
     <li><a href="./Dodo.html">Dodo</a>
   
+    <li><a href="./Dodo/Container.html">Dodo::Container</a>
+  
     <li><a href="./Dodo/Context.html">Dodo::Context</a>
   
     <li><a href="./Dodo/Distribution.html">Dodo::Distribution</a>
   
     <li><a href="./Dodo/DodoException.html">Dodo::DodoException</a>
   
+    <li><a href="./Dodo/Moment.html">Dodo::Moment</a>
+  
     <li><a href="./Dodo/ProgressBar.html">Dodo::ProgressBar</a>
   
     <li><a href="./Dodo/ProgressCounter.html">Dodo::ProgressCounter</a>
   
     <li><a href="./Dodo/ProgressLogger.html">Dodo::ProgressLogger</a>
+  
+    <li><a href="./Dodo/Runner.html">Dodo::Runner</a>
   
     <li><a href="./Dodo/Window.html">Dodo::Window</a>
   
@@ -101,19 +107,19 @@
 
 <h2 id="label-TL-3BDR">TL;DR<span><a href="#label-TL-3BDR">&para;</a> <a href="#top">&uarr;</a></span></h2>
 
-<p>The <strong>Demo Data <a href="Dodo.html"><code>Dodo</code></a></strong> is a toolkit which provides a family of data structures that can be used to simulate the occurrence of interrelated events over a series of (nested) intervals.</p>
+<p>The <strong>Demo Data <a href="Dodo.html"><code>Dodo</code></a></strong> is a ruby DSL which provides a family of data structures that can be used to simulate the occurrence of interrelated events over a series of (nested) intervals.</p>
 
-<p><code>Dodo</code> uses <a href="https://github.com/travisjeffery/timecop">Timecop</a> to <em>freeze</em> time at points, defined by <code>Dodo</code> data structures.</p>
+<p><code>Dodo</code> uses <a href="https://github.com/travisjeffery/timecop">Timecop</a> to <em>freeze</em> time at instants specified by these data structures.</p>
 
 <h3 id="label-Example">Example<span><a href="#label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
-<p>Suppose you work for a small media startup and you wish to create a set of data that can be loaded into a demo environment that will then be used by the sales department when presenting to potential customers.</p>
+<p>Suppose you work for a small media startup and you wish to create a set of data that can be loaded into a demo environment in order to then be used by the sales department when presenting to potential customers.</p>
 
-<p>This data should consist of models representing <code>Author</code>s and the <code>Article</code>s they write, as well as readers (or <code>User</code>s) and <code>Comment</code>s they leave on the aforementioned <code>Article</code>s.</p>
+<p>This data could consist of models representing <code>Author</code>s and the <code>Article</code>s they write, as well as readers (or <code>User</code>s) and <code>Comment</code>s they leave on the aforementioned <code>Article</code>s.</p>
 
-<p>Obviously, each <code>Article</code> should be created by an <code>Author</code> and each <code>Comment</code> should come <em>after</em> the creation of its associated <code>Article</code>.</p>
+<p>Obviously, each <code>Article</code> should be created by an <code>Author</code> and the simulated  creation time of each <code>Comment</code> should be <em>after</em> that of its associated  <code>Article</code>.</p>
 
-<p><code>Dodo</code> could be used as follows to define a demo data set:</p>
+<p><code>Dodo</code> could be used as follows to define this demo data set:</p>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">simultaneously</span> <span class="ruby-value">over:</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span> <span class="ruby-keyword">do</span>

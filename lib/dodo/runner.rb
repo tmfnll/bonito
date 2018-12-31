@@ -2,7 +2,7 @@
 
 require 'timecop'
 module Dodo
-  class Runner # :nodoc:
+  class Runner
     def initialize(enumerable, opts = {})
       @enumerable = enumerable
       @opts = opts

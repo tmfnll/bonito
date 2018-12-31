@@ -5,27 +5,28 @@
 
 ## TL;DR
 
-The **Demo Data Dodo** is a toolkit which provides a 
+The **Demo Data Dodo** is a ruby DSL which provides a 
 family of data structures that can be used to simulate the occurrence of 
 interrelated events over a series of (nested) intervals.
 
 `Dodo` uses [Timecop](https://github.com/travisjeffery/timecop) to _freeze_ 
-time at points, defined by `Dodo` data structures.
+time at instants specified by these data structures.
 
 ### Example
 
 Suppose you work for a small media startup and you wish to create a set of data
-that can be loaded into a demo environment that will then be used by the sales 
+that can be loaded into a demo environment in order to then be used by the sales 
 department when presenting to potential customers.
 
-This data should consist of models representing `Author`s and the `Article`s they 
+This data could consist of models representing `Author`s and the `Article`s they 
 write, as well as readers (or `User`s) and `Comment`s they leave on the 
 aforementioned `Article`s.
 
-Obviously, each `Article` should be created by an `Author` and each `Comment` 
-should come _after_ the creation of its associated `Article`.
+Obviously, each `Article` should be created by an `Author` and the simulated
+ creation time of each `Comment` should be _after_ that of its associated 
+ `Article`.
 
-`Dodo` could be used as follows to define a demo data set:
+`Dodo` could be used as follows to define this demo data set:
 
 ```ruby
 Dodo.over 1.week do

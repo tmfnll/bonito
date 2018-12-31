@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class Dodo::Distribution - RDoc Documentation</title>
+<title>class Dodo::Moment - RDoc Documentation</title>
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "../";
@@ -59,7 +59,7 @@
   <h3>Parent</h3>
 
   
-  <p class="link">Object
+  <p class="link">Dodo::Happening
   
 </div>
 
@@ -71,11 +71,13 @@
 
   <ul class="link-list" role="directory">
     
-    <li ><a href="#method-c-new">::new</a>
+    <li class="calls-super" ><a href="#method-c-new">::new</a>
     
-    <li ><a href="#method-i-consume">#consume</a>
+    <li ><a href="#method-i-crammed">#crammed</a>
     
-    <li ><a href="#method-i-next">#next</a>
+    <li ><a href="#method-i-scheduler">#scheduler</a>
+    
+    <li ><a href="#method-i-to_proc">#to_proc</a>
     
   </ul>
 </div>
@@ -83,9 +85,9 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-Dodo::Distribution">
-  <h1 id="class-Dodo::Distribution" class="class">
-    class Dodo::Distribution
+<main role="main" aria-labelledby="class-Dodo::Moment">
+  <h1 id="class-Dodo::Moment" class="class">
+    class Dodo::Moment
   </h1>
 
   <section class="description">
@@ -101,27 +103,6 @@
     
 
     
-    <section class="attribute-method-details" class="method-section">
-      <header>
-        <h3>Attributes</h3>
-      </header>
-
-      
-      <div id="attribute-i-count" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">count</span><span
-            class="attribute-access-type">[R]</span>
-        </div>
-
-        <div class="method-description">
-        
-        
-        
-        </div>
-      </div>
-      
-    </section>
-    
 
     
      <section id="public-class-5Buntitled-5D-method-details" class="method-section">
@@ -134,7 +115,7 @@
         
         <div class="method-heading">
           <span class="method-name">new</span><span
-            class="method-args">(start, interval = 0, count = 1, stretch: 1)</span>
+            class="method-args">(&amp;block)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -146,18 +127,18 @@
           
           
           
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+          
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 215</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">start</span>, <span class="ruby-identifier">interval</span> = <span class="ruby-value">0</span>, <span class="ruby-identifier">count</span> = <span class="ruby-value">1</span>, <span class="ruby-value">stretch:</span> <span class="ruby-value">1</span>)
-  <span class="ruby-ivar">@start</span> = <span class="ruby-identifier">start</span>
-  <span class="ruby-ivar">@interval</span> = <span class="ruby-identifier">interval</span>
-  <span class="ruby-ivar">@count</span> = <span class="ruby-identifier">count</span>
-  <span class="ruby-ivar">@stretch</span> = <span class="ruby-identifier">stretch</span>
-  <span class="ruby-ivar">@distribution</span> = <span class="ruby-identifier">generate</span>
-  <span class="ruby-ivar">@consumed</span> = <span class="ruby-value">0</span>
-  <span class="ruby-ivar">@current</span> = <span class="ruby-value">0</span>
+            <pre><span class="ruby-comment"># File lib/dodo/moment.rb, line 7</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-ivar">@block</span> = <span class="ruby-identifier">block</span>
+  <span class="ruby-keyword">super</span> <span class="ruby-value">0</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -177,11 +158,11 @@
        </header>
 
     
-      <div id="method-i-consume" class="method-detail ">
+      <div id="method-i-crammed" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">consume</span><span
-            class="method-args">(duration)</span>
+          <span class="method-name">crammed</span><span
+            class="method-args">(factor:)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -195,10 +176,10 @@
           
 
           
-          <div class="method-source-code" id="consume-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 235</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">consume</span>(<span class="ruby-identifier">duration</span>)
-  <span class="ruby-ivar">@consumed</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">duration</span>
+          <div class="method-source-code" id="crammed-source">
+            <pre><span class="ruby-comment"># File lib/dodo/moment.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">crammed</span>(<span class="ruby-value">factor:</span>)
+  <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">factor</span>) { <span class="ruby-keyword">self</span> }
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -210,10 +191,43 @@
       </div>
 
     
-      <div id="method-i-next" class="method-detail ">
+      <div id="method-i-scheduler" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">next</span><span
+          <span class="method-name">scheduler</span><span
+            class="method-args">(distribution, context, opts = {})</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="scheduler-source">
+            <pre><span class="ruby-comment"># File lib/dodo/moment.rb, line 12</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">scheduler</span>(<span class="ruby-identifier">distribution</span>, <span class="ruby-identifier">context</span>, <span class="ruby-identifier">opts</span> = {})
+  <span class="ruby-constant">MomentScheduler</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">self</span>, <span class="ruby-identifier">distribution</span>, <span class="ruby-identifier">context</span>, <span class="ruby-identifier">opts</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_proc" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_proc</span><span
             class="method-args">()</span>
           
           <span class="method-click-advice">click to toggle source</span>
@@ -228,14 +242,10 @@
           
 
           
-          <div class="method-source-code" id="next-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 227</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">next</span>
-  <span class="ruby-identifier ruby-title">raise</span> <span class="ruby-constant">StopIteration</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@current</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@count</span>
-
-  <span class="ruby-identifier">offset</span> = <span class="ruby-ivar">@start</span> <span class="ruby-operator">+</span> (<span class="ruby-ivar">@stretch</span> <span class="ruby-operator">*</span> (<span class="ruby-ivar">@distribution</span>[<span class="ruby-ivar">@current</span>] <span class="ruby-operator">+</span> <span class="ruby-ivar">@consumed</span>))
-  <span class="ruby-ivar">@current</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
-  <span class="ruby-identifier">offset</span>
+          <div class="method-source-code" id="to_proc-source">
+            <pre><span class="ruby-comment"># File lib/dodo/moment.rb, line 16</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_proc</span>
+  <span class="ruby-ivar">@block</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
