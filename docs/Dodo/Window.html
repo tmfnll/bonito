@@ -129,7 +129,7 @@
         
         <p>A <a href="Window.html"><code>Window</code></a> is a data structure with a duration (measured in seconds) that contains Happenings. A Happening is an instance of either the <a href="Moment.html"><code>Moment</code></a>, <a href="Container.html"><code>Container</code></a> <a href="Window.html"><code>Window</code></a> classes.</p>
 
-<p>A <a href="Window.html"><code>Window</code></a> serves to define an interval in which it may be simulated that a <a href="Moment.html"><code>Moment</code></a> is <em>evaluated</em>.</p>
+<p>A <a href="Window.html"><code>Window</code></a> serves to define an interval in which it may be <code>simulated</code> that one or more <a href="Moment.html"><code>Moment</code></a> objects are <em>evaluated</em> <em>in</em> series_.</p>
 
 <p>A <a href="Window.html"><code>Window</code></a> exposes methods that can either be used to define these <a href="Moment.html"><code>Moment</code></a> objects directly or to create additional <em>child</em> data structures (i.e <a href="Container.html"><code>Container</code></a> objects or further, child <a href="Window.html"><code>Window</code></a> objects) which can in turn be provide more fine grained control over precisely <em>when</em> any given <a href="Moment.html"><code>Moment</code></a> objects may be evaluated.</p>
 
@@ -145,7 +145,7 @@
 <pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
 </pre>
 
-<p>is evaluated <em>exactly</em> <em>once</em>. Furthermore, the simulated time at which the block is evaluated will be contained at some point within the 2 week interval beginning on the start data provided when instantiating the <a href="Runner.html"><code>Runner</code></a> object.</p>
+<p>is evaluated <em>exactly</em> <em>once</em>. Furthermore, the simulated time at which the block is evaluated will be contained at some point within the 2 week interval beginning on the start date provided when instantiating the <a href="Runner.html"><code>Runner</code></a> object.</p>
 
 <p>As mentioned, it is also possible to include other data structures within <a href="Window.html"><code>Window</code></a> objects, including other <a href="Window.html"><code>Window</code></a> objects.</p>
 

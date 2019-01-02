@@ -73,7 +73,7 @@ end
  
 The above data structure (a `Dodo::Window` object, to be precise) will 
 simulate the creation of objects (i.e. `Author`s, `Article`s etc.) over a
-period of `1.week`:
+period of 1 week:
 
 ```ruby
 Dodo.over 1.week do
@@ -82,7 +82,7 @@ end
 ```
 
 It will initially create 5 `Author`s and 10 `User`s, in some random order,
-over the course of `1.day`. 
+over the course of 1 day. 
 
 Then it will create an `Article` followed by up to 10 `Comment`s on said article.
 
@@ -104,7 +104,7 @@ end
 ```
 
 This step will be repeated a total of five times over a period of
-`5.days`
+5 days
 
 ```ruby
 repeat times: 5, over: 5.days do

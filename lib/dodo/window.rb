@@ -11,8 +11,8 @@ module Dodo
     # contains Happenings. A Happening is an instance of either the Moment,
     # Container Window classes.
     #
-    # A Window serves to define an interval in which it may be simulated that a
-    # Moment is _evaluated_.
+    # A Window serves to define an interval in which it may be +simulated+ that
+    # one or more Moment objects are _evaluated_ _in_ series_.
     #
     # A Window exposes methods that can either be used to define these
     # Moment objects directly or to create additional _child_ data structures
@@ -35,7 +35,7 @@ module Dodo
     #
     # is evaluated _exactly_ _once_. Furthermore, the simulated time at which
     # the block is evaluated will be contained at some point within the 2 week
-    # interval beginning on the start data provided when instantiating the
+    # interval beginning on the start date provided when instantiating the
     # Runner object.
     #
     # As mentioned, it is also possible to include other data structures within

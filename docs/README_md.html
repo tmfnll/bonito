@@ -141,14 +141,14 @@
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>The above data structure (a <code>Dodo::Window</code> object, to be precise) will simulate the creation of objects (i.e. <code>Author</code>s, <code>Article</code>s etc.) over a period of <code>1.week</code>:</p>
+<p>The above data structure (a <code>Dodo::Window</code> object, to be precise) will simulate the creation of objects (i.e. <code>Author</code>s, <code>Article</code>s etc.) over a period of 1 week:</p>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
   <span class="ruby-comment"># ...</span>
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>It will initially create 5 <code>Author</code>s and 10 <code>User</code>s, in some random order, over the course of <code>1.day</code>.</p>
+<p>It will initially create 5 <code>Author</code>s and 10 <code>User</code>s, in some random order, over the course of 1 day.</p>
 
 <p>Then it will create an <code>Article</code> followed by up to 10 <code>Comment</code>s on said article.</p>
 
@@ -168,7 +168,7 @@
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>This step will be repeated a total of five times over a period of <code>5.days</code></p>
+<p>This step will be repeated a total of five times over a period of 5 days</p>
 
 <pre class="ruby"><span class="ruby-identifier">repeat</span> <span class="ruby-value">times:</span> <span class="ruby-value">5</span>, <span class="ruby-value">over:</span> <span class="ruby-value">5</span>.<span class="ruby-identifier">days</span> <span class="ruby-keyword">do</span>
   <span class="ruby-comment"># ...</span>
