@@ -161,14 +161,6 @@ RSpec.describe Dodo::Window do
         expect(subject.happenings.size).to be k
       end
     end
-
-    context 'without a provided :over param' do
-      before { params.delete :over }
-      it 'should invoke #over once with window.unused_duration as an arg' do
-        expect(window).to receive(:over).with(window.unused_duration).once
-        subject
-      end
-    end
   end
 
   describe '#scheduler' do

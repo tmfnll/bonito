@@ -117,7 +117,7 @@ module Dodo
       Moment.new(&block).tap { |moment| self << moment }
     end
 
-    def repeat(times:, over: unused_duration, &block)
+    def repeat(times:, over:, &block)
       repeated_block = proc { times.times { instance_eval(&block) } }
       over(over, &repeated_block)
     end
