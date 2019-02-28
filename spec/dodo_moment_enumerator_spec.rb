@@ -4,17 +4,17 @@ require 'rspec'
 RSpec.describe Dodo::MomentScheduler do
   let(:block) { -> { true } }
   let(:distribution) { double }
-  let(:cram) { 2 }
   let(:stretch) { 2 }
-  let(:opts) { { cram: cram, stretch: stretch } }
+  let(:opts) { { stretch: stretch } }
   let(:moment) { Dodo::Moment.new(&block) }
   let(:context) { Dodo::Context.new }
   let(:scheduler) do
     Dodo::MomentScheduler.new moment, distribution, context, opts
   end
+  let(:dist_next) { rand 10 }
 
   before do
-    allow(distribution).to receive(:next).and_return(*(1..cram))
+    allow(distribution).to receive(:next).and_return(dist_next)
   end
 
   describe '#initialize' do
@@ -34,17 +34,17 @@ RSpec.describe Dodo::MomentScheduler do
     end
     context 'with a block' do
       subject { scheduler }
-      it 'should yield according to the cram factor' do
-        expect { |b| subject.each(&b) }.to yield_control.exactly(cram).times
+      it 'should yield exactly once' do
+        expect { |b| subject.each(&b) }.to yield_control.once
       end
-      it 'should yield the (decorated) moment cram times' do
-        expect { |b| subject.each(&b) }.to yield_successive_args(
-          *Array.new(cram) { have_attributes __getobj__: moment }
+      it 'should yield the (decorated) moment once' do
+        expect { |b| subject.each(&b) }.to yield_with_args(
+          have_attributes(__getobj__: moment)
         )
       end
       it 'should offset these moments according to the distribution' do
-        expect { |b| subject.each(&b) }.to yield_successive_args(
-          *(1..cram).map { |offset| have_attributes offset: offset }
+        expect { |b| subject.each(&b) }.to yield_with_args(
+          have_attributes(offset: dist_next)
         )
       end
     end
