@@ -54,14 +54,35 @@ RSpec.describe Dodo::Window do
       let(:happening) { Dodo::Window.new(duration + 1) {} }
 
       it 'should successfully append the happening' do
-        expect { subject }.to raise_error(Exception)
+        expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
       end
     end
   end
 
   describe '#use' do
-    it 'should be an alias for #push_window' do
-      expect(window.method(:use)).to eq(window.method(:<<))
+    let(:happening_duration) { 1.day }
+    let(:happenings) { build_list :window, 3, duration: happening_duration }
+    subject { window.use(*happenings) }
+
+    it 'should successfully append the happenings' do
+      expect(subject.instance_variable_get(:@happenings)).to eq happenings
+    end
+
+    it 'should increase the @total_child_duration by the ' \
+       'duration of the sum of the happening' do
+      expect { subject }.to change {
+        window.instance_variable_get :@total_child_duration
+      }.by(happenings.reduce(0) { |sum, happening| sum + happening.duration })
+    end
+
+    context 'with happenings whose duration is greater than
+             that of the window' do
+
+      let(:happening_duration) { window.duration }
+
+      it 'should successfully append the happening' do
+        expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
+      end
     end
   end
 
@@ -171,6 +192,42 @@ RSpec.describe Dodo::Window do
         )
         subject
       end
+    end
+  end
+
+  describe '#simultaneously' do
+    let(:block) { proc { called? } }
+    subject { window.simultaneously(&block) }
+    let(:container) { Dodo::Container.new }
+
+    before do
+      allow(Dodo::Container).to receive(:new).and_return container
+      Dodo::Container.send(:define_method, :called?) {}
+    end
+
+    after do
+      Dodo::Container.send :remove_method, :called?
+    end
+
+    it 'should append the container to the happening array' do
+      expect { subject }.to change {
+        window.happenings
+      }.from([]).to([container])
+    end
+
+    it 'should evaluate the block passed' do
+      expect(container).to receive(:called?).with no_args
+      subject
+    end
+
+    it 'should evaluate the block passed within the context of the created
+        container' do
+      expect(container).to receive(:instance_eval)
+      subject
+    end
+
+    it 'should return a new Container object' do
+      expect(subject).to eq container
     end
   end
 end
