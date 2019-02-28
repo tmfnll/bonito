@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'timecop'
-module Dodo
-  class Runner
+module Dodo # :nodoc:
+  class Runner # :nodoc:
     def initialize(enumerable, opts = {})
       @enumerable = enumerable
       @opts = opts
@@ -27,7 +27,7 @@ module Dodo
     private
 
     def maybe_sleep(moment)
-      return unless live? && ((nap_time = moment.offset - Time.now) > 0)
+      return unless live? && (nap_time = moment.offset - Time.now).positive?
 
       sleep nap_time
     end
@@ -44,7 +44,7 @@ module Dodo
     runner.call
   end
 
-  class Context
+  class Context # :nodoc:
     def initialize(parent = nil)
       @parent = parent
     end
@@ -77,7 +77,7 @@ module Dodo
     end
 
     def assignment?(symbol)
-      !!symbol.to_s.match(/\w+=/)
+      !symbol.to_s.match(/\w+=/).nil?
     end
 
     def instance_var_for(symbol)
