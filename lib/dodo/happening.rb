@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dodo
   class Happening # :nodoc:
     attr_reader :duration

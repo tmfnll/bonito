@@ -5,7 +5,7 @@ require 'dodo/moment'
 require 'securerandom'
 require 'timecop'
 
-module Dodo
+module Dodo  # :nodoc:
   class Window < Happening
     # A Window is a data structure with a duration (measured in seconds) that
     # contains Happenings. A Happening is an instance of either the Moment,
@@ -174,16 +174,10 @@ module Dodo
       return to_enum(:each) unless block_given?
 
       distribution = Distribution.new(
-        @starting_offset, @window.unused_duration, size,
-        stretch: stretch
+        @starting_offset, @window.unused_duration, size, stretch: stretch
       )
 
-      happenings.each do |happening|
-        happening.scheduler(distribution, @context, @opts).map do |moment|
-          yield moment
-        end
-        distribution.consume happening.duration
-      end
+      distribute_moments(distribution) { |moment| yield moment }
     end
 
     def stretch
@@ -192,6 +186,15 @@ module Dodo
 
     private
 
+    def distribute_moments(distribution)
+      happenings.each do |happening|
+        happening.scheduler(distribution, @context, @opts).map do |moment|
+          yield moment
+        end
+        distribution.consume happening.duration
+      end
+    end
+
     def happenings
       @window.happenings
     end
@@ -199,10 +202,9 @@ module Dodo
     def size
       happenings.size
     end
-
   end
 
-  class Distribution
+  class Distribution  # :nodoc:
     def initialize(start, interval = 0, count = 1, stretch: 1)
       @start = start
       @interval = interval
@@ -231,7 +233,7 @@ module Dodo
 
     def generate
       Array.new(@count) do
-        @interval > 0 ? SecureRandom.random_number(@interval) : 0
+        @interval.positive? ? SecureRandom.random_number(@interval) : 0
       end.sort
     end
   end
