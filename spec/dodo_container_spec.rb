@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/numeric/time'
 
 RSpec.describe Dodo::Container do
@@ -85,12 +87,25 @@ RSpec.describe Dodo::Container do
     )
   end
 
+  describe '#over' do
+    let(:offset) { 0 }
+    subject { container.over window_duration, after: offset, &block }
+    before do
+      container # Ensure the container is created before patching the
+      # window constructor
+      allow(Dodo::Window).to receive(:new).and_return(window)
+    end
+    it_behaves_like(
+      'a method that allows additional windows be added to a container'
+    )
+  end
+
   describe '#also' do
     subject { container.also after: offset, over: window_duration, &block }
 
     before do
       container # Ensure the container is created before patching the
-                # window constructor
+      # window constructor
       allow(Dodo::Window).to receive(:new).and_return(window)
     end
 
@@ -101,12 +116,60 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  describe '#also_use' do
+  describe '#use' do
     context 'with a pre-baked window provided' do
-      subject { container.also_use window, after: offset }
+      subject { container.use window, after: offset }
       it_behaves_like(
         'a method that allows additional windows be added to a container'
       )
+    end
+
+    context 'with many pre-baked windows provided' do
+      let(:windows) { build_list :window, 3 }
+      let(:offset_windows) do
+        windows.map { |window| Dodo::OffsetHappening.new window, offset }
+      end
+
+      subject { container.use(*windows, after: offset) }
+
+      it 'should append to the windows array' do
+        expect { subject }.to change { container.windows.size }.by windows.size
+      end
+
+      it 'should append the window provided to the windows array' do
+        expect(subject.windows.last(windows.size)).to eq offset_windows
+      end
+
+      it 'should return the container itself' do
+        expect(subject).to be container
+      end
+    end
+  end
+
+  describe '#repeat' do
+    let(:times) { 3 }
+    subject do
+      container.repeat(
+        times: times, over: window_duration, after: offset, &block
+      )
+    end
+
+    before do
+      container # Ensure the container is created before patching the
+      # window constructor
+      allow(Dodo::Window).to receive(:new).and_return(window)
+    end
+
+    it 'should append to the windows array' do
+      expect { subject }.to change { container.windows.size }.by times
+    end
+
+    it 'should append the window provided to the windows array' do
+      expect(subject.windows.last(times)).to eq([offset_window] * 3)
+    end
+
+    it 'should return the container itself' do
+      expect(subject).to be container
     end
   end
 

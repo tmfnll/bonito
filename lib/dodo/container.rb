@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dodo/happening'
 require 'dodo/window'
 require 'algorithms'
@@ -18,13 +20,22 @@ module Dodo
       self
     end
 
-    def also(after:, over:, &block)
-      window = Dodo::Window.new over, &block
-      self << OffsetHappening.new(window, after)
+    def over(duration, after: 0, &block)
+      use Dodo::Window.new(duration, &block), after: after
     end
 
-    def also_use(window, after:)
-      self << OffsetHappening.new(window, after)
+    def also(over: duration, after: 0, &block)
+      over(over, after: after, &block)
+    end
+
+    def use(*windows, after: 0)
+      windows.each { |window| self << OffsetHappening.new(window, after) }
+      self
+    end
+
+    def repeat(times:, over:, after: 0, &block)
+      times.times { over(over, after: after, &block) }
+      self
     end
 
     def crammed(*)
