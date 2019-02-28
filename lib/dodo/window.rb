@@ -133,10 +133,6 @@ module Dodo
       WindowScheduler.new self, distribution, context, opts
     end
 
-    def crammed(*) # :nodoc:
-      [self]
-    end
-
     def <<(happening)
       tap do
         @total_child_duration += happening.duration
@@ -178,20 +174,16 @@ module Dodo
       return to_enum(:each) unless block_given?
 
       distribution = Distribution.new(
-        @starting_offset, @window.unused_duration, crammed_happenings.size,
+        @starting_offset, @window.unused_duration, size,
         stretch: stretch
       )
 
-      @window.happenings.each do |happening|
+      happenings.each do |happening|
         happening.scheduler(distribution, @context, @opts).map do |moment|
           yield moment
         end
         distribution.consume happening.duration
       end
-    end
-
-    def cram
-      @cram ||= @opts.fetch(:scale) {  @opts.fetch(:cram) { 1 } }.ceil
     end
 
     def stretch
@@ -200,11 +192,14 @@ module Dodo
 
     private
 
-    def crammed_happenings
-      @crammed_happenings ||= @window.happenings.map do |happening|
-        happening.crammed(factor: cram)
-      end.flatten
+    def happenings
+      @window.happenings
     end
+
+    def size
+      happenings.size
+    end
+
   end
 
   class Distribution

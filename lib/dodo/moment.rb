@@ -3,7 +3,7 @@
 require 'dodo/happening'
 
 module Dodo
-  class Moment < Happening
+  class Moment < Happening # :nodoc
     def initialize(&block)
       @block = block
       super 0
@@ -15,10 +15,6 @@ module Dodo
 
     def to_proc
       @block
-    end
-
-    def crammed(factor:)
-      Array.new(factor) { self }
     end
   end
 
@@ -32,16 +28,10 @@ module Dodo
       @opts = opts
     end
 
-    def cram
-      @cram ||= @opts.fetch(:scale) { @opts.fetch(:cram) { 1 } }.ceil
-    end
-
     def each
       return to_enum(:each) unless block_given?
 
-      cram.times do
-        yield ContextualMoment.new(@moment, @distribution.next, @context)
-      end
+      yield ContextualMoment.new(@moment, @distribution.next, @context)
     end
   end
 end

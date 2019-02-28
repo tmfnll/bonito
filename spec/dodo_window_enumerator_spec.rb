@@ -10,7 +10,7 @@ RSpec.describe Dodo::WindowScheduler do
   let(:happenings) { [child_window, child_container] + moments }
 
   let(:random_numbers) do
-    random_numbers = scheduler.send(:crammed_happenings).map do |_|
+    random_numbers = window.send(:happenings).map do |_|
       rand(window.unused_duration)
     end.sort
     2.times { random_numbers.pop }
@@ -36,37 +36,6 @@ RSpec.describe Dodo::WindowScheduler do
 
   before do
     allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
-  end
-
-  describe '#cram' do
-    subject { scheduler.cram }
-    context 'without opts' do
-      it 'should have a default value of 1' do
-        expect(subject).to eq 1
-      end
-    end
-    context 'with a cram param passed int the scaled opts hash' do
-      let(:cram) { rand 5 }
-      let(:scale_opts) { { cram: cram } }
-      context 'where this param is an integer' do
-        it 'should return the value of the cram opt' do
-          expect(subject).to eq cram
-        end
-      end
-      context 'where this param is not an integer' do
-        let(:cram) { rand 7 + rand }
-        it 'should return the ceiling value of the cram opt' do
-          expect(subject).to eq cram.ceil
-        end
-      end
-      context 'with a scale param passed in the scaled_opts hash' do
-        let(:scale) { rand 7 + rand }
-        let(:scale_opts) { { scale: scale, cram: cram } }
-        it 'should return the ceiling value of the scale opt' do
-          expect(subject).to eq scale.ceil
-        end
-      end
-    end
   end
 
   describe '#stretch' do
@@ -102,8 +71,8 @@ RSpec.describe Dodo::WindowScheduler do
           expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
         end
 
-        it 'should yield multiple moments according to the cram factor' do
-          expect(subject.size).to eq((moments * scheduler.cram).size)
+        it 'should yield multiple moments' do
+          expect(subject.size).to eq(moments.size)
         end
 
         it 'should yield happenings within a range equal to that of the
@@ -132,13 +101,6 @@ RSpec.describe Dodo::WindowScheduler do
     end
 
     context 'without any scale_opts' do
-      it_behaves_like 'an scheduler of offset moments'
-    end
-
-    context 'with a non-trivial cram parameter provided in scale_opts' do
-      let(:cram) { rand 2..5 + rand }
-      let(:scale_opts) { { cram: cram } }
-
       it_behaves_like 'an scheduler of offset moments'
     end
 

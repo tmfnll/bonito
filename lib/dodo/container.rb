@@ -38,10 +38,6 @@ module Dodo
       self
     end
 
-    def crammed(*)
-      [self]
-    end
-
     def scheduler(distribution, context, opts = {})
       ContainerScheduler.new self, distribution, context, opts
     end
