@@ -56,24 +56,27 @@ RSpec.describe 'End to end' do
 
   let(:window) do
     Dodo.over 1.week do
-      simultaneously over: 1.day do
-        repeat times: 5 do
-          please do
-            name = Faker::Name.name
-            author = Author.new(name)
-            authors << author
-            users_and_authors << author
+      simultaneously do
+        over 1.day do
+          repeat times: 5, over: 1.day do
+            please do
+              name = Faker::Name.name
+              author = Author.new(name)
+              authors << author
+              users_and_authors << author
+            end
           end
         end
-      end.also over: 1.day, after: 2.hours do
 
-        repeat times: 10 do
-          please do
-            name = Faker::Name.name
-            email = Faker::Internet.safe_email(name)
-            user = User.new(name, email)
-            users << user
-            users_and_authors << user
+        also over: 1.day, after: 2.hours do
+          repeat times: 10, over: 1.day do
+            please do
+              name = Faker::Name.name
+              email = Faker::Internet.safe_email(name)
+              user = User.new(name, email)
+              users << user
+              users_and_authors << user
+            end
           end
         end
       end

@@ -117,14 +117,14 @@ module Dodo
       Moment.new(&block).tap { |moment| self << moment }
     end
 
-    def repeat(times:, over: unused_duration, &block)
+    def repeat(times:, over:, &block)
       repeated_block = proc { times.times { instance_eval(&block) } }
       over(over, &repeated_block)
     end
 
-    def simultaneously(over:, &block)
+    def simultaneously(&block)
       Container.new.tap do |container|
-        container.also(after: 0, over: over, &block)
+        container.instance_eval(&block)
         self << container
       end
     end
@@ -148,7 +148,10 @@ module Dodo
       end
     end
 
-    alias use <<
+    def use(*happenings)
+      happenings.each { |happening| self << happening }
+      self
+    end
   end
 
   class DodoException < StandardError
