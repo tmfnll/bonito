@@ -2,7 +2,7 @@
 
 require 'ruby-progressbar'
 module Dodo
-  module ProgressCounter
+  module ProgressCounter # :nodoc:
     attr_accessor :total
     attr_accessor :current
 
@@ -28,7 +28,7 @@ module Dodo
     end
   end
 
-  class ProgressLogger
+  class ProgressLogger # :nodoc:
     include ProgressCounter
 
     def initialize(logger, total: nil, prefix: nil)
@@ -42,7 +42,7 @@ module Dodo
     end
   end
 
-  class ProgressBar
+  class ProgressBar # :nodoc:
     include ProgressCounter
 
     def initialize(opts = {})

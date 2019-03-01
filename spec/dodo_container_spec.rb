@@ -80,13 +80,6 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  describe '#<<' do
-    subject { container << offset_window }
-    it_behaves_like(
-      'a method that allows additional windows be added to a container'
-    )
-  end
-
   describe '#over' do
     let(:offset) { 0 }
     subject { container.over window_duration, after: offset, &block }

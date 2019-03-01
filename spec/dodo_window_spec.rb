@@ -32,7 +32,7 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#<<' do
-    subject { window << happening }
+    subject { window.use happening }
 
     context 'with a happening whose duration is less than that of the window' do
       let(:happening) { Dodo::Window.new(duration - 1) {} }

@@ -23,7 +23,7 @@ RSpec.describe Dodo::Runner do
   end
   let(:window) do
     window = Dodo::Window.new(3.weeks) {}
-    moments.each { |moment| window << moment }
+    moments.each { |moment| window.use moment }
     window
   end
   let(:start) { 2.weeks.ago }

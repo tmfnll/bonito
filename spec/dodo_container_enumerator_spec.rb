@@ -28,12 +28,12 @@ RSpec.describe Dodo::ContainerScheduler do
 
   let(:window) do
     window = build :window
-    moments.each { |moment| window << moment }
+    moments.each { |moment| window.use moment }
     window
   end
   let(:another_window) do
     window = build :window
-    more_moments.each { |moment| window << moment }
+    more_moments.each { |moment| window.use moment }
     window
   end
 
