@@ -5,19 +5,11 @@ require 'dodo/window'
 require 'algorithms'
 
 module Dodo
-  class Container < Happening
+  class Container < Happening # :nodoc:
     attr_reader :windows
     def initialize
       @windows = []
       super 0
-    end
-
-    def <<(offset_window)
-      @windows << offset_window
-      self.duration = [
-        duration, offset_window.offset + offset_window.duration
-      ].max
-      self
     end
 
     def over(duration, after: 0, &block)
@@ -29,7 +21,7 @@ module Dodo
     end
 
     def use(*windows, after: 0)
-      windows.each { |window| self << OffsetHappening.new(window, after) }
+      windows.each { |window| send :<<, OffsetHappening.new(window, after) }
       self
     end
 
@@ -40,6 +32,16 @@ module Dodo
 
     def scheduler(distribution, context, opts = {})
       ContainerScheduler.new self, distribution, context, opts
+    end
+
+    private
+
+    def <<(offset_window)
+      @windows << offset_window
+      self.duration = [
+        duration, offset_window.offset + offset_window.duration
+      ].max
+      self
     end
   end
 

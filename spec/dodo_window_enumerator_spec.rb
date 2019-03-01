@@ -21,7 +21,7 @@ RSpec.describe Dodo::WindowScheduler do
   let(:window) do
     duration = child_window.duration + child_container.duration + 1.day
     window = build :window, duration: duration
-    happenings.each { |happening| window << happening }
+    happenings.each { |happening| window.use happening }
     window
   end
 

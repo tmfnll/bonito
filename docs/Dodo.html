@@ -58,19 +58,7 @@
     
     
     
-    <!-- Method Quickref -->
-<div id="method-list-section" class="nav-section">
-  <h3>Methods</h3>
-
-  <ul class="link-list" role="directory">
     
-    <li ><a href="#method-c-over">::over</a>
-    
-    <li ><a href="#method-c-run">::run</a>
-    
-  </ul>
-</div>
-
   </div>
 </nav>
 
@@ -108,87 +96,6 @@
     
 
     
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
-       <header>
-         <h3>Public Class Methods</h3>
-       </header>
-
-    
-      <div id="method-c-over" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">over</span><span
-            class="method-args">(duration, &amp;block)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="over-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 167</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">over</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">duration</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-c-run" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">run</span><span
-            class="method-args">( window, starting:, context: Context.new, progress: ProgressLogger.new(Logger.new(STDOUT)), **opts )</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="run-source">
-            <pre><span class="ruby-comment"># File lib/dodo/runner.rb, line 36</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">run</span>(
-  <span class="ruby-identifier">window</span>, <span class="ruby-value">starting:</span>, <span class="ruby-value">context:</span> <span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>,
-  <span class="ruby-value">progress:</span> <span class="ruby-constant">ProgressLogger</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Logger</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">STDOUT</span>)), <span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>
-)
-  <span class="ruby-identifier">distribution</span> = <span class="ruby-constant">Distribution</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">starting</span>
-  <span class="ruby-identifier">scheduler</span> = <span class="ruby-identifier">window</span>.<span class="ruby-identifier">scheduler</span>(<span class="ruby-identifier">distribution</span>, <span class="ruby-identifier">context</span>, <span class="ruby-identifier">opts</span>)
-  <span class="ruby-identifier">scheduler</span> = <span class="ruby-constant">ProgressDecorator</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">scheduler</span>, <span class="ruby-identifier">progress</span>
-  <span class="ruby-identifier">runner</span> = <span class="ruby-constant">Runner</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">scheduler</span>, <span class="ruby-identifier">opts</span>
-  <span class="ruby-identifier">runner</span>.<span class="ruby-identifier">call</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-    </section>
-  
   </section>
 </main>
 
