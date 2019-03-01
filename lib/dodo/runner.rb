@@ -35,13 +35,13 @@ module Dodo # :nodoc:
 
   def self.run(
     window, starting:, context: Context.new,
-    progress: ProgressLogger.new(Logger.new(STDOUT)), **opts
+    progress_factory: ProgressLogger.factory, **opts
   )
     distribution = Distribution.new starting
     scheduler = window.scheduler(distribution, context, opts)
+    progress = progress_factory.call total: scheduler.count
     scheduler = ProgressDecorator.new scheduler, progress
-    runner = Runner.new scheduler, opts
-    runner.call
+    Runner.new(scheduler, opts).call
   end
 
   class Context # :nodoc:
@@ -67,6 +67,8 @@ module Dodo # :nodoc:
       super
     end
 
+    # :reek:BooleanParameter
+    # Inherits interface from Object#respond_to_missing?
     def respond_to_missing?(symbol, respond_to_private = false)
       return true if assignment? symbol
 
@@ -77,6 +79,7 @@ module Dodo # :nodoc:
     end
 
     # :reek:NilCheck
+    # String#match? Unavailable for Ruby 2.3
     def assignment?(symbol)
       !symbol.to_s.match(/\w+=/).nil?
     end

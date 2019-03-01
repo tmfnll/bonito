@@ -103,12 +103,15 @@ RSpec.describe 'End to end' do
   end
 
   let(:logger) { Logger.new STDOUT }
-  let(:progress) { Dodo::ProgressBar.new }
+  let(:progress_factory) { Dodo::ProgressBar.factory }
   let(:stretch) { 1 }
   let(:opts) { { stretch: stretch } }
   let(:distribution) { Dodo::Distribution.new 3.weeks.ago }
   let(:scheduler) { window.scheduler(distribution, context, opts) }
-  let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
+  let(:progress) { progress_factory.call }
+  let(:decorated_enum) do
+    Dodo::ProgressDecorator.new scheduler, progress
+  end
 
   let(:users_and_authors) { context.users_and_authors }
   let(:authors) { context.authors }
@@ -120,7 +123,7 @@ RSpec.describe 'End to end' do
   subject! do
     Dodo.run window, starting: 3.weeks.ago,
                      context: context,
-                     progress: progress, **opts
+                     progress_factory: progress_factory, **opts
   end
 
   context 'without scaling' do
