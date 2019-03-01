@@ -76,6 +76,7 @@ module Dodo # :nodoc:
       super
     end
 
+    # :reek:NilCheck
     def assignment?(symbol)
       !symbol.to_s.match(/\w+=/).nil?
     end
@@ -87,7 +88,7 @@ module Dodo # :nodoc:
     def get(symbol)
       context = self
       instance_var = instance_var_for symbol
-      until context.nil?
+      while context
         if context.instance_variable_defined? instance_var
           return context.instance_variable_get instance_var
         end
