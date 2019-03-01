@@ -9,7 +9,7 @@ RSpec.describe Dodo::Runner do
   let(:progress) do
     double.tap do |progress|
       allow(progress).to receive(:total=)
-      allow(progress).to receive(:+).and_return(progress)
+      allow(progress).to receive(:increment).and_return(progress)
     end
   end
   let(:opts) { { live: live, daemonise: daemonise, progress: progress } }
@@ -90,7 +90,7 @@ RSpec.describe Dodo::Runner do
         subject
       end
       it 'should update the progress each time it calls a moment' do
-        expect(progress).to receive(:+).exactly(moments.size).times
+        expect(progress).to receive(:increment).exactly(moments.size).times
         subject
       end
       context 'with daemonize = false' do

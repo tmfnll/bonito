@@ -22,21 +22,46 @@ RSpec.describe Dodo::ProgressLogger do
     end
   end
 
-  describe '#current=' do
-    subject { progress.current = current }
+  describe '#increment' do
+    let(:increment) { 2 }
+    let(:incremented) { current + increment }
+
+    subject { progress.increment increment }
+
+    before do
+      progress.instance_variable_set :@current, current
+    end
+
+    it 'should add the value of increment to @current' do
+      subject
+      expect(progress.current).to eq(incremented)
+    end
+
+    it 'should return the incremented value' do
+      subject
+      expect(progress.current).to eq(incremented)
+    end
+
+    it 'should invoke on_increment' do
+      expect(progress).to receive(:on_increment).with(increment)
+      subject
+    end
+
     it 'should log the current progress as a fraction of the total' do
-      expect(logger).to receive(:info).with("#{prefix} #{current} / #{total}")
+      expect(logger).to receive(:info).with(
+        "#{prefix} #{incremented} / #{total}"
+      )
       subject
     end
 
     it 'should update the value of @current' do
       subject
-      expect(progress.current).to eq current
+      expect(progress.current).to eq current + increment
     end
-    context ' without an integer total' do
+    context 'without an integer total' do
       let(:progress) { Dodo::ProgressLogger.new logger, prefix: prefix }
       it 'should log the current progress by itself' do
-        expect(logger).to receive(:info).with("#{prefix} #{current}")
+        expect(logger).to receive(:info).with("#{prefix} #{incremented} / -")
         subject
       end
     end
@@ -45,30 +70,10 @@ RSpec.describe Dodo::ProgressLogger do
       it 'should log the current progress with the default prefix' do
         expect(logger).to receive(:info).with(
           "Dodo::ProgressLogger{#{progress.object_id}} : " \
-          "Progress Made : #{current} / #{total}"
+          "Progress Made : #{incremented} / #{total}"
         )
         subject
       end
-    end
-  end
-
-  describe '#+' do
-    let(:increment) { 2 }
-
-    subject { progress + increment }
-
-    before do
-      progress.current = current
-    end
-
-    it 'should add the value of increment to @current' do
-      subject
-      expect(progress.current).to eq(current + increment)
-    end
-
-    it 'should return the incremented value' do
-      subject
-      expect(progress.current).to eq(current + increment)
     end
   end
 end

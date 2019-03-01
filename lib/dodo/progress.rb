@@ -3,22 +3,40 @@
 require 'ruby-progressbar'
 module Dodo
   module ProgressCounter # :nodoc:
-    attr_accessor :total
-    attr_accessor :current
+    attr_reader :total
+    attr_reader :current
 
-    def setup(total: nil, prefix: nil)
+    class Unknown # :nodoc:
+      include Singleton
+      def to_s
+        '-'
+      end
+    end
+
+    module ClassMethods # :nodoc:
+      def factory(*args)
+        ->(total: nil, prefix: nil) { new(*args, total: total, prefix: prefix) }
+      end
+    end
+
+    def self.included(base)
+      base.extend ClassMethods
+    end
+
+    def setup(total: ProgressCounter::Unknown.instance, prefix: nil)
       @total = total
       @prefix = prefix
       @current = 0
     end
 
-    def +(other)
-      self.current = (current + other)
+    def increment(change)
+      @current += change
+      on_increment change
       self
     end
 
     def to_s
-      "#{prefix} #{current}#{total.nil? ? '' : " / #{total}"}"
+      "#{prefix} #{current} / #{total}"
     end
 
     private
@@ -31,13 +49,12 @@ module Dodo
   class ProgressLogger # :nodoc:
     include ProgressCounter
 
-    def initialize(logger, total: nil, prefix: nil)
+    def initialize(logger = Logger.new(STDOUT), **opts)
       @logger = logger
-      setup total: total, prefix: prefix
+      setup opts
     end
 
-    def current=(value)
-      @current = value
+    def on_increment(_increment)
       @logger.info to_s
     end
   end
@@ -45,36 +62,29 @@ module Dodo
   class ProgressBar # :nodoc:
     include ProgressCounter
 
-    def initialize(opts = {})
+    def initialize(**opts)
       @bar = ::ProgressBar.create opts
+      @bar.total = opts[:total]
       setup opts
     end
 
-    def total=(value)
-      @bar.total = value
-    end
-
-    def current=(value)
-      incr = [(value - @current), 0].max
-      @current = value
-      incr.times { @bar.increment }
+    def on_increment(increment)
+      increment.times { @bar.increment }
     end
   end
 
   class ProgressDecorator < SimpleDelegator # :nodoc:
     def initialize(enumerable, progress)
-      @enumerable = enumerable
       @progress = progress
-      @progress.total = enumerable.count
       super enumerable
     end
 
     def each
       return to_enum(:each) unless block_given?
 
-      @enumerable.each do |item|
+      __getobj__.each do |item|
         yield item
-        @progress += 1
+        @progress.increment 1
       end
     end
   end
