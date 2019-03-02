@@ -168,12 +168,10 @@ module Dodo # :nodoc:
     end
 
     def each
-      distribute!
-      happenings.each do |happening|
-        happening.scheduler(@distribution.next, @context, @opts).map do |moment|
+      window.happenings.zip(distribution) do |happening, offset|
+        happening.scheduler(offset, @context, @opts).map do |moment|
           yield moment
         end
-        @distribution.consume happening.duration
       end
     end
 
@@ -183,56 +181,44 @@ module Dodo # :nodoc:
 
     private
 
-    def distribute!
-      @distribution = Distribution.new(
-        @starting_offset, window.unused_duration, size, stretch: stretch
-      )
+    def distribution
+      Distribution.new(@starting_offset, window, stretch: stretch)
     end
 
     def window
       @happening
     end
-
-    def happenings
-      window.happenings
-    end
-
-    def size
-      happenings.size
-    end
   end
 
   class Distribution # :nodoc:
-    def initialize(start, interval = 0, count = 1, stretch: 1)
+    include Enumerable
+
+    def initialize(start, window, stretch: 1)
       @start = start
-      @interval = interval
-      @count = count
+      @window = window
       @stretch = stretch
-      @distribution = generate
-      @consumed = 0
-      @current = 0
     end
 
-    attr_reader :count
-
-    def next
-      raise StopIteration if @current == @count
-
-      offset = @start + (@stretch * (@distribution[@current] + @consumed))
-      @current += 1
-      offset
-    end
-
-    def consume(duration)
-      @consumed += duration
+    def each
+      @window.happenings.zip(generate_offsets).reduce(0) do |consumed, zipped|
+        happening, offset = zipped
+        yield @start + (@stretch * (offset + consumed))
+        consumed + happening.duration
+      end
     end
 
     private
 
-    def generate
-      Array.new(@count) do
-        @interval.positive? ? SecureRandom.random_number(@interval) : 0
-      end.sort
+    def interval
+      @window.unused_duration
+    end
+
+    def size
+      @window.happenings.size
+    end
+
+    def generate_offsets
+      Array.new(size) { SecureRandom.random_number(interval) }.sort
     end
   end
 end
