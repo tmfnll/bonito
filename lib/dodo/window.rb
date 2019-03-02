@@ -126,9 +126,11 @@ module Dodo # :nodoc:
       end
     end
 
-    def scheduler(distribution, context, opts = {}) # :nodoc:
-      WindowScheduler.new self, distribution, context, opts
+    def scheduler(starting_offset, context, opts = {}) # :nodoc:
+      WindowScheduler.new self, starting_offset, context, opts
     end
+
+    def distribution; end
 
     def use(*happenings)
       happenings.each { |happening| send :<<, happening }
@@ -159,24 +161,20 @@ module Dodo # :nodoc:
     Window.new duration, &block
   end
 
-  class WindowScheduler # :nodoc:
-    include Enumerable
-
-    def initialize(window, parent_distribution, parent_context, opts = {})
-      @window = window
-      @starting_offset = parent_distribution.next
-      @context = parent_context.push
-      @opts = opts
+  class WindowScheduler < Scheduler # :nodoc:
+    def initialize(window, starting_offset, parent_context, opts = {})
+      context = parent_context.push
+      super(window, starting_offset, context, opts)
     end
 
     def each
-      return to_enum(:each) unless block_given?
-
-      distribution = Distribution.new(
-        @starting_offset, @window.unused_duration, size, stretch: stretch
-      )
-
-      distribute_moments(distribution) { |moment| yield moment }
+      distribute!
+      happenings.each do |happening|
+        happening.scheduler(@distribution.next, @context, @opts).map do |moment|
+          yield moment
+        end
+        @distribution.consume happening.duration
+      end
     end
 
     def stretch
@@ -185,17 +183,18 @@ module Dodo # :nodoc:
 
     private
 
-    def distribute_moments(distribution)
-      happenings.each do |happening|
-        happening.scheduler(distribution, @context, @opts).map do |moment|
-          yield moment
-        end
-        distribution.consume happening.duration
-      end
+    def distribute!
+      @distribution = Distribution.new(
+        @starting_offset, window.unused_duration, size, stretch: stretch
+      )
+    end
+
+    def window
+      @happening
     end
 
     def happenings
-      @window.happenings
+      window.happenings
     end
 
     def size

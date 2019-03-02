@@ -37,8 +37,7 @@ module Dodo # :nodoc:
     window, starting:, context: Context.new,
     progress_factory: ProgressLogger.factory, **opts
   )
-    distribution = Distribution.new starting
-    scheduler = window.scheduler(distribution, context, opts)
+    scheduler = window.scheduler(starting, context, opts)
     progress = progress_factory.call total: scheduler.count
     scheduler = ProgressDecorator.new scheduler, progress
     Runner.new(scheduler, opts).call
