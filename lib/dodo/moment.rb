@@ -18,20 +18,9 @@ module Dodo
     end
   end
 
-  class MomentScheduler # :nodoc:
-    include Enumerable
-
-    def initialize(moment, distribution, context, opts = {})
-      @moment = moment
-      @distribution = distribution
-      @context = context
-      @opts = opts
-    end
-
+  class MomentScheduler < Scheduler # :nodoc:
     def each
-      return to_enum(:each) unless block_given?
-
-      yield ContextualMoment.new(@moment, @distribution.next, @context)
+      yield ContextualMoment.new(@happening, @starting_offset, @context)
     end
   end
 end

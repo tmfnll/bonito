@@ -45,25 +45,19 @@ module Dodo
     end
   end
 
-  class ContainerScheduler # :nodoc:
-    include Enumerable
-
-    def initialize(container, distribution, context, opts = {})
-      @container = container
-      @starting_offset = distribution.next
-      @context = context
+  class ContainerScheduler < Scheduler # :nodoc:
+    def initialize(container, starting_offset, context, opts = {})
+      super
       @moment_heap = Containers::MinHeap.new []
       @window_schedulers = container.windows.map do |window|
         window.scheduler(
-          [@starting_offset + window.offset].to_enum, @context, opts
-        ).each
+          @starting_offset + window.offset, @context, opts
+        ).to_enum :each
       end
       @window_schedulers.each { |scheduler| push_moment_from_enum scheduler }
     end
 
     def each
-      return to_enum(:each) unless block_given?
-
       until @moment_heap.empty?
         moment = @moment_heap.next_key
         scheduler = @moment_heap.pop

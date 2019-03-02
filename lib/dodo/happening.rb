@@ -45,4 +45,15 @@ module Dodo
       Timecop.freeze(offset) { yield }
     end
   end
+
+  class Scheduler # :nodoc:
+    include Enumerable
+
+    def initialize(happening, starting_offset, context, opts = {})
+      @happening = happening
+      @starting_offset = starting_offset
+      @context = context
+      @opts = opts
+    end
+  end
 end
