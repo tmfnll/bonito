@@ -165,6 +165,8 @@ module Dodo # :nodoc:
       @distribution = Distribution.new starting_offset, window, opts
     end
 
+    # :reek:NestedIterators:
+    # Not sure how this can be avoided nicely at the moment
     def each
       @distribution.each do |happening, offset|
         happening.scheduler(offset, context, opts).each do |moment|

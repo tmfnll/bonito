@@ -34,6 +34,11 @@ module Dodo
       ContainerScheduler.new self, starting_offset, context, opts
     end
 
+    # :reek:FeatureEnvy:
+    # Any method to resolve this smell would have to be included on the
+    # :HappeningOffset: class which would overload it somewhat.  It may be
+    # worth creating a separate decorator for these offset :Window: objects
+    # within :Container:s rather than recycling the existing :OffsetHappening:.
     def window_schedulers(starting_offset, context, opts)
       windows.map do |window|
         window.scheduler(starting_offset + window.offset, context, opts)
