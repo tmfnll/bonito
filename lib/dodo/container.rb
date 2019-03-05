@@ -30,8 +30,14 @@ module Dodo
       self
     end
 
-    def scheduler(distribution, context, opts = {})
-      ContainerScheduler.new self, distribution, context, opts
+    def scheduler(starting_offset, context, opts = {})
+      ContainerScheduler.new self, starting_offset, context, opts
+    end
+
+    def window_schedulers(starting_offset, context, opts)
+      windows.map do |window|
+        window.scheduler(starting_offset + window.offset, context, opts)
+      end
     end
 
     private
@@ -49,12 +55,10 @@ module Dodo
     def initialize(container, starting_offset, context, opts = {})
       super
       @moment_heap = Containers::MinHeap.new []
-      @window_schedulers = container.windows.map do |window|
-        window.scheduler(
-          @starting_offset + window.offset, @context, opts
-        ).to_enum :each
-      end
-      @window_schedulers.each { |scheduler| push_moment_from_enum scheduler }
+      @window_schedulers = container.window_schedulers(
+        @starting_offset, @context, opts
+      ).map(&:to_enum)
+      @window_schedulers.each(&method(:push_moment_from_enum))
     end
 
     def each

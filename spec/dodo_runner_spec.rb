@@ -28,8 +28,8 @@ RSpec.describe Dodo::Runner do
   end
   let(:start) { 2.weeks.ago }
   let(:context) { Dodo::Context.new }
-  let(:distribution) { Dodo::Distribution.new start }
-  let(:scheduler) { window.scheduler(distribution, context) }
+  let(:starting_offset) { rand 100 }
+  let(:scheduler) { window.scheduler(starting_offset, context) }
   let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
   let(:runner) { described_class.new decorated_enum, opts }
 
