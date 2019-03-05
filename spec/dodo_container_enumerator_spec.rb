@@ -10,7 +10,11 @@ RSpec.describe Dodo::ContainerScheduler do
 
   let(:starting_offset) { 0.seconds }
 
-  let(:context) { Dodo::Context.new }
+  let(:context) do
+    instance_double(Dodo::Context).tap do |context|
+      allow(context).to receive(:push).and_return(context)
+    end
+  end
 
   let(:moments) { build_list :moment, 5 }
   let(:offset_moments) do
@@ -50,7 +54,9 @@ RSpec.describe Dodo::ContainerScheduler do
 
   let(:window_scheduler) do
     scheduler = window.scheduler(starting_offset, context, opts)
-    allow(scheduler).to(receive(:each)).and_return distributed_moments.to_enum
+    allow(scheduler).to(
+      receive(:to_enum)
+    ).and_return distributed_moments.to_enum
     scheduler
   end
 
@@ -58,7 +64,7 @@ RSpec.describe Dodo::ContainerScheduler do
     scheduler = another_window.scheduler(starting_offset + after, context, opts)
     allow(
       scheduler
-    ).to receive(:each).and_return more_distributed_moments.to_enum
+    ).to receive(:to_enum).and_return more_distributed_moments.to_enum
     scheduler
   end
 
@@ -71,26 +77,18 @@ RSpec.describe Dodo::ContainerScheduler do
 
   let(:container) do
     allow(Dodo::Window).to receive(:new).and_return(window, another_window)
-    container = Dodo::Container.new
-    container.also after: 0, over: window.duration {}
-    container.also after: after, over: another_window.duration {}
-    container
+    Dodo::Container.new.tap do |container|
+      container.also after: 0, over: window.duration {}
+      container.also after: after, over: another_window.duration {}
+    end
   end
 
-  let(:distribution) { [starting_offset].to_enum }
-
   let(:container_scheduler) do
-    Dodo::ContainerScheduler.new container, distribution, context, opts
+    Dodo::ContainerScheduler.new container, starting_offset, context, opts
   end
 
   describe '#each' do
-    subject { container_scheduler.each }
-
-    context 'without a block provided' do
-      it 'should return an enumerator' do
-        expect(subject).to be_an Enumerator
-      end
-    end
+    subject { container_scheduler }
 
     context 'without opts' do
       let(:expected_moments) do
@@ -99,22 +97,22 @@ RSpec.describe Dodo::ContainerScheduler do
 
       it 'should provide any opts to the underlying window schedulers' do
         expect(window).to receive(:scheduler).with(
-          satisfy { |scheduler| scheduler.next == starting_offset },
-          context, opts
+          starting_offset, context, opts
         )
         subject
       end
 
       it 'should yield the expected number of moments' do
-        expect(subject.to_a.size).to eq expected_moments.size
+        expect(subject.count).to eq expected_moments.size
       end
+
       it 'should yield all moments' do
         expected = Set[*expected_moments.map(&:__getobj__)]
         actual = Set[*subject(&:__getobj__)]
         expect(actual).to eq expected
       end
       it 'should yield offset moments in chronological order' do
-        expect(subject.to_a.map(&:offset)).to eq expected_moments.map(&:offset)
+        expect(subject.map(&:offset)).to eq expected_moments.map(&:offset)
       end
       it 'should not store more than 1 moment per window in the heap' do
         subject.each do
