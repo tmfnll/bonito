@@ -130,8 +130,6 @@ module Dodo # :nodoc:
       WindowScheduler.new self, starting_offset, context, opts
     end
 
-    def distribution; end
-
     def use(*happenings)
       happenings.each { |happening| send :<<, happening }
       self
@@ -163,30 +161,16 @@ module Dodo # :nodoc:
 
   class WindowScheduler < Scheduler # :nodoc:
     def initialize(window, starting_offset, parent_context, opts = {})
-      context = parent_context.push
-      super(window, starting_offset, context, opts)
+      super window, starting_offset, parent_context.push, opts
+      @distribution = Distribution.new @starting_offset, window, opts
     end
 
     def each
-      window.happenings.zip(distribution) do |happening, offset|
-        happening.scheduler(offset, @context, @opts).map do |moment|
+      @distribution.each do |happening, offset|
+        happening.scheduler(offset, @context, @opts).each do |moment|
           yield moment
         end
       end
-    end
-
-    def stretch
-      @stretch ||= @opts.fetch(:scale) { @opts.fetch(:stretch) { 1 } }
-    end
-
-    private
-
-    def distribution
-      Distribution.new(@starting_offset, window, stretch: stretch)
-    end
-
-    def window
-      @happening
     end
   end
 
@@ -202,7 +186,7 @@ module Dodo # :nodoc:
     def each
       @window.happenings.zip(generate_offsets).reduce(0) do |consumed, zipped|
         happening, offset = zipped
-        yield @start + (@stretch * (offset + consumed))
+        yield happening, @start + (@stretch * (offset + consumed))
         consumed + happening.duration
       end
     end

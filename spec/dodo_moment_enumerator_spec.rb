@@ -3,18 +3,13 @@
 require 'rspec'
 RSpec.describe Dodo::MomentScheduler do
   let(:block) { -> { true } }
-  let(:distribution) { double }
+  let(:starting_offset) { rand 100 }
   let(:stretch) { 2 }
   let(:opts) { { stretch: stretch } }
   let(:moment) { Dodo::Moment.new(&block) }
   let(:context) { Dodo::Context.new }
   let(:scheduler) do
-    Dodo::MomentScheduler.new moment, distribution, context, opts
-  end
-  let(:dist_next) { rand 10 }
-
-  before do
-    allow(distribution).to receive(:next).and_return(dist_next)
+    Dodo::MomentScheduler.new moment, starting_offset, context, opts
   end
 
   describe '#initialize' do
@@ -26,12 +21,6 @@ RSpec.describe Dodo::MomentScheduler do
     end
   end
   describe '#each' do
-    context 'without a block' do
-      subject { scheduler.each }
-      it 'should return an Enumerator' do
-        expect(subject).to be_an Enumerator
-      end
-    end
     context 'with a block' do
       subject { scheduler }
       it 'should yield exactly once' do
@@ -42,9 +31,9 @@ RSpec.describe Dodo::MomentScheduler do
           have_attributes(__getobj__: moment)
         )
       end
-      it 'should offset these moments according to the distribution' do
+      it 'should offset the moment by the starting offset' do
         expect { |b| subject.each(&b) }.to yield_with_args(
-          have_attributes(offset: dist_next)
+          have_attributes(offset: starting_offset)
         )
       end
     end

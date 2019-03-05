@@ -26,39 +26,16 @@ RSpec.describe Dodo::WindowScheduler do
   end
 
   let(:scale_opts) { {} }
+  let(:stretch) { scale_opts.fetch(:stretch) { 1 } }
 
   let(:starting_offset) { rand(10).days }
   let(:context) { Dodo::Context.new }
-  let(:parent_distribution) { [starting_offset].to_enum }
   let(:scheduler) do
-    described_class.new window, parent_distribution, context, scale_opts
+    described_class.new window, starting_offset, context, scale_opts
   end
 
   before do
     allow(SecureRandom).to receive(:random_number).and_return(*random_numbers)
-  end
-
-  describe '#stretch' do
-    subject { scheduler.stretch }
-    context 'without opts' do
-      it 'should have a default value of 1' do
-        expect(subject).to eq 1
-      end
-    end
-    context 'with a stretch param passed in the scale_opts hash' do
-      let(:stretch) { rand 7 + rand }
-      let(:scale_opts) { { stretch: stretch } }
-      it 'should return the value of the stretch opt' do
-        expect(subject).to eq stretch
-      end
-      context 'with a scale param passed in the scaled_opts hash' do
-        let(:scale) { rand 7 + rand }
-        let(:scale_opts) { { scale: scale, stretch: stretch } }
-        it 'should return the value of the scale opt' do
-          expect(subject).to eq scale
-        end
-      end
-    end
   end
 
   describe '#each' do
@@ -78,7 +55,7 @@ RSpec.describe Dodo::WindowScheduler do
         it 'should yield happenings within a range equal to that of the
             stretched duration' do
           expect(subject.last.offset - subject.first.offset).to eq(
-            (window.unused_duration - random_numbers[2]) * scheduler.stretch
+            (window.unused_duration - random_numbers[2]) * stretch
           )
         end
 
@@ -87,7 +64,7 @@ RSpec.describe Dodo::WindowScheduler do
           random_numbers[2..random_numbers.size].each_with_index do |rnd, index|
             expect(subject[index].offset).to eq(
               starting_offset +
-              (scheduler.stretch * (
+              (stretch * (
                 child_window.duration + child_container.duration + rnd
               ))
             )
@@ -107,13 +84,6 @@ RSpec.describe Dodo::WindowScheduler do
     context 'with a stretch parameter provided in scale_opts' do
       let(:stretch) { rand 2..5 }
       let(:scale_opts) { { stretch: stretch } }
-
-      it_behaves_like 'an scheduler of offset moments'
-    end
-
-    context 'with a scale parameter provided in scale_opts' do
-      let(:scale) { rand 2..5 }
-      let(:scale_opts) { { scale: scale } }
 
       it_behaves_like 'an scheduler of offset moments'
     end
