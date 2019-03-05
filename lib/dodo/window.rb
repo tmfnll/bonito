@@ -162,12 +162,12 @@ module Dodo # :nodoc:
   class WindowScheduler < Scheduler # :nodoc:
     def initialize(window, starting_offset, parent_context, opts = {})
       super window, starting_offset, parent_context.push, opts
-      @distribution = Distribution.new @starting_offset, window, opts
+      @distribution = Distribution.new starting_offset, window, opts
     end
 
     def each
       @distribution.each do |happening, offset|
-        happening.scheduler(offset, @context, @opts).each do |moment|
+        happening.scheduler(offset, context, opts).each do |moment|
           yield moment
         end
       end
