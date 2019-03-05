@@ -56,7 +56,7 @@ module Dodo
       super
       @moment_heap = Containers::MinHeap.new []
       @window_schedulers = container.window_schedulers(
-        @starting_offset, @context, opts
+        starting_offset, context, opts
       ).map(&:to_enum)
       @window_schedulers.each(&method(:push_moment_from_enum))
     end

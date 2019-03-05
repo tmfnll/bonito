@@ -55,5 +55,9 @@ module Dodo
       @context = context
       @opts = opts
     end
+
+    private
+
+    attr_reader :happening, :starting_offset, :context, :opts
   end
 end
