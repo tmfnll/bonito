@@ -7,7 +7,7 @@ RSpec.describe Dodo::WindowScheduler do
   let(:moments) { build_list :moment, 3 }
   let(:child_window) { build :window }
   let(:child_container) { build :container }
-  let(:happenings) { [child_window, child_container] + moments }
+  let(:timelines) { [child_window, child_container] + moments }
 
   let(:random_numbers) do
     random_numbers = window.map do |_|
@@ -21,7 +21,7 @@ RSpec.describe Dodo::WindowScheduler do
   let(:window) do
     duration = child_window.duration + child_container.duration + 1.day
     window = build :window, duration: duration
-    happenings.each { |happening| window.use happening }
+    timelines.each { |timeline| window.use timeline }
     window
   end
 
@@ -42,9 +42,9 @@ RSpec.describe Dodo::WindowScheduler do
     subject { scheduler.to_a }
 
     shared_examples 'an scheduler of offset moments' do
-      context 'where the last happening in window.to_a has a
+      context 'where the last timeline in window.to_a has a
                duration of 0' do
-        it 'should return an scheduler of offset happenings' do
+        it 'should return an scheduler of offset timelines' do
           expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
         end
 
@@ -52,14 +52,14 @@ RSpec.describe Dodo::WindowScheduler do
           expect(subject.size).to eq(moments.size)
         end
 
-        it 'should yield happenings within a range equal to that of the
+        it 'should yield timelines within a range equal to that of the
             stretched duration' do
           expect(subject.last.offset - subject.first.offset).to eq(
             (window.unused_duration - random_numbers[2]) * stretch
           )
         end
 
-        it 'should yield happenings offset by the accumulated duration and a
+        it 'should yield timelines offset by the accumulated duration and a
             random value' do
           random_numbers[2..random_numbers.size].each_with_index do |rnd, index|
             expect(subject[index].offset).to eq(
@@ -71,7 +71,7 @@ RSpec.describe Dodo::WindowScheduler do
           end
         end
 
-        it 'should yield happenings in ascending order of offset' do
+        it 'should yield timelines in ascending order of offset' do
           expect(subject.sort).to eq subject
         end
       end
@@ -88,11 +88,11 @@ RSpec.describe Dodo::WindowScheduler do
       it_behaves_like 'an scheduler of offset moments'
     end
 
-    context 'where the only happening with non-zero duration appears last in
+    context 'where the only timeline with non-zero duration appears last in
              window.to_a' do
-      let(:happenings) { moments + [child_window] }
+      let(:timelines) { moments + [child_window] }
 
-      it 'should yield happenings within a range equal to that of the
+      it 'should yield timelines within a range equal to that of the
           unused duration' do
         expect(subject.last.offset - subject.first.offset).to eq(
           random_numbers[-2]

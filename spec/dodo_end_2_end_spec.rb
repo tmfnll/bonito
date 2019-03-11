@@ -130,7 +130,7 @@ RSpec.describe 'End to end' do
     it 'should complete successfully' do
     end
 
-    it 'should add 2 happenings to the top level window' do
+    it 'should add 2 timelines to the top level window' do
       expect(window.to_a.size).to eq 2
     end
 
@@ -143,7 +143,7 @@ RSpec.describe 'End to end' do
       expect(container.to_a.size).to eq 2
     end
 
-    it 'should add a single happening to the first of these window' do
+    it 'should add a single timeline to the first of these window' do
       expect(container.to_a.first.to_a.size).to eq 1
     end
 
@@ -151,7 +151,7 @@ RSpec.describe 'End to end' do
       expect(container.to_a.first.to_a.first).to be_a Dodo::Window
     end
 
-    it 'it should add 5 happenings to this window' do
+    it 'it should add 5 timelines to this window' do
       expect(container.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
@@ -161,7 +161,7 @@ RSpec.describe 'End to end' do
       ).to all(be_a Dodo::Moment)
     end
 
-    it 'should add a single happening to the second of these window' do
+    it 'should add a single timeline to the second of these window' do
       expect(container.to_a.last.to_a.size).to eq 1
     end
 
@@ -169,7 +169,7 @@ RSpec.describe 'End to end' do
       expect(container.to_a.last.to_a.first).to be_a Dodo::Window
     end
 
-    it 'it should add 10 happenings to this window' do
+    it 'it should add 10 timelines to this window' do
       expect(container.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
@@ -184,7 +184,7 @@ RSpec.describe 'End to end' do
       expect(child_window).to be_a Dodo::Window
     end
 
-    it 'should add 10 happenings to this child_window' do
+    it 'should add 10 timelines to this child_window' do
       expect(child_window.to_a.size).to eq 10
     end
 
@@ -265,7 +265,7 @@ RSpec.describe 'End to end' do
     it 'should complete successfully' do
     end
 
-    it 'should add 2 happenings to the top level window' do
+    it 'should add 2 timelines to the top level window' do
       expect(window.to_a.size).to eq 2
     end
 
@@ -278,7 +278,7 @@ RSpec.describe 'End to end' do
       expect(container.to_a.size).to eq 2
     end
 
-    it 'should add a single happening to the first of these window' do
+    it 'should add a single timeline to the first of these window' do
       expect(container.to_a.first.to_a.size).to eq 1
     end
 
@@ -286,7 +286,7 @@ RSpec.describe 'End to end' do
       expect(container.to_a.first.to_a.first).to be_a Dodo::Window
     end
 
-    it 'it should add 5 happenings to this window' do
+    it 'it should add 5 timelines to this window' do
       expect(container.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
@@ -296,7 +296,7 @@ RSpec.describe 'End to end' do
       ).to all(be_a Dodo::Moment)
     end
 
-    it 'should add a single happening to the second of these window' do
+    it 'should add a single timeline to the second of these window' do
       expect(container.to_a.last.to_a.size).to eq 1
     end
 
@@ -304,7 +304,7 @@ RSpec.describe 'End to end' do
       expect(container.to_a.last.to_a.first).to be_a Dodo::Window
     end
 
-    it 'it should add 10 happenings to this window' do
+    it 'it should add 10 timelines to this window' do
       expect(container.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
@@ -319,7 +319,7 @@ RSpec.describe 'End to end' do
       expect(child_window).to be_a Dodo::Window
     end
 
-    it 'should add 10 happenings to this child_window' do
+    it 'should add 10 timelines to this child_window' do
       expect(child_window.to_a.size).to eq 10
     end
 

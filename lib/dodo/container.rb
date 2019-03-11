@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dodo/happening'
+require 'dodo/timeline'
 require 'dodo/window'
 require 'algorithms'
 
@@ -8,8 +8,8 @@ module Dodo
   class ContainerScheduler < Scheduler # :nodoc:
     def initialize(container, starting_offset, context, opts = {})
       super
-      @schedulers = container.map do |happening|
-        happening.schedule(starting_offset, context, opts).to_enum
+      @schedulers = container.map do |timeline|
+        timeline.schedule(starting_offset, context, opts).to_enum
       end
       @heap = LazyMinHeap.new(*@schedulers)
     end
@@ -19,7 +19,7 @@ module Dodo
     end
   end
 
-  class Container < Happening # :nodoc:
+  class Container < Timeline # :nodoc:
     schedule_with ContainerScheduler
 
     def initialize
@@ -34,9 +34,9 @@ module Dodo
       over(over, after: after, &block)
     end
 
-    def use(*happenings, after: 0)
-      happenings.each do |happening|
-        send :<<, OffsetHappening.new(happening, after)
+    def use(*timelines, after: 0)
+      timelines.each do |timeline|
+        send :<<, OffsetTimeline.new(timeline, after)
       end
       self
     end
@@ -48,10 +48,10 @@ module Dodo
 
     private
 
-    def <<(offset_happening)
-      @happenings << offset_happening
+    def <<(offset_timeline)
+      @timelines << offset_timeline
       self.duration = [
-        duration, offset_happening.offset + offset_happening.duration
+        duration, offset_timeline.offset + offset_timeline.duration
       ].max
       self
     end

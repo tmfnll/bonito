@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dodo/happening'
+require 'dodo/timeline'
 require 'dodo/moment'
 require 'securerandom'
 require 'timecop'
@@ -15,8 +15,8 @@ module Dodo # :nodoc:
     # :reek:NestedIterators:
     # Not sure how this can be avoided nicely at the moment
     def each
-      @distribution.each do |happening, offset|
-        happening.scheduler(offset, context, opts).each do |moment|
+      @distribution.each do |timeline, offset|
+        timeline.scheduler(offset, context, opts).each do |moment|
           yield moment
         end
       end
@@ -24,7 +24,7 @@ module Dodo # :nodoc:
   end
 
   # A Window is a data structure with a duration (measured in seconds) that
-  # contains Happenings. A Happening is an instance of either the Moment,
+  # contains Timelines. A Timeline is an instance of either the Moment,
   # Container Window classes.
   #
   # A Window serves to define an interval in which it may be +simulated+ that
@@ -108,7 +108,7 @@ module Dodo # :nodoc:
   # *Note* that the moment from the second Window could easily be evaluated at
   # a simulated time _before_ that at which the moment from the first Window
   # is evaluated.
-  class Window < Happening
+  class Window < Timeline
     schedule_with WindowScheduler
 
     def initialize(duration, parent = nil, &block)
@@ -142,21 +142,21 @@ module Dodo # :nodoc:
       end
     end
 
-    def use(*happenings)
-      happenings.each { |happening| send :<<, happening }
+    def use(*timelines)
+      timelines.each { |timeline| send :<<, timeline }
       self
     end
 
     private
 
-    def <<(happening)
+    def <<(timeline)
       tap do
-        @total_child_duration += happening.duration
+        @total_child_duration += timeline.duration
         if @total_child_duration > duration
           raise WindowDurationExceeded, "#{@total_child_duration} > #{duration}"
         end
 
-        @happenings << happening
+        @timelines << timeline
       end
     end
   end
@@ -182,9 +182,9 @@ module Dodo # :nodoc:
 
     def each
       @window.zip(generate_offsets).reduce(0) do |consumed, zipped|
-        happening, offset = zipped
-        yield happening, @start + (@stretch * (offset + consumed))
-        consumed + happening.duration
+        timeline, offset = zipped
+        yield timeline, @start + (@stretch * (offset + consumed))
+        consumed + timeline.duration
       end
     end
 

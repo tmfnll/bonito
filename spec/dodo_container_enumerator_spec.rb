@@ -19,14 +19,14 @@ RSpec.describe Dodo::ContainerScheduler do
   let(:moments) { build_list :moment, 5 }
   let(:offset_moments) do
     moments.map do |moment|
-      Dodo::OffsetHappening.new(moment, rand(10).days)
+      Dodo::OffsetTimeline.new(moment, rand(10).days)
     end.sort
   end
 
   let(:more_moments) { build_list :moment, 5 }
   let(:more_offset_moments) do
     more_moments.map do |moment|
-      Dodo::OffsetHappening.new(moment, rand(7).days)
+      Dodo::OffsetTimeline.new(moment, rand(7).days)
     end.sort
   end
 
@@ -43,12 +43,12 @@ RSpec.describe Dodo::ContainerScheduler do
 
   let(:distributed_moments) do
     moments.map do |moment|
-      Dodo::OffsetHappening.new moment, rand(10).days
+      Dodo::OffsetTimeline.new moment, rand(10).days
     end.sort
   end
   let(:more_distributed_moments) do
     more_moments.map do |moment|
-      Dodo::OffsetHappening.new moment, rand(7).days + after
+      Dodo::OffsetTimeline.new moment, rand(7).days + after
     end.sort
   end
 
