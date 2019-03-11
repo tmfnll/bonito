@@ -59,28 +59,47 @@ module Dodo
   class ContainerScheduler < Scheduler # :nodoc:
     def initialize(container, starting_offset, context, opts = {})
       super
-      @moment_heap = Containers::MinHeap.new []
       @window_schedulers = container.window_schedulers(
         starting_offset, context, opts
       ).map(&:to_enum)
-      @window_schedulers.each(&method(:push_moment_from_enum))
+      @heap = LazyMinHeap.new(*@window_schedulers)
     end
 
     def each
-      until @moment_heap.empty?
-        moment = @moment_heap.next_key
-        scheduler = @moment_heap.pop
-        yield moment
-        push_moment_from_enum scheduler
-      end
+      @heap.each { |moment| yield moment }
+    end
+  end
+
+  class LazyMinHeap # :nodoc:
+    include Enumerable
+
+    def initialize(*sorted_enums)
+      @heap = Containers::MinHeap.new []
+      @enums = Set[*sorted_enums]
+      @enums.each(&method(:push_from_enum))
+    end
+
+    def pop
+      moment = @heap.next_key
+      enum = @heap.pop
+      push_from_enum enum
+      moment
+    end
+
+    def empty?
+      @enums.empty? && @heap.empty?
+    end
+
+    def each
+      yield pop until empty?
     end
 
     private
 
-    def push_moment_from_enum(scheduler)
-      @moment_heap.push scheduler.next, scheduler
+    def push_from_enum(enum)
+      @heap.push enum.next, enum
     rescue StopIteration
-      # ignore
+      @enums.delete enum
     end
   end
 end
