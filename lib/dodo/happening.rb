@@ -27,6 +27,10 @@ module Dodo
     def <=>(other)
       offset <=> other.offset
     end
+
+    def schedule(starting_offset, context, opts = {})
+      __getobj__.scheduler(starting_offset + offset, context, opts)
+    end
   end
 
   class ContextualMoment < OffsetHappening # :nodoc:
