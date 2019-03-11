@@ -131,61 +131,61 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add 2 happenings to the top level window' do
-      expect(window.happenings.size).to eq 2
+      expect(window.to_a.size).to eq 2
     end
 
-    let(:container) { window.happenings.first }
+    let(:container) { window.to_a.first }
     it 'should first add a container to the top level window' do
       expect(container).to be_a Dodo::Container
     end
 
     it 'should add two windows to the container' do
-      expect(container.windows.size).to eq 2
+      expect(container.to_a.size).to eq 2
     end
 
     it 'should add a single happening to the first of these window' do
-      expect(container.windows.first.happenings.size).to eq 1
+      expect(container.to_a.first.to_a.size).to eq 1
     end
 
     it 'should add a window to the first of these windows' do
-      expect(container.windows.first.happenings.first).to be_a Dodo::Window
+      expect(container.to_a.first.to_a.first).to be_a Dodo::Window
     end
 
     it 'it should add 5 happenings to this window' do
-      expect(container.windows.first.happenings.first.happenings.size).to eq 5
+      expect(container.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
     it 'it should add only moments to this window' do
       expect(
-        container.windows.first.happenings.first.happenings
+        container.to_a.first.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
     it 'should add a single happening to the second of these window' do
-      expect(container.windows.last.happenings.size).to eq 1
+      expect(container.to_a.last.to_a.size).to eq 1
     end
 
     it 'should add a window to the second of these windows' do
-      expect(container.windows.last.happenings.first).to be_a Dodo::Window
+      expect(container.to_a.last.to_a.first).to be_a Dodo::Window
     end
 
     it 'it should add 10 happenings to this window' do
-      expect(container.windows.last.happenings.first.happenings.size).to eq 10
+      expect(container.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
     it 'it should add only moments to this window' do
       expect(
-        container.windows.last.happenings.first.happenings
+        container.to_a.last.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
-    let(:child_window) { window.happenings.last }
+    let(:child_window) { window.to_a.last }
     it 'should then add a window to the top level window' do
       expect(child_window).to be_a Dodo::Window
     end
 
     it 'should add 10 happenings to this child_window' do
-      expect(child_window.happenings.size).to eq 10
+      expect(child_window.to_a.size).to eq 10
     end
 
     it 'should create 5 authors' do
@@ -266,61 +266,61 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add 2 happenings to the top level window' do
-      expect(window.happenings.size).to eq 2
+      expect(window.to_a.size).to eq 2
     end
 
-    let(:container) { window.happenings.first }
+    let(:container) { window.to_a.first }
     it 'should first add a container to the top level window' do
       expect(container).to be_a Dodo::Container
     end
 
     it 'should add two windows to the container' do
-      expect(container.windows.size).to eq 2
+      expect(container.to_a.size).to eq 2
     end
 
     it 'should add a single happening to the first of these window' do
-      expect(container.windows.first.happenings.size).to eq 1
+      expect(container.to_a.first.to_a.size).to eq 1
     end
 
     it 'should add a window to the first of these windows' do
-      expect(container.windows.first.happenings.first).to be_a Dodo::Window
+      expect(container.to_a.first.to_a.first).to be_a Dodo::Window
     end
 
     it 'it should add 5 happenings to this window' do
-      expect(container.windows.first.happenings.first.happenings.size).to eq 5
+      expect(container.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
     it 'it should add only moments to this window' do
       expect(
-        container.windows.first.happenings.first.happenings
+        container.to_a.first.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
     it 'should add a single happening to the second of these window' do
-      expect(container.windows.last.happenings.size).to eq 1
+      expect(container.to_a.last.to_a.size).to eq 1
     end
 
     it 'should add a window to the second of these windows' do
-      expect(container.windows.last.happenings.first).to be_a Dodo::Window
+      expect(container.to_a.last.to_a.first).to be_a Dodo::Window
     end
 
     it 'it should add 10 happenings to this window' do
-      expect(container.windows.last.happenings.first.happenings.size).to eq 10
+      expect(container.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
     it 'it should add only moments to this window' do
       expect(
-        container.windows.last.happenings.first.happenings
+        container.to_a.last.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
-    let(:child_window) { window.happenings.last }
+    let(:child_window) { window.to_a.last }
     it 'should then add a window to the top level window' do
       expect(child_window).to be_a Dodo::Window
     end
 
     it 'should add 10 happenings to this child_window' do
-      expect(child_window.happenings.size).to eq 10
+      expect(child_window.to_a.size).to eq 10
     end
 
     it 'should create 5 authors' do

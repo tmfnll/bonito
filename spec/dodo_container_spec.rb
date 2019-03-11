@@ -21,13 +21,13 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'an appender of windows' do
-    it 'should append to the windows array' do
-      expect { subject }.to change { container.windows.size }.by 1
+  shared_examples 'an appender of happenings' do
+    it 'should append to the happenings array' do
+      expect { subject }.to change { container.to_a.size }.by 1
     end
 
-    it 'should append the window provided to the windows array' do
-      expect(subject.windows.last).to eq offset_window
+    it 'should append the window provided to the happenings array' do
+      expect(subject.to_a.last).to eq offset_window
     end
 
     it 'should return the container itself' do
@@ -35,11 +35,11 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'a method that allows additional windows be ' \
+  shared_examples 'a method that allows additional happenings be ' \
                   'added to a container' do
     context 'when passed a single OffsetHappening as an argument' do
       context 'with a newly initialized container' do
-        it_behaves_like 'an appender of windows'
+        it_behaves_like 'an appender of happenings'
 
         it 'should update the container duration to that of the
             appended window' do
@@ -56,7 +56,7 @@ RSpec.describe Dodo::Container do
           allow(container).to receive(:duration).and_return(3.weeks)
         end
 
-        it_behaves_like 'an appender of windows'
+        it_behaves_like 'an appender of happenings'
 
         it 'should not change the duration of the container' do
           expect { subject }.not_to(change { container.duration })
@@ -68,7 +68,7 @@ RSpec.describe Dodo::Container do
 
         let(:offset) { duration + 1.week }
 
-        it_behaves_like 'an appender of windows'
+        it_behaves_like 'an appender of happenings'
 
         it 'should change the duration of the container to the sum of the ' \
            'appended window and its offset' do
@@ -89,7 +89,7 @@ RSpec.describe Dodo::Container do
       allow(Dodo::Window).to receive(:new).and_return(window)
     end
     it_behaves_like(
-      'a method that allows additional windows be added to a container'
+      'a method that allows additional happenings be added to a container'
     )
   end
 
@@ -104,7 +104,7 @@ RSpec.describe Dodo::Container do
 
     context 'with an integer provided' do
       it_behaves_like(
-        'a method that allows additional windows be added to a container'
+        'a method that allows additional happenings be added to a container'
       )
     end
   end
@@ -113,24 +113,26 @@ RSpec.describe Dodo::Container do
     context 'with a pre-baked window provided' do
       subject { container.use window, after: offset }
       it_behaves_like(
-        'a method that allows additional windows be added to a container'
+        'a method that allows additional happenings be added to a container'
       )
     end
 
-    context 'with many pre-baked windows provided' do
-      let(:windows) { build_list :window, 3 }
-      let(:offset_windows) do
-        windows.map { |window| Dodo::OffsetHappening.new window, offset }
+    context 'with many pre-baked happenings provided' do
+      let(:happenings) { build_list :window, 3 }
+      let(:offset_happenings) do
+        happenings.map { |window| Dodo::OffsetHappening.new window, offset }
       end
 
-      subject { container.use(*windows, after: offset) }
+      subject { container.use(*happenings, after: offset) }
 
-      it 'should append to the windows array' do
-        expect { subject }.to change { container.windows.size }.by windows.size
+      it 'should append to the happenings array' do
+        expect { subject }.to change {
+          container.to_a.size
+        }.by happenings.size
       end
 
-      it 'should append the window provided to the windows array' do
-        expect(subject.windows.last(windows.size)).to eq offset_windows
+      it 'should append the window provided to the happenings array' do
+        expect(subject.to_a.last(happenings.size)).to eq offset_happenings
       end
 
       it 'should return the container itself' do
@@ -153,12 +155,12 @@ RSpec.describe Dodo::Container do
       allow(Dodo::Window).to receive(:new).and_return(window)
     end
 
-    it 'should append to the windows array' do
-      expect { subject }.to change { container.windows.size }.by times
+    it 'should append to the happenings array' do
+      expect { subject }.to change { container.to_a.size }.by times
     end
 
-    it 'should append the window provided to the windows array' do
-      expect(subject.windows.last(times)).to eq([offset_window] * 3)
+    it 'should append the window provided to the happenings array' do
+      expect(subject.to_a.last(times)).to eq([offset_window] * 3)
     end
 
     it 'should return the container itself' do

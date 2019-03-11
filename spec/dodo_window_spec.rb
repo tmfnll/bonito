@@ -158,7 +158,7 @@ RSpec.describe Dodo::Window do
       end
 
       it 'should return a window with two happenings' do
-        expect(subject.happenings.size).to be k
+        expect(subject.to_a.size).to be k
       end
     end
   end
@@ -203,7 +203,7 @@ RSpec.describe Dodo::Window do
 
     it 'should append the container to the happening array' do
       expect { subject }.to change {
-        window.happenings
+        window.to_a
       }.from([]).to([container])
     end
 

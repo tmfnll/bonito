@@ -2,6 +2,8 @@
 
 module Dodo
   class Happening # :nodoc:
+    include Enumerable
+
     class << self
       attr_reader :scheduler_class
 
@@ -11,8 +13,18 @@ module Dodo
     end
 
     attr_reader :duration
+
     def initialize(duration)
       @duration = duration
+      @happenings = []
+    end
+
+    def each
+      @happenings.each { |happening| yield happening }
+    end
+
+    def size
+      @happenings.size
     end
 
     def scheduler(starting_offset, context, opts = {})
