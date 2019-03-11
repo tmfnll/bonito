@@ -2,10 +2,21 @@
 
 module Dodo
   class Happening # :nodoc:
-    attr_reader :duration
+    class << self
+      attr_reader :scheduler_class
 
+      def schedule_with(klass)
+        @scheduler_class = klass
+      end
+    end
+
+    attr_reader :duration
     def initialize(duration)
       @duration = duration
+    end
+
+    def scheduler(starting_offset, context, opts = {})
+      self.class.scheduler_class.new self, starting_offset, context, opts
     end
 
     private
