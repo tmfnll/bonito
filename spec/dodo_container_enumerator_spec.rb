@@ -114,13 +114,6 @@ RSpec.describe Dodo::ContainerScheduler do
       it 'should yield offset moments in chronological order' do
         expect(subject.map(&:offset)).to eq expected_moments.map(&:offset)
       end
-      it 'should not store more than 1 moment per window in the heap' do
-        subject.each do
-          expect(
-            container_scheduler.instance_variable_get(:@moment_heap).size
-          ).to be <= 2
-        end
-      end
     end
   end
 end
