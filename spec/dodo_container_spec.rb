@@ -9,7 +9,7 @@ RSpec.describe Dodo::Container do
   let(:window_duration) { 1.week }
   let(:window) { Dodo::Window.new window_duration, &block }
   let(:offset) { 3.days }
-  let(:offset_window) { Dodo::OffsetHappening.new window, offset }
+  let(:offset_window) { Dodo::OffsetTimeline.new window, offset }
 
   describe '#initialize' do
     subject { container }
@@ -21,12 +21,12 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'an appender of happenings' do
-    it 'should append to the happenings array' do
+  shared_examples 'an appender of timelines' do
+    it 'should append to the timelines array' do
       expect { subject }.to change { container.to_a.size }.by 1
     end
 
-    it 'should append the window provided to the happenings array' do
+    it 'should append the window provided to the timelines array' do
       expect(subject.to_a.last).to eq offset_window
     end
 
@@ -35,11 +35,11 @@ RSpec.describe Dodo::Container do
     end
   end
 
-  shared_examples 'a method that allows additional happenings be ' \
+  shared_examples 'a method that allows additional timelines be ' \
                   'added to a container' do
-    context 'when passed a single OffsetHappening as an argument' do
+    context 'when passed a single OffsetTimeline as an argument' do
       context 'with a newly initialized container' do
-        it_behaves_like 'an appender of happenings'
+        it_behaves_like 'an appender of timelines'
 
         it 'should update the container duration to that of the
             appended window' do
@@ -56,7 +56,7 @@ RSpec.describe Dodo::Container do
           allow(container).to receive(:duration).and_return(3.weeks)
         end
 
-        it_behaves_like 'an appender of happenings'
+        it_behaves_like 'an appender of timelines'
 
         it 'should not change the duration of the container' do
           expect { subject }.not_to(change { container.duration })
@@ -68,7 +68,7 @@ RSpec.describe Dodo::Container do
 
         let(:offset) { duration + 1.week }
 
-        it_behaves_like 'an appender of happenings'
+        it_behaves_like 'an appender of timelines'
 
         it 'should change the duration of the container to the sum of the ' \
            'appended window and its offset' do
@@ -89,7 +89,7 @@ RSpec.describe Dodo::Container do
       allow(Dodo::Window).to receive(:new).and_return(window)
     end
     it_behaves_like(
-      'a method that allows additional happenings be added to a container'
+      'a method that allows additional timelines be added to a container'
     )
   end
 
@@ -104,7 +104,7 @@ RSpec.describe Dodo::Container do
 
     context 'with an integer provided' do
       it_behaves_like(
-        'a method that allows additional happenings be added to a container'
+        'a method that allows additional timelines be added to a container'
       )
     end
   end
@@ -113,26 +113,26 @@ RSpec.describe Dodo::Container do
     context 'with a pre-baked window provided' do
       subject { container.use window, after: offset }
       it_behaves_like(
-        'a method that allows additional happenings be added to a container'
+        'a method that allows additional timelines be added to a container'
       )
     end
 
-    context 'with many pre-baked happenings provided' do
-      let(:happenings) { build_list :window, 3 }
-      let(:offset_happenings) do
-        happenings.map { |window| Dodo::OffsetHappening.new window, offset }
+    context 'with many pre-baked timelines provided' do
+      let(:timelines) { build_list :window, 3 }
+      let(:offset_timelines) do
+        timelines.map { |window| Dodo::OffsetTimeline.new window, offset }
       end
 
-      subject { container.use(*happenings, after: offset) }
+      subject { container.use(*timelines, after: offset) }
 
-      it 'should append to the happenings array' do
+      it 'should append to the timelines array' do
         expect { subject }.to change {
           container.to_a.size
-        }.by happenings.size
+        }.by timelines.size
       end
 
-      it 'should append the window provided to the happenings array' do
-        expect(subject.to_a.last(happenings.size)).to eq offset_happenings
+      it 'should append the window provided to the timelines array' do
+        expect(subject.to_a.last(timelines.size)).to eq offset_timelines
       end
 
       it 'should return the container itself' do
@@ -155,11 +155,11 @@ RSpec.describe Dodo::Container do
       allow(Dodo::Window).to receive(:new).and_return(window)
     end
 
-    it 'should append to the happenings array' do
+    it 'should append to the timelines array' do
       expect { subject }.to change { container.to_a.size }.by times
     end
 
-    it 'should append the window provided to the happenings array' do
+    it 'should append the window provided to the timelines array' do
       expect(subject.to_a.last(times)).to eq([offset_window] * 3)
     end
 

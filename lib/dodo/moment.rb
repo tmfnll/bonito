@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'dodo/happening'
+require 'dodo/timeline'
 
 module Dodo
   class MomentScheduler < Scheduler # :nodoc:
     def each
-      yield ContextualMoment.new(happening, starting_offset, context)
+      yield ContextualMoment.new(timeline, starting_offset, context)
     end
   end
 
-  class Moment < Happening # :nodoc:
+  class Moment < Timeline # :nodoc:
     schedule_with MomentScheduler
 
     def initialize(&block)

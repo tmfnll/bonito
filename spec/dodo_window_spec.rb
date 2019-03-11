@@ -15,8 +15,8 @@ RSpec.describe Dodo::Window do
       expect(subject.duration).to eq duration
     end
 
-    it 'should initialize @happenings as an empty array' do
-      expect(subject.instance_variable_get(:@happenings)).to eq []
+    it 'should initialize @timelines as an empty array' do
+      expect(subject.instance_variable_get(:@timelines)).to eq []
     end
 
     it 'should initialize @total_child_duration as 0' do
@@ -32,55 +32,55 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#<<' do
-    subject { window.use happening }
+    subject { window.use timeline }
 
-    context 'with a happening whose duration is less than that of the window' do
-      let(:happening) { Dodo::Window.new(duration - 1) {} }
+    context 'with a timeline whose duration is less than that of the window' do
+      let(:timeline) { Dodo::Window.new(duration - 1) {} }
 
-      it 'should successfully append the happening' do
-        expect(subject.instance_variable_get(:@happenings)).to eq [happening]
+      it 'should successfully append the timeline' do
+        expect(subject.instance_variable_get(:@timelines)).to eq [timeline]
       end
 
       it 'should increase the @total_child_duration by the ' \
-         'duration of the happening' do
+         'duration of the timeline' do
         expect { subject }.to change {
           window.instance_variable_get :@total_child_duration
-        }.by happening.duration
+        }.by timeline.duration
       end
     end
 
-    context 'with a happening whose duration is greater than
+    context 'with a timeline whose duration is greater than
              that of the window' do
-      let(:happening) { Dodo::Window.new(duration + 1) {} }
+      let(:timeline) { Dodo::Window.new(duration + 1) {} }
 
-      it 'should successfully append the happening' do
+      it 'should successfully append the timeline' do
         expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
       end
     end
   end
 
   describe '#use' do
-    let(:happening_duration) { 1.day }
-    let(:happenings) { build_list :window, 3, duration: happening_duration }
-    subject { window.use(*happenings) }
+    let(:timeline_duration) { 1.day }
+    let(:timelines) { build_list :window, 3, duration: timeline_duration }
+    subject { window.use(*timelines) }
 
-    it 'should successfully append the happenings' do
-      expect(subject.instance_variable_get(:@happenings)).to eq happenings
+    it 'should successfully append the timelines' do
+      expect(subject.instance_variable_get(:@timelines)).to eq timelines
     end
 
     it 'should increase the @total_child_duration by the ' \
-       'duration of the sum of the happening' do
+       'duration of the sum of the timeline' do
       expect { subject }.to change {
         window.instance_variable_get :@total_child_duration
-      }.by(happenings.reduce(0) { |sum, happening| sum + happening.duration })
+      }.by(timelines.reduce(0) { |sum, timeline| sum + timeline.duration })
     end
 
-    context 'with happenings whose duration is greater than
+    context 'with timelines whose duration is greater than
              that of the window' do
 
-      let(:happening_duration) { window.duration }
+      let(:timeline_duration) { window.duration }
 
-      it 'should successfully append the happening' do
+      it 'should successfully append the timeline' do
         expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
       end
     end
@@ -104,7 +104,7 @@ RSpec.describe Dodo::Window do
       subject
     end
 
-    it 'should append the new window to parent@happenings' do
+    it 'should append the new window to parent@timelines' do
       expect(window).to receive(:<<).with(child)
       subject
     end
@@ -129,7 +129,7 @@ RSpec.describe Dodo::Window do
       subject
     end
 
-    it 'should append the new window to window@happenings' do
+    it 'should append the new window to window@timelines' do
       expect(window).to receive(:<<).with(moment)
       subject
     end
@@ -157,7 +157,7 @@ RSpec.describe Dodo::Window do
         expect(subject).to be_a Dodo::Window
       end
 
-      it 'should return a window with two happenings' do
+      it 'should return a window with two timelines' do
         expect(subject.to_a.size).to be k
       end
     end
@@ -201,7 +201,7 @@ RSpec.describe Dodo::Window do
       Dodo::Container.send :remove_method, :called?
     end
 
-    it 'should append the container to the happening array' do
+    it 'should append the container to the timeline array' do
       expect { subject }.to change {
         window.to_a
       }.from([]).to([container])

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dodo
-  class Happening # :nodoc:
+  class Timeline # :nodoc:
     include Enumerable
 
     class << self
@@ -16,15 +16,15 @@ module Dodo
 
     def initialize(duration)
       @duration = duration
-      @happenings = []
+      @timelines = []
     end
 
     def each
-      @happenings.each { |happening| yield happening }
+      @timelines.each { |timeline| yield timeline }
     end
 
     def size
-      @happenings.size
+      @timelines.size
     end
 
     def scheduler(starting_offset, context, opts = {})
@@ -36,11 +36,11 @@ module Dodo
     attr_writer :duration
   end
 
-  class OffsetHappening < SimpleDelegator # :nodoc:
+  class OffsetTimeline < SimpleDelegator # :nodoc:
     attr_reader :offset
-    def initialize(happening, offset)
+    def initialize(timeline, offset)
       @offset = offset
-      super happening
+      super timeline
     end
 
     def ==(other)
@@ -56,7 +56,7 @@ module Dodo
     end
   end
 
-  class ContextualMoment < OffsetHappening # :nodoc:
+  class ContextualMoment < OffsetTimeline # :nodoc:
     def initialize(moment, offset, context)
       @context = context
       super moment, offset
@@ -76,8 +76,8 @@ module Dodo
   class Scheduler # :nodoc:
     include Enumerable
 
-    def initialize(happening, starting_offset, context, opts = {})
-      @happening = happening
+    def initialize(timeline, starting_offset, context, opts = {})
+      @timeline = timeline
       @starting_offset = starting_offset
       @context = context
       @opts = opts
@@ -85,6 +85,6 @@ module Dodo
 
     private
 
-    attr_reader :happening, :starting_offset, :context, :opts
+    attr_reader :timeline, :starting_offset, :context, :opts
   end
 end
