@@ -6,6 +6,23 @@ require 'securerandom'
 require 'timecop'
 
 module Dodo # :nodoc:
+  class WindowScheduler < Scheduler # :nodoc:
+    def initialize(window, starting_offset, parent_context, opts = {})
+      super window, starting_offset, parent_context.push, opts
+      @distribution = Distribution.new starting_offset, window, opts
+    end
+
+    # :reek:NestedIterators:
+    # Not sure how this can be avoided nicely at the moment
+    def each
+      @distribution.each do |happening, offset|
+        happening.scheduler(offset, context, opts).each do |moment|
+          yield moment
+        end
+      end
+    end
+  end
+
   # A Window is a data structure with a duration (measured in seconds) that
   # contains Happenings. A Happening is an instance of either the Moment,
   # Container Window classes.
@@ -94,6 +111,8 @@ module Dodo # :nodoc:
   class Window < Happening
     attr_reader :happenings
 
+    schedule_with WindowScheduler
+
     def initialize(duration, parent = nil, &block)
       @parent = parent
       @happenings = []
@@ -126,10 +145,6 @@ module Dodo # :nodoc:
       end
     end
 
-    def scheduler(starting_offset, context, opts = {}) # :nodoc:
-      WindowScheduler.new self, starting_offset, context, opts
-    end
-
     def use(*happenings)
       happenings.each { |happening| send :<<, happening }
       self
@@ -157,23 +172,6 @@ module Dodo # :nodoc:
 
   def self.over(duration, &block)
     Window.new duration, &block
-  end
-
-  class WindowScheduler < Scheduler # :nodoc:
-    def initialize(window, starting_offset, parent_context, opts = {})
-      super window, starting_offset, parent_context.push, opts
-      @distribution = Distribution.new starting_offset, window, opts
-    end
-
-    # :reek:NestedIterators:
-    # Not sure how this can be avoided nicely at the moment
-    def each
-      @distribution.each do |happening, offset|
-        happening.scheduler(offset, context, opts).each do |moment|
-          yield moment
-        end
-      end
-    end
   end
 
   class Distribution # :nodoc:

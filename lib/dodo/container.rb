@@ -5,7 +5,23 @@ require 'dodo/window'
 require 'algorithms'
 
 module Dodo
+  class ContainerScheduler < Scheduler # :nodoc:
+    def initialize(container, starting_offset, context, opts = {})
+      super
+      @window_schedulers = container.window_schedulers(
+        starting_offset, context, opts
+      ).map(&:to_enum)
+      @heap = LazyMinHeap.new(*@window_schedulers)
+    end
+
+    def each
+      @heap.each { |moment| yield moment }
+    end
+  end
+
   class Container < Happening # :nodoc:
+    schedule_with ContainerScheduler
+
     attr_reader :windows
     def initialize
       @windows = []
@@ -30,10 +46,6 @@ module Dodo
       self
     end
 
-    def scheduler(starting_offset, context, opts = {})
-      ContainerScheduler.new self, starting_offset, context, opts
-    end
-
     def window_schedulers(starting_offset, context, opts = {})
       windows.map { |window| window.scheduler(starting_offset, context, opts) }
     end
@@ -46,20 +58,6 @@ module Dodo
         duration, offset_window.offset + offset_window.duration
       ].max
       self
-    end
-  end
-
-  class ContainerScheduler < Scheduler # :nodoc:
-    def initialize(container, starting_offset, context, opts = {})
-      super
-      @window_schedulers = container.window_schedulers(
-        starting_offset, context, opts
-      ).map(&:to_enum)
-      @heap = LazyMinHeap.new(*@window_schedulers)
-    end
-
-    def each
-      @heap.each { |moment| yield moment }
     end
   end
 
