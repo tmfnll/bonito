@@ -109,13 +109,10 @@ module Dodo # :nodoc:
   # a simulated time _before_ that at which the moment from the first Window
   # is evaluated.
   class Window < Happening
-    attr_reader :happenings
-
     schedule_with WindowScheduler
 
     def initialize(duration, parent = nil, &block)
       @parent = parent
-      @happenings = []
       @total_child_duration = 0
       super duration
       instance_eval(&block)
@@ -184,7 +181,7 @@ module Dodo # :nodoc:
     end
 
     def each
-      @window.happenings.zip(generate_offsets).reduce(0) do |consumed, zipped|
+      @window.zip(generate_offsets).reduce(0) do |consumed, zipped|
         happening, offset = zipped
         yield happening, @start + (@stretch * (offset + consumed))
         consumed + happening.duration
@@ -198,7 +195,7 @@ module Dodo # :nodoc:
     end
 
     def size
-      @window.happenings.size
+      @window.size
     end
 
     def generate_offsets

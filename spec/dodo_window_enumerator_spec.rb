@@ -10,7 +10,7 @@ RSpec.describe Dodo::WindowScheduler do
   let(:happenings) { [child_window, child_container] + moments }
 
   let(:random_numbers) do
-    random_numbers = window.send(:happenings).map do |_|
+    random_numbers = window.map do |_|
       rand(window.unused_duration)
     end.sort
     2.times { random_numbers.pop }
@@ -42,7 +42,7 @@ RSpec.describe Dodo::WindowScheduler do
     subject { scheduler.to_a }
 
     shared_examples 'an scheduler of offset moments' do
-      context 'where the last happening in window.happenings has a
+      context 'where the last happening in window.to_a has a
                duration of 0' do
         it 'should return an scheduler of offset happenings' do
           expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
@@ -89,7 +89,7 @@ RSpec.describe Dodo::WindowScheduler do
     end
 
     context 'where the only happening with non-zero duration appears last in
-             window.happenings' do
+             window.to_a' do
       let(:happenings) { moments + [child_window] }
 
       it 'should yield happenings within a range equal to that of the

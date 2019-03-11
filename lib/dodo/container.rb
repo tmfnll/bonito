@@ -8,10 +8,10 @@ module Dodo
   class ContainerScheduler < Scheduler # :nodoc:
     def initialize(container, starting_offset, context, opts = {})
       super
-      @window_schedulers = container.window_schedulers(
-        starting_offset, context, opts
-      ).map(&:to_enum)
-      @heap = LazyMinHeap.new(*@window_schedulers)
+      @schedulers = container.map do |happening|
+        happening.schedule(starting_offset, context, opts).to_enum
+      end
+      @heap = LazyMinHeap.new(*@schedulers)
     end
 
     def each
@@ -22,9 +22,7 @@ module Dodo
   class Container < Happening # :nodoc:
     schedule_with ContainerScheduler
 
-    attr_reader :windows
     def initialize
-      @windows = []
       super 0
     end
 
@@ -36,8 +34,10 @@ module Dodo
       over(over, after: after, &block)
     end
 
-    def use(*windows, after: 0)
-      windows.each { |window| send :<<, OffsetHappening.new(window, after) }
+    def use(*happenings, after: 0)
+      happenings.each do |happening|
+        send :<<, OffsetHappening.new(happening, after)
+      end
       self
     end
 
@@ -46,16 +46,12 @@ module Dodo
       self
     end
 
-    def window_schedulers(starting_offset, context, opts = {})
-      windows.map { |window| window.scheduler(starting_offset, context, opts) }
-    end
-
     private
 
-    def <<(offset_window)
-      @windows << offset_window
+    def <<(offset_happening)
+      @happenings << offset_happening
       self.duration = [
-        duration, offset_window.offset + offset_window.duration
+        duration, offset_happening.offset + offset_happening.duration
       ].max
       self
     end
