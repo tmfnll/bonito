@@ -156,7 +156,7 @@ module Dodo # :nodoc:
           raise WindowDurationExceeded, "#{@total_child_duration} > #{duration}"
         end
 
-        @timelines << timeline
+        super timeline
       end
     end
   end

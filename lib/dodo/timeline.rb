@@ -34,6 +34,10 @@ module Dodo
     private
 
     attr_writer :duration
+
+    def <<(timeline)
+      @timelines << timeline
+    end
   end
 
   class OffsetTimeline < SimpleDelegator # :nodoc:

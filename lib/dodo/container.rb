@@ -49,7 +49,7 @@ module Dodo
     private
 
     def <<(offset_timeline)
-      @timelines << offset_timeline
+      super offset_timeline
       self.duration = [
         duration, offset_timeline.offset + offset_timeline.duration
       ].max
