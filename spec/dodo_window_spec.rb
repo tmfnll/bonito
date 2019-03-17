@@ -29,6 +29,21 @@ RSpec.describe Dodo::Window do
       end
       uninitialized.send(:initialize, duration, &block)
     end
+
+    context 'without a block provided' do
+      subject { Dodo::Window.new duration }
+      it 'should set duration' do
+        expect(subject.duration).to eq duration
+      end
+
+      it 'should initialize @timelines as an empty array' do
+        expect(subject.instance_variable_get(:@timelines)).to eq []
+      end
+
+      it 'should initialize @total_child_duration as 0' do
+        expect(subject.instance_variable_get(:@total_child_duration)).to eq 0
+      end
+    end
   end
 
   describe '#<<' do
@@ -194,11 +209,6 @@ RSpec.describe Dodo::Window do
 
     before do
       allow(Dodo::Container).to receive(:new).and_return container
-      Dodo::Container.send(:define_method, :called?) {}
-    end
-
-    after do
-      Dodo::Container.send :remove_method, :called?
     end
 
     it 'should append the container to the timeline array' do
@@ -208,18 +218,11 @@ RSpec.describe Dodo::Window do
     end
 
     it 'should evaluate the block passed' do
-      expect(container).to receive(:called?).with no_args
+      expect(Dodo::Container).to receive(:new) do |&blk|
+        expect(blk).to eq block
+        container
+      end
       subject
-    end
-
-    it 'should evaluate the block passed within the context of the created
-        container' do
-      expect(container).to receive(:instance_eval)
-      subject
-    end
-
-    it 'should return a new Container object' do
-      expect(subject).to eq container
     end
   end
 end

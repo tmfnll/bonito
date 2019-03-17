@@ -22,8 +22,9 @@ module Dodo
   class Container < Timeline # :nodoc:
     schedule_with ContainerScheduler
 
-    def initialize
+    def initialize(&block)
       super 0
+      instance_eval(&block) if block_given?
     end
 
     def over(duration, after: 0, &block)

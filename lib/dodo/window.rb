@@ -115,7 +115,7 @@ module Dodo # :nodoc:
       @parent = parent
       @total_child_duration = 0
       super duration
-      instance_eval(&block)
+      instance_eval(&block) if block_given?
     end
 
     def unused_duration
@@ -136,10 +136,7 @@ module Dodo # :nodoc:
     end
 
     def simultaneously(&block)
-      Container.new.tap do |container|
-        container.instance_eval(&block)
-        use container
-      end
+      use Container.new(&block)
     end
 
     def use(*timelines)
