@@ -14,9 +14,27 @@ RSpec.describe Dodo::Container do
   describe '#initialize' do
     subject { container }
 
-    context 'with a block defining a Dodo::Window' do
+    context 'without a block' do
       it 'should have an initial duration of 0' do
         expect(subject.duration).to eq 0
+      end
+    end
+
+    context 'with a block' do
+      let(:allocated) { Dodo::Container.allocate }
+      let(:block) { proc { true } }
+
+      subject { Dodo::Container.new(&block) }
+
+      it 'should have an initial duration of 0' do
+        expect(subject.duration).to eq 0
+      end
+
+      it 'should call instance_eval using the block passed' do
+        expect(allocated).to receive(:instance_eval) do |&blk|
+          expect(blk).to eq block
+        end
+        allocated.send :initialize, &block
       end
     end
   end
