@@ -225,4 +225,77 @@ RSpec.describe Dodo::Window do
       subject
     end
   end
+
+  describe '#+' do
+    let(:window) { build :window }
+    let(:another_window) { build :window }
+
+    subject { window + another_window }
+
+    it 'should return a window' do
+      expect(subject).to be_a Dodo::Window
+    end
+
+    it 'should return a new window whose duration is the sum of the
+        two original window' do
+      expect(subject.duration).to eq(
+        window.duration + another_window.duration
+      )
+    end
+
+    it 'should return a new window whose child window array is a
+        concatenation of the child window arrays of the two original
+        window' do
+      expect(subject.to_a).to eq(window.to_a + another_window.to_a)
+    end
+  end
+
+  describe '#*' do
+    let(:window) { build :window }
+    let(:factor) { rand 1..5 }
+
+    subject { window * factor }
+
+    it 'should return a window' do
+      expect(subject).to be_a Dodo::Window
+    end
+
+    it 'should return a new window whose duration is the product of the original
+        window\'s duration and the factor' do
+      expect(subject.duration).to eq(
+        window.duration * factor
+      )
+    end
+
+    it 'should return a new window whose child window array is that of the
+        original window concatenated with itself factor times' do
+      expect(subject.to_a).to eq(window.to_a * factor)
+    end
+  end
+
+  describe '#**' do
+    let(:window) { build :window }
+    let(:factor) { rand 5 }
+
+    subject { window**factor }
+
+    it 'should return a window' do
+      expect(subject).to be_a Dodo::Window
+    end
+
+    it 'should return a new window consisting of a single timeline' do
+      expect(subject.size).to eq 1
+    end
+
+    it 'should return a new window consisting of a single timeline' do
+      expect(subject.first).to be_a Dodo::Container
+    end
+
+    it 'should return a new window consisting of a single timeline which itself
+        consists of the original window parallelised factor times' do
+      expect(
+        subject.first.instance_variable_get(:@timelines).map(&:__getobj__)
+      ).to eq([window] * factor)
+    end
+  end
 end
