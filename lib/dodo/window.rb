@@ -144,6 +144,25 @@ module Dodo # :nodoc:
       self
     end
 
+    def +(other)
+      Window.new duration + other.duration do
+        use(*(to_a + other.to_a))
+      end
+    end
+
+    def *(other)
+      Window.new(duration * other) do
+        use(*Array.new(other) { entries }.reduce(:+))
+      end
+    end
+
+    def **(other)
+      this = self
+      Window.new(duration) do
+        simultaneously { use(*Array.new(other) { this }) }
+      end
+    end
+
     private
 
     def <<(timeline)
