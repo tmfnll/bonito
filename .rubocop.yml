@@ -5,5 +5,5 @@ AllCops:
 Metrics/BlockLength:
   ExcludedMethods: [
     'describe', 'shared_examples', 'context', 'over', 'simultaneously',
-    'please'
+    'please', 'let',
   ]
