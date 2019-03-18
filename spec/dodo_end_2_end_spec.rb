@@ -101,12 +101,12 @@ RSpec.describe 'End to end' do
       end
     end
   end
+  let(:scaled_window) { window }
 
   let(:logger) { Logger.new STDOUT }
   let(:progress_factory) { Dodo::ProgressBar.factory }
   let(:stretch) { 1 }
   let(:opts) { { stretch: stretch } }
-  let(:distribution) { Dodo::Distribution.new 3.weeks.ago }
   let(:scheduler) { window.scheduler(distribution, context, opts) }
   let(:progress) { progress_factory.call }
   let(:decorated_enum) do
@@ -121,9 +121,9 @@ RSpec.describe 'End to end' do
   let(:comments_by_article) { comments.group_by(&:article) }
 
   subject! do
-    Dodo.run window, starting: 3.weeks.ago,
-                     context: context,
-                     progress_factory: progress_factory, **opts
+    Dodo.run scaled_window, starting: 3.weeks.ago,
+                            context: context,
+                            progress_factory: progress_factory, **opts
   end
 
   context 'without scaling' do
@@ -235,6 +235,152 @@ RSpec.describe 'End to end' do
       diff = comments.last.created_at - articles.first.created_at
       expect(diff).to be <= 5.days
     end
+
+    it 'should create comments over a period of 5 hours' do
+      comments_by_article.each_value do |article_comments|
+        diff = (
+          article_comments.last.created_at - article_comments.first.created_at
+        )
+        expect(diff).to be <= 5.hours
+      end
+    end
+
+    it 'should create all models over the course of a week' do
+      diff = comments.last.created_at - users_and_authors.first.created_at
+      expect(diff).to be <= 1.week
+    end
+
+    it 'should create no models before 3 weeks ago' do
+      expect(users_and_authors.first.created_at).to be >= 3.weeks.ago
+    end
+
+    it 'should create no models after 2 weeks ago' do
+      expect(comments.last.created_at).to be <= 2.weeks.ago
+    end
+  end
+
+  context 'with the window scaled by 2' do
+    let(:factor) { 2 }
+    let(:scaled_window) { window**2 }
+
+    it 'should complete successfully' do
+    end
+
+    it 'should add 2 happenings to the top level window' do
+      expect(window.to_a.size).to eq 2
+    end
+
+    let(:container) { window.to_a.first }
+    it 'should first add a container to the top level window' do
+      expect(container).to be_a Dodo::Container
+    end
+
+    it 'should add two windows to the container' do
+      expect(container.to_a.size).to eq 2
+    end
+
+    it 'should add a single happening to the first of these window' do
+      expect(container.to_a.first.to_a.size).to eq 1
+    end
+
+    it 'should add a window to the first of these windows' do
+      expect(container.to_a.first.to_a.first).to be_a Dodo::Window
+    end
+
+    it 'it should add 5 happenings to this window' do
+      expect(container.to_a.first.to_a.first.to_a.size).to eq 5
+    end
+
+    it 'it should add only moments to this window' do
+      expect(
+        container.to_a.first.to_a.first.to_a
+      ).to all(be_a Dodo::Moment)
+    end
+
+    it 'should add a single happening to the second of these window' do
+      expect(container.to_a.last.to_a.size).to eq 1
+    end
+
+    it 'should add a window to the second of these windows' do
+      expect(container.to_a.last.to_a.first).to be_a Dodo::Window
+    end
+
+    it 'it should add 10 happenings to this window' do
+      expect(container.to_a.last.to_a.first.to_a.size).to eq 10
+    end
+
+    it 'it should add only moments to this window' do
+      expect(
+        container.to_a.last.to_a.first.to_a
+      ).to all(be_a Dodo::Moment)
+    end
+
+    let(:child_window) { window.to_a.last }
+    it 'should then add a window to the top level window' do
+      expect(child_window).to be_a Dodo::Window
+    end
+
+    it 'should add 10 happenings to this child_window' do
+      expect(child_window.to_a.size).to eq 10
+    end
+
+    it 'should create 10 authors' do
+      expect(authors.size).to eq 10
+    end
+
+    it 'should create 20 users' do
+      expect(users.size).to eq 20
+    end
+
+    it 'should create users and authors in order' do
+      expect(users_and_authors.sort_by(&:created_at)).to eq users_and_authors
+    end
+
+    # xit 'should create users and authors over 1 day' do
+    #   diff = (
+    #     users_and_authors.last.created_at - users_and_authors.first.created_at
+    #   )
+    #   expect(diff).to be <= (1.day + 2.hours)
+    # end
+
+    # Certain time based test cases are expected to fail.  The reason why is
+    # best illustrated with a direct reference to the following test case.
+    # By paralellising the `window` using the ** operator we are _effectively_
+    # scheduling the window twice and sorting by offset.  As such, the time
+    # at which the first author is created in one of the parallelised 'versions'
+    # of the window may be very different from the time the first author is
+    # created in the other 'version' despite the fact that in both cases the
+    # authors required were created within the specified time frame.
+    #
+    # Skipping the tests until I can think of how to improve them.
+    # xit 'should create authors over 1 day' do
+    #   diff = authors.last.created_at - authors.first.created_at
+    #   expect(diff).to be <= 1.day
+    # end
+
+    # xit 'should create users and authors over 1 day' do
+    #   diff = users.last.created_at - users.first.created_at
+    #   expect(diff).to be <= 1.day
+    # end
+
+    it 'should create all users and authors before any articles' do
+      expect(
+        users_and_authors.last.created_at
+      ).to be < articles.first.created_at
+    end
+
+    it 'should create comments in order' do
+      expect(comments.sort_by(&:created_at)).to eq comments
+    end
+
+    it 'should create a total of 10 articles' do
+      expect(articles.size).to eq 10
+    end
+
+    # xit 'should create articles and comments over a period of 5 days' do
+    #   diff = comments.last.created_at - articles.first.created_at
+    #   expect(diff).to be <= 5.days
+    # end
 
     it 'should create comments over a period of 5 hours' do
       comments_by_article.each_value do |article_comments|
