@@ -59,7 +59,7 @@
   <h3>Parent</h3>
 
   
-  <p class="link">Dodo::Happening
+  <p class="link">Dodo::Timeline
   
 </div>
 
@@ -72,6 +72,12 @@
   <ul class="link-list" role="directory">
     
     <li class="calls-super" ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-2A">#*</a>
+    
+    <li ><a href="#method-i-2A-2A">#**</a>
+    
+    <li ><a href="#method-i-2B">#+</a>
     
     <li ><a href="#method-i-over">#over</a>
     
@@ -98,9 +104,9 @@
 
   <section class="description">
     
-<p>A <a href="Window.html"><code>Window</code></a> is a data structure with a duration (measured in seconds) that contains Happenings. A Happening is an instance of either the Moment, Container <a href="Window.html"><code>Window</code></a> classes.</p>
+<p>A <a href="Window.html"><code>Window</code></a> is a data structure with a duration (measured in seconds) that contains <code>timelines</code>. A <code>timeline</code> is any instance of a class that inherits from the Timeline base class.</p>
 
-<p>A <a href="Window.html"><code>Window</code></a> serves to define an interval in which it may be <code>simulated</code> that one or more Moment objects are <em>evaluated</em> <em>in</em> series_.</p>
+<p>A <a href="Window.html"><code>Window</code></a> serves to define an interval in which it may be <em>simulated</em> that one or more Moment objects are <em>evaluated</em> <em>in</em> series_.</p>
 
 <p>A <a href="Window.html"><code>Window</code></a> exposes methods that can either be used to define these Moment objects directly or to create additional <em>child</em> data structures (i.e Container objects or further, child <a href="Window.html"><code>Window</code></a> objects) which can in turn be provide more fine grained control over precisely <em>when</em> any given Moment objects may be evaluated.</p>
 
@@ -111,12 +117,12 @@
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>The above defines a <a href="Window.html"><code>Window</code></a> (using the Dodo#over method) that encompasses a 2 week time period. A single Moment is included in this window (via the <a href="Window.html#method-i-please"><code>please</code></a> factory method).  When the top level <a href="Window.html"><code>Window</code></a> is evaluated (using a Runner object) the block</p>
+<p>The above defines a <a href="Window.html"><code>Window</code></a> (using the Dodo#over module method) that specifies a 2 week time period. A single Moment is included in this window (via the <a href="Window.html#method-i-please"><code>please</code></a> factory method).  When the top level <a href="Window.html"><code>Window</code></a> is evaluated (using a Runner object) the block</p>
 
 <pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
 </pre>
 
-<p>is evaluated <em>exactly</em> <em>once</em>. Furthermore, the simulated time at which the block is evaluated will be contained at some point within the 2 week interval beginning on the start date provided when instantiating the Runner object.</p>
+<p>is evaluated <em>exactly</em> <em>once</em>. Furthermore, the simulated time at which the block is evaluated will be contained at some point within the 2 week interval beginning on some start date provided when instantiating the Runner object.</p>
 
 <p>As mentioned, it is also possible to include other data structures within <a href="Window.html"><code>Window</code></a> objects, including other <a href="Window.html"><code>Window</code></a> objects.</p>
 
@@ -125,29 +131,32 @@
 <p>We could use the <a href="Window.html#method-i-over"><code>over</code></a> method to add an empty <a href="Window.html"><code>Window</code></a> to the previous example in order to force the already included Moment to be evaluated during the last day of the 2 week period.</p>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
-  <span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>) {}  <span class="ruby-comment"># This defines a non-operational window</span>
+  <span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>)  <span class="ruby-comment"># This defines an empty window</span>
   <span class="ruby-identifier">please</span> { <span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>The empty <a href="Window.html"><code>Window</code></a> returned by the <a href="Window.html#method-i-over"><code>over</code></a> factory method consumes 13 days of the parent <a href="Window.html"><code>Window</code></a> object&#39;s total duration of 2 weeks.  This means that when this parent <a href="Window.html"><code>Window</code></a> is evaluated, the Moment will be as if it occurred during the final day of the 2 week period.</p>
+<p>The empty <a href="Window.html"><code>Window</code></a> returned by the <a href="Window.html#method-i-over"><code>over</code></a> factory method consumes 13 days of the parent <a href="Window.html"><code>Window</code></a> object&#39;s total duration of 2 weeks.  This means that when this parent <a href="Window.html"><code>Window</code></a> is evaluated, the Moment will be <em>as</em> <em>if</em> <em>it</em> <em>occurred</em> during the <em>final</em> <em>day</em> of the 2 week period.</p>
 
-<p>Finally, we may also define Container objects within windows using the <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> factory method.  These allow for multiple <a href="Window.html"><code>Window</code></a> objects to be defined over the same time period and for any Moment objects contained within to be <em>interleaved</em> when the parent <a href="Window.html"><code>Window</code></a> is ultimately evaluated.</p>
+<p>Finally, we may also define Container objects within windows using the <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> method.  These allow for multiple <a href="Window.html"><code>Window</code></a> objects to be defined over the same time period and for any Moment objects contained within to be <em>interleaved</em> when the parent <a href="Window.html"><code>Window</code></a> is ultimately evaluated.</p>
+
+<p>The <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> method instantiates a Container object, whilst accepting a block.  The block is evaluated within the context of the new Container. Timelines defined within this block will be evaluated in parallel.</p>
+
+<p>Note that Container implements many of the same methods as <a href="Window.html"><code>Window</code></a></p>
 
 <p>@example</p>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
-  <span class="ruby-identifier">simultaneously</span>(<span class="ruby-value">over:</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">please</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">simultaneously</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Window 1 #{Time.now}&quot;</span>
     <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>.<span class="ruby-identifier">also</span>(<span class="ruby-value">after:</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>, <span class="ruby-value">over:</span> <span class="ruby-value">6</span>.<span class="ruby-identifier">days</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">please</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">over</span> <span class="ruby-value">6</span>.<span class="ruby-identifier">days</span>, <span class="ruby-value">after:</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span> <span class="ruby-keyword">do</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Window 2 #{Time.now}&quot;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> {}  <span class="ruby-comment"># This defines an non-operational window</span>
+  <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> {}  <span class="ruby-comment"># This defines an empty window</span>
 <span class="ruby-keyword">end</span>
 </pre>
 
@@ -163,7 +172,7 @@
 
 <p>will be evaluated once during the first week.  The precise instant is chosen randomly within this interval with the only constraint being that the second block cannot be evaluated during the first day (This offset is controlled by the <code>after</code> parameter of the <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> method).</p>
 
-<p><strong>Note</strong> that the moment from the second <a href="Window.html"><code>Window</code></a> could easily be evaluated at a simulated time <em>before</em> that at which the moment from the first <a href="Window.html"><code>Window</code></a> is evaluated.</p>
+<p><strong>Note</strong> that the moment from the second <a href="Window.html"><code>Window</code></a> could still be evaluated at a simulated time <em>before</em> that at which the moment from the first <a href="Window.html"><code>Window</code></a> is evaluated.</p>
 
   </section>
 
@@ -175,27 +184,6 @@
 
     
 
-    
-    <section class="attribute-method-details" class="method-section">
-      <header>
-        <h3>Attributes</h3>
-      </header>
-
-      
-      <div id="attribute-i-happenings" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">happenings</span><span
-            class="attribute-access-type">[R]</span>
-        </div>
-
-        <div class="method-description">
-        
-        
-        
-        </div>
-      </div>
-      
-    </section>
     
 
     
@@ -218,7 +206,19 @@
 
         <div class="method-description">
           
-          
+          <p>Instantiate a new <a href="Window.html"><code>Window</code></a> object</p>
+
+<p>@param [Integer] duration The total time period (in seconds) that the <a href="Window.html"><code>Window</code></a> encompasses @param [Timeline] parent If the <a href="Window.html"><code>Window</code></a> is a child of another Timeline, parent is this Timeline @param [Proc] block A block that will be evaluated within the context of the newly created <a href="Window.html"><code>Window</code></a>.  Note that the following two statements are equivalent</p>
+
+<pre class="ruby"><span class="ruby-identifier">a_window</span> = <span class="ruby-constant">Dodo</span><span class="ruby-operator">::</span><span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">week</span>) <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">please</span> { <span class="ruby-identifier">p</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">another_window</span> = <span class="ruby-constant">Dodo</span><span class="ruby-operator">::</span><span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span>
+<span class="ruby-identifier">window</span>.<span class="ruby-identifier">please</span> { <span class="ruby-identifier">p</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
+</pre>
+
+<p>The ability to include a block in this way is in order to allow the code used to define a given <a href="Window.html"><code>Window</code></a> will reflect its hierarchy.</p>
           
           
             <div class="method-calls-super">
@@ -229,13 +229,12 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 97</span>
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 138</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-identifier">parent</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-ivar">@parent</span> = <span class="ruby-identifier">parent</span>
-  <span class="ruby-ivar">@happenings</span> = []
   <span class="ruby-ivar">@total_child_duration</span> = <span class="ruby-value">0</span>
   <span class="ruby-keyword">super</span> <span class="ruby-identifier">duration</span>
-  <span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -255,6 +254,130 @@
        </header>
 
     
+      <div id="method-i-2A" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">*</span><span
+            class="method-args">(other)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Repeatedly apply the <a href="Window.html#method-i-2B"><code>+</code></a> method of the current <a href="Window.html"><code>Window</code></a> to itself</p>
+
+<p>@param [Integer] other Denotes the number of times the current window should be added to itself.</p>
+
+<p>@return [Window] A new <a href="Window.html"><code>Window</code></a> object</p>
+
+<p>Note that the following statements are equivalent for some window <code>window</code>:</p>
+
+<pre class="ruby"><span class="ruby-identifier">window</span> <span class="ruby-operator">*</span> <span class="ruby-value">3</span>
+<span class="ruby-identifier">window</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">window</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">window</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="2A-source">
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 241</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">*</span>(<span class="ruby-identifier">other</span>)
+  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">other</span>) <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">other</span>) { <span class="ruby-identifier">entries</span> }.<span class="ruby-identifier">reduce</span>(<span class="ruby-value">:+</span>))
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-2A-2A" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">**</span><span
+            class="method-args">(other)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Scale up a window by parallelising it according to some factor</p>
+
+<p>@param [Integer] other An Integer denoting the degree of parallelism with which to scale the window.</p>
+
+<p>@return [Container] A new Container whose child timelines are precisely the current window repeated <code>other</code> times.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="2A-2A-source">
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 254</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">**</span>(<span class="ruby-identifier">other</span>)
+  <span class="ruby-identifier">this</span> = <span class="ruby-keyword">self</span>
+  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>) <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">simultaneously</span> { <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">other</span>) { <span class="ruby-identifier">this</span> }) }
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-2B" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">+</span><span
+            class="method-args">(other)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Combine two Windows into a single, larger <a href="Window.html"><code>Window</code></a> object.</p>
+
+<p>@param [Window] other Some other <a href="Window.html"><code>Window</code></a> object</p>
+
+<p>@return [Window] a <a href="Window.html"><code>Window</code></a> object consisting of the ordered child Timeline objects of the current <a href="Window.html"><code>Window</code></a> with the ordered child Timeline objects of <code>other</code> appended to the end.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="2B-source">
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 222</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
+  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">duration</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">duration</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span>(<span class="ruby-identifier">to_a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>))
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
       <div id="method-i-over" class="method-detail ">
         
         <div class="method-heading">
@@ -268,13 +391,19 @@
 
         <div class="method-description">
           
-          
+          <p>Define a new <a href="Window.html"><code>Window</code></a> and add it as a child to the current <a href="Window.html"><code>Window</code></a></p>
+
+<p>@param [Integer] duration The duration (in seconds) of the newly created child <a href="Window.html"><code>Window</code></a></p>
+
+<p>@params [Proc] block A block passed to the new method on the child <a href="Window.html"><code>Window</code></a> object</p>
+
+<p>@return [Window] The newly created <a href="Window.html"><code>Window</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="over-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 109</span>
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 160</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">over</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-keyword">self</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>).<span class="ruby-identifier">tap</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">method</span>(<span class="ruby-value">:use</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -301,13 +430,17 @@
 
         <div class="method-description">
           
-          
+          <p>Define a new Moment and add it as a child to the current <a href="Window.html"><code>Window</code></a></p>
+
+<p>@params [Proc] block A block passed to the new method on the child Moment object</p>
+
+<p>@return [Moment] The newly created Moment object</p>
           
           
 
           
           <div class="method-source-code" id="please-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 113</span>
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 170</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">please</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-constant">Moment</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>).<span class="ruby-identifier">tap</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">method</span>(<span class="ruby-value">:use</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -334,13 +467,21 @@
 
         <div class="method-description">
           
-          
+          <p>Define a new window and append it multiple times as a child of the current <a href="Window.html"><code>Window</code></a> object.</p>
+
+<p>@param [Integer] times The number of times that the new <a href="Window.html"><code>Window</code></a> object to be appended to the current <a href="Window.html"><code>Window</code></a></p>
+
+<p>@param [Integer] over The total duration (in senconds) of the new repeated <a href="Window.html"><code>Window</code></a> objects.</p>
+
+<p>@param [Proc] block A block passed to the new method on the child <a href="Window.html"><code>Window</code></a> object</p>
+
+<p>@return [Window] The current <a href="Window.html"><code>Window</code></a></p>
           
           
 
           
           <div class="method-source-code" id="repeat-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 117</span>
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">repeat</span>(<span class="ruby-value">times:</span>, <span class="ruby-value">over:</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">repeated_block</span> = <span class="ruby-identifier">proc</span> { <span class="ruby-identifier">times</span>.<span class="ruby-identifier">times</span> { <span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) } }
   <span class="ruby-identifier">over</span>(<span class="ruby-identifier">over</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">repeated_block</span>)
@@ -368,18 +509,19 @@
 
         <div class="method-description">
           
-          
+          <p>Define a new Container object append it as a child to the current <a href="Window.html"><code>Window</code></a>. Also permit the evaluation of methods within the context of the new Container.</p>
+
+<p>@param [Proc] block A block to be passed to the new method on the child Container method.</p>
+
+<p>@return [Window] The current <a href="Window.html"><code>Window</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="simultaneously-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 122</span>
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 200</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">simultaneously</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-constant">Container</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">tap</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">container</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">container</span>.<span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-    <span class="ruby-identifier">use</span> <span class="ruby-identifier">container</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">use</span> <span class="ruby-constant">Container</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -404,13 +546,13 @@
 
         <div class="method-description">
           
-          
+          <p>The the amount of duration remaining taking into account the duration of any Timeline objects included as children of the <a href="Window.html"><code>Window</code></a>.</p>
           
           
 
           
           <div class="method-source-code" id="unused_duration-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 105</span>
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unused_duration</span>
   <span class="ruby-identifier">duration</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@total_child_duration</span>
 <span class="ruby-keyword">end</span></pre>
@@ -428,7 +570,7 @@
         
         <div class="method-heading">
           <span class="method-name">use</span><span
-            class="method-args">(*happenings)</span>
+            class="method-args">(*timelines)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -437,15 +579,19 @@
 
         <div class="method-description">
           
-          
+          <p>Append an existing Timeline as a child of the current <a href="Window.html"><code>Window</code></a></p>
+
+<p>@params [Array] timelines An array of Timeline objects that will be appended, in order to the current <a href="Window.html"><code>Window</code></a></p>
+
+<p>@return [Window] The current <a href="Window.html"><code>Window</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="use-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 133</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">happenings</span>)
-  <span class="ruby-identifier">happenings</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">happening</span><span class="ruby-operator">|</span> <span class="ruby-identifier">send</span> <span class="ruby-value">:&lt;&lt;</span>, <span class="ruby-identifier">happening</span> }
+            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 210</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">timelines</span>)
+  <span class="ruby-identifier">timelines</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">timeline</span><span class="ruby-operator">|</span> <span class="ruby-identifier">send</span> <span class="ruby-value">:&lt;&lt;</span>, <span class="ruby-identifier">timeline</span> }
   <span class="ruby-keyword">self</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
