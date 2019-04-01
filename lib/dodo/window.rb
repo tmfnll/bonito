@@ -24,10 +24,10 @@ module Dodo # :nodoc:
   end
 
   # A Window is a data structure with a duration (measured in seconds) that
-  # contains Timelines. A Timeline is an instance of either the Moment,
-  # Container Window classes.
+  # contains +timelines+. A +timeline+ is any instance of a class that inherits
+  # from the Timeline base class.
   #
-  # A Window serves to define an interval in which it may be +simulated+ that
+  # A Window serves to define an interval in which it may be _simulated_ that
   # one or more Moment objects are _evaluated_ _in_ series_.
   #
   # A Window exposes methods that can either be used to define these
@@ -42,8 +42,8 @@ module Dodo # :nodoc:
   #     please { puts Time.now }
   #   end
   #
-  # The above defines a Window (using the Dodo#over method) that encompasses
-  # a 2 week time period. A single Moment is included in this window
+  # The above defines a Window (using the Dodo#over module method) that
+  # specifies a 2 week time period. A single Moment is included in this window
   # (via the #please factory method).  When the top level Window is
   # evaluated (using a Runner object) the block
   #
@@ -51,7 +51,7 @@ module Dodo # :nodoc:
   #
   # is evaluated _exactly_ _once_. Furthermore, the simulated time at which
   # the block is evaluated will be contained at some point within the 2 week
-  # interval beginning on the start date provided when instantiating the
+  # interval beginning on some start date provided when instantiating the
   # Runner object.
   #
   # As mentioned, it is also possible to include other data structures within
@@ -64,35 +64,40 @@ module Dodo # :nodoc:
   # during the last day of the 2 week period.
   #
   #   Dodo.over(2.weeks) do
-  #     over(2.weeks - 1.day) {}  # This defines a non-operational window
+  #     over(2.weeks - 1.day)  # This defines an empty window
   #     please { puts Time.now }
   #   end
   #
   # The empty Window returned by the #over factory method consumes 13 days
   # of the parent Window object's total duration of 2 weeks.  This means that
-  # when this parent Window is evaluated, the Moment will be as if it
-  # occurred during the final day of the 2 week period.
+  # when this parent Window is evaluated, the Moment will be _as_ _if_ _it_
+  # _occurred_ during the _final_ _day_ of the 2 week period.
   #
   # Finally, we may also define Container objects within windows using the
-  # #simultaneously factory method.  These allow for multiple Window
+  # #simultaneously method.  These allow for multiple Window
   # objects to be defined over the same time period and for any Moment
   # objects contained within to be _interleaved_ when the parent Window is
   # ultimately evaluated.
   #
+  # The #simultaneously method instantiates a Container object, whilst accepting
+  # a block.  The block is evaluated within the context of the new Container.
+  # Timelines defined within this block will be evaluated in parallel.
+  #
+  # Note that Container implements many of the same methods as Window
+  #
   # @example
   #
   #   Dodo.over(2.weeks) do
-  #     simultaneously(over: 1.week) do
-  #       please do
+  #     simultaneously do
+  #       over 1.week do
   #         puts "Window 1 #{Time.now}"
   #       end
-  #     end.also(after: 1.day, over: 6.days) do
-  #       please do
+  #       over 6.days, after: 1.day do
   #         puts "Window 2 #{Time.now}"
   #       end
   #     end
   #
-  #     over 1.week {}  # This defines an non-operational window
+  #     over 1.week {}  # This defines an empty window
   #   end
   #
   # Now, when evaluating this Window both the blocks
@@ -105,12 +110,31 @@ module Dodo # :nodoc:
   # offset is controlled by the +after+ parameter of the #simultaneously
   # method).
   #
-  # *Note* that the moment from the second Window could easily be evaluated at
+  # *Note* that the moment from the second Window could still be evaluated at
   # a simulated time _before_ that at which the moment from the first Window
   # is evaluated.
   class Window < Timeline
     schedule_with WindowScheduler
 
+    # Instantiate a new Window object
+    #
+    # @param [Integer] duration The total time period (in seconds) that the
+    # Window encompasses
+    # @param [Timeline] parent If the Window is a child of another Timeline,
+    # parent is this Timeline
+    # @param [Proc] block A block that will be evaluated within the context of
+    # the newly created Window.  Note that the following two statements are
+    # equivalent
+    #
+    #   a_window = Dodo::Window.new(1.week) do
+    #     please { p Time.now }
+    #   end
+    #
+    #   another_window = Dodo::Window.new 1.week
+    #   window.please { p Time.now }
+    #
+    # The ability to include a block in this way is in order to allow the
+    # code used to define a given Window will reflect its hierarchy.
     def initialize(duration, parent = nil, &block)
       @parent = parent
       @total_child_duration = 0
@@ -118,44 +142,115 @@ module Dodo # :nodoc:
       instance_eval(&block) if block_given?
     end
 
+    # The the amount of #duration remaining taking into account the duration of
+    # any Timeline objects included as children of the Window.
     def unused_duration
       duration - @total_child_duration
     end
 
+    # Define a new Window and add it as a child to the current Window
+    #
+    # @param [Integer] duration
+    # The duration (in seconds) of the newly created child Window
+    #
+    # @params [Proc] block A block passed to the #new method on the child Window
+    # object
+    #
+    # @return [Window] The newly created Window object
     def over(duration, &block)
       self.class.new(duration, self, &block).tap(&method(:use))
     end
 
+    # Define a new Moment and add it as a child to the current Window
+    #
+    # @params [Proc] block A block passed to the #new method on the child Moment
+    # object
+    #
+    # @return [Moment] The newly created Moment object
     def please(&block)
       Moment.new(&block).tap(&method(:use))
     end
 
+    # Define a new window and append it multiple times as a child of the
+    # current Window object.
+    #
+    # @param [Integer] times The number of times that the new Window object to
+    # be appended to the current Window
+    #
+    # @param [Integer] over The total duration (in senconds) of the new
+    # repeated Window objects.
+    #
+    # @param [Proc] block A block passed to the #new method on the child Window
+    # object
+    #
+    # @return [Window] The current Window
     def repeat(times:, over:, &block)
       repeated_block = proc { times.times { instance_eval(&block) } }
       over(over, &repeated_block)
     end
 
+    # Define a new Container object append it as a child to the current
+    # Window. Also permit the evaluation of methods within the context
+    # of the new Container.
+    #
+    # @param [Proc] block
+    # A block to be passed to the #new method on the child Container method.
+    #
+    # @return [Window] The current Window object
     def simultaneously(&block)
       use Container.new(&block)
     end
 
+    # Append an existing Timeline as a child of the current Window
+    #
+    # @params [Array] timelines An array of Timeline objects that will be
+    # appended, in order to the current Window
+    #
+    # @return [Window] The current Window object
     def use(*timelines)
       timelines.each { |timeline| send :<<, timeline }
       self
     end
 
+    # Combine two Windows into a single, larger Window object.
+    #
+    # @param [Window] other Some other Window object
+    #
+    # @return [Window] a Window object consisting of the ordered child Timeline
+    # objects of the current Window with the ordered child Timeline objects of
+    # +other+ appended to the end.
     def +(other)
       Window.new duration + other.duration do
         use(*(to_a + other.to_a))
       end
     end
 
+    # Repeatedly apply the #+ method of the current Window to itself
+    #
+    # @param [Integer] other Denotes the number of times the current window
+    # should be added to itself.
+    #
+    # @return [Window] A new Window object
+    #
+    # Note that the following statements are equivalent for
+    # some window +window+:
+    #
+    #   window * 3
+    #   window + window + window
+    #
     def *(other)
       Window.new(duration * other) do
         use(*Array.new(other) { entries }.reduce(:+))
       end
     end
 
+    # Scale up a window by parallelising it according to some factor
+    #
+    # @param [Integer] other An Integer denoting the degree of parallelism with
+    # which to scale the window.
+    #
+    # @return [Container] A new Container whose child timelines are precisely
+    # the current window repeated +other+ times.
     def **(other)
       this = self
       Window.new(duration) do
