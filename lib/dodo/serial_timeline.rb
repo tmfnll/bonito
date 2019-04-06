@@ -6,7 +6,7 @@ require 'securerandom'
 require 'timecop'
 
 module Dodo # :nodoc:
-  class WindowScheduler < Scheduler # :nodoc:
+  class SerialScheduler < Scheduler # :nodoc:
     def initialize(serial, starting_offset, parent_context, opts = {})
       super serial, starting_offset, parent_context.push, opts
       @distribution = Distribution.new starting_offset, serial, opts
@@ -114,7 +114,7 @@ module Dodo # :nodoc:
   # a simulated time _before_ that at which the moment from the first SerialTimeline
   # is evaluated.
   class SerialTimeline < Timeline
-    schedule_with WindowScheduler
+    schedule_with SerialScheduler
 
     # Instantiate a new SerialTimeline object
     #
