@@ -34,10 +34,10 @@ module Dodo # :nodoc:
   end
 
   def self.run(
-    window, starting:, context: Context.new,
+    serial, starting:, context: Context.new,
     progress_factory: ProgressLogger.factory, **opts
   )
-    scheduler = window.scheduler(starting, context, opts)
+    scheduler = serial.scheduler(starting, context, opts)
     progress = progress_factory.call total: scheduler.count
     scheduler = ProgressDecorator.new scheduler, progress
     Runner.new(scheduler, opts).call

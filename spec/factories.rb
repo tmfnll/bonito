@@ -11,7 +11,7 @@ FactoryBot.define do
     initialize_with { new(&block) }
   end
 
-  factory :window, class: Dodo::Window do
+  factory :serial, class: Dodo::SerialTimeline do
     transient do
       block { proc { true } }
     end

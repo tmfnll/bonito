@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-RSpec.describe Dodo::Window do
+RSpec.describe Dodo::SerialTimeline do
   let(:duration) { 2.weeks }
-  let(:window) { Dodo::Window.new(duration) {} }
+  let(:serial) { Dodo::SerialTimeline.new(duration) {} }
   let(:moment) { Dodo::Moment.new {} }
   let(:block) { -> { true } }
 
   describe '#initialize' do
-    let(:uninitialized) { Dodo::Window.allocate }
+    let(:uninitialized) { Dodo::SerialTimeline.allocate }
 
-    subject { window }
+    subject { serial }
 
     it 'should set duration' do
       expect(subject.duration).to eq duration
@@ -31,7 +31,7 @@ RSpec.describe Dodo::Window do
     end
 
     context 'without a block provided' do
-      subject { Dodo::Window.new duration }
+      subject { Dodo::SerialTimeline.new duration }
       it 'should set duration' do
         expect(subject.duration).to eq duration
       end
@@ -47,10 +47,10 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#<<' do
-    subject { window.use timeline }
+    subject { serial.use timeline }
 
-    context 'with a timeline whose duration is less than that of the window' do
-      let(:timeline) { Dodo::Window.new(duration - 1) {} }
+    context 'with a timeline whose duration is less than that of the serial' do
+      let(:timeline) { Dodo::SerialTimeline.new(duration - 1) {} }
 
       it 'should successfully append the timeline' do
         expect(subject.instance_variable_get(:@timelines)).to eq [timeline]
@@ -59,14 +59,14 @@ RSpec.describe Dodo::Window do
       it 'should increase the @total_child_duration by the ' \
          'duration of the timeline' do
         expect { subject }.to change {
-          window.instance_variable_get :@total_child_duration
+          serial.instance_variable_get :@total_child_duration
         }.by timeline.duration
       end
     end
 
     context 'with a timeline whose duration is greater than
-             that of the window' do
-      let(:timeline) { Dodo::Window.new(duration + 1) {} }
+             that of the serial' do
+      let(:timeline) { Dodo::SerialTimeline.new(duration + 1) {} }
 
       it 'should successfully append the timeline' do
         expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
@@ -76,8 +76,8 @@ RSpec.describe Dodo::Window do
 
   describe '#use' do
     let(:timeline_duration) { 1.day }
-    let(:timelines) { build_list :window, 3, duration: timeline_duration }
-    subject { window.use(*timelines) }
+    let(:timelines) { build_list :serial, 3, duration: timeline_duration }
+    subject { serial.use(*timelines) }
 
     it 'should successfully append the timelines' do
       expect(subject.instance_variable_get(:@timelines)).to eq timelines
@@ -86,14 +86,14 @@ RSpec.describe Dodo::Window do
     it 'should increase the @total_child_duration by the ' \
        'duration of the sum of the timeline' do
       expect { subject }.to change {
-        window.instance_variable_get :@total_child_duration
+        serial.instance_variable_get :@total_child_duration
       }.by(timelines.reduce(0) { |sum, timeline| sum + timeline.duration })
     end
 
     context 'with timelines whose duration is greater than
-             that of the window' do
+             that of the serial' do
 
-      let(:timeline_duration) { window.duration }
+      let(:timeline_duration) { serial.duration }
 
       it 'should successfully append the timeline' do
         expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
@@ -102,16 +102,16 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#over' do
-    let(:child) { Dodo::Window.new(duration - 1) {} }
+    let(:child) { Dodo::SerialTimeline.new(duration - 1) {} }
 
     before do
-      allow(window.class).to receive(:new).and_return child
+      allow(serial.class).to receive(:new).and_return child
     end
 
-    subject { window.over(child.duration, &block) }
+    subject { serial.over(child.duration, &block) }
 
     it 'should instantiate a new child' do
-      expect(window.class).to receive(:new) do |dur, &blk|
+      expect(serial.class).to receive(:new) do |dur, &blk|
         expect(dur).to eq child.duration
         expect(blk).to eq block
         child
@@ -119,8 +119,8 @@ RSpec.describe Dodo::Window do
       subject
     end
 
-    it 'should append the new window to parent@timelines' do
-      expect(window).to receive(:<<).with(child)
+    it 'should append the new serial to parent@timelines' do
+      expect(serial).to receive(:<<).with(child)
       subject
     end
 
@@ -134,7 +134,7 @@ RSpec.describe Dodo::Window do
       allow(Dodo::Moment).to receive(:new).and_return(moment)
     end
 
-    subject { window.please(&block) }
+    subject { serial.please(&block) }
 
     it 'should instantiate a new child' do
       expect(Dodo::Moment).to receive(:new) do |&blk|
@@ -144,8 +144,8 @@ RSpec.describe Dodo::Window do
       subject
     end
 
-    it 'should append the new window to window@timelines' do
-      expect(window).to receive(:<<).with(moment)
+    it 'should append the new serial to serial@timelines' do
+      expect(serial).to receive(:<<).with(moment)
       subject
     end
 
@@ -160,19 +160,19 @@ RSpec.describe Dodo::Window do
     let(:k) { 2 }
     let(:params) { { times: k, over: repeat_duration } }
 
-    subject { window.repeat params, &block }
+    subject { serial.repeat params, &block }
 
     context 'with an integer as the :times argument and passing block' do
       it 'should invoke #over once with :repeat_duration as an arg' do
-        expect(window).to receive(:over).with(repeat_duration).once
+        expect(serial).to receive(:over).with(repeat_duration).once
         subject
       end
 
-      it 'should return a Window' do
-        expect(subject).to be_a Dodo::Window
+      it 'should return a SerialTimeline' do
+        expect(subject).to be_a Dodo::SerialTimeline
       end
 
-      it 'should return a window with two timelines' do
+      it 'should return a serial with two timelines' do
         expect(subject.to_a.size).to be k
       end
     end
@@ -182,20 +182,20 @@ RSpec.describe Dodo::Window do
     let(:offset) { 2.days.from_now }
     let(:context) { Dodo::Context.new }
     let(:opts) { double }
-    subject { window.scheduler offset, context, opts }
+    subject { serial.scheduler offset, context, opts }
     context 'with opts' do
       it 'should create a new WindowScheduler with opts included' do
         expect(Dodo::WindowScheduler).to receive(:new).with(
-          window, offset, context, opts
+          serial, offset, context, opts
         )
         subject
       end
     end
     context 'without opts' do
-      subject { window.scheduler offset, context }
+      subject { serial.scheduler offset, context }
       it 'should create a new WindowScheduler with an empty hash as opts' do
         expect(Dodo::WindowScheduler).to receive(:new).with(
-          window, offset, context, {}
+          serial, offset, context, {}
         )
         subject
       end
@@ -204,7 +204,7 @@ RSpec.describe Dodo::Window do
 
   describe '#simultaneously' do
     let(:block) { proc { called? } }
-    subject { window.simultaneously(&block) }
+    subject { serial.simultaneously(&block) }
     let(:container) { Dodo::Container.new }
 
     before do
@@ -213,7 +213,7 @@ RSpec.describe Dodo::Window do
 
     it 'should append the container to the timeline array' do
       expect { subject }.to change {
-        window.to_a
+        serial.to_a
       }.from([]).to([container])
     end
 
@@ -227,75 +227,75 @@ RSpec.describe Dodo::Window do
   end
 
   describe '#+' do
-    let(:window) { build :window }
-    let(:another_window) { build :window }
+    let(:serial) { build :serial }
+    let(:another_serial) { build :serial }
 
-    subject { window + another_window }
+    subject { serial + another_serial }
 
-    it 'should return a window' do
-      expect(subject).to be_a Dodo::Window
+    it 'should return a serial' do
+      expect(subject).to be_a Dodo::SerialTimeline
     end
 
-    it 'should return a new window whose duration is the sum of the
-        two original window' do
+    it 'should return a new serial whose duration is the sum of the
+        two original serial' do
       expect(subject.duration).to eq(
-        window.duration + another_window.duration
+        serial.duration + another_serial.duration
       )
     end
 
-    it 'should return a new window whose child window array is a
-        concatenation of the child window arrays of the two original
-        window' do
-      expect(subject.to_a).to eq(window.to_a + another_window.to_a)
+    it 'should return a new serial whose child serial array is a
+        concatenation of the child serial arrays of the two original
+        serial' do
+      expect(subject.to_a).to eq(serial.to_a + another_serial.to_a)
     end
   end
 
   describe '#*' do
-    let(:window) { build :window }
+    let(:serial) { build :serial }
     let(:factor) { rand 1..5 }
 
-    subject { window * factor }
+    subject { serial * factor }
 
-    it 'should return a window' do
-      expect(subject).to be_a Dodo::Window
+    it 'should return a serial' do
+      expect(subject).to be_a Dodo::SerialTimeline
     end
 
-    it 'should return a new window whose duration is the product of the original
-        window\'s duration and the factor' do
+    it 'should return a new serial whose duration is the product of the original
+        serial\'s duration and the factor' do
       expect(subject.duration).to eq(
-        window.duration * factor
+        serial.duration * factor
       )
     end
 
-    it 'should return a new window whose child window array is that of the
-        original window concatenated with itself factor times' do
-      expect(subject.to_a).to eq(window.to_a * factor)
+    it 'should return a new serial whose child serial array is that of the
+        original serial concatenated with itself factor times' do
+      expect(subject.to_a).to eq(serial.to_a * factor)
     end
   end
 
   describe '#**' do
-    let(:window) { build :window }
+    let(:serial) { build :serial }
     let(:factor) { rand 5 }
 
-    subject { window**factor }
+    subject { serial**factor }
 
-    it 'should return a window' do
-      expect(subject).to be_a Dodo::Window
+    it 'should return a serial' do
+      expect(subject).to be_a Dodo::SerialTimeline
     end
 
-    it 'should return a new window consisting of a single timeline' do
+    it 'should return a new serial consisting of a single timeline' do
       expect(subject.size).to eq 1
     end
 
-    it 'should return a new window consisting of a single timeline' do
+    it 'should return a new serial consisting of a single timeline' do
       expect(subject.first).to be_a Dodo::Container
     end
 
-    it 'should return a new window consisting of a single timeline which itself
-        consists of the original window parallelised factor times' do
+    it 'should return a new serial consisting of a single timeline which itself
+        consists of the original serial parallelised factor times' do
       expect(
         subject.first.instance_variable_get(:@timelines).map(&:__getobj__)
-      ).to eq([window] * factor)
+      ).to eq([serial] * factor)
     end
   end
 end

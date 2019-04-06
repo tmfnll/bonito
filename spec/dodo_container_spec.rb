@@ -6,10 +6,10 @@ RSpec.describe Dodo::Container do
   let(:duration) { 2.weeks }
   let(:block) { proc { true } }
   let(:container) { described_class.new }
-  let(:window_duration) { 1.week }
-  let(:window) { Dodo::Window.new window_duration, &block }
+  let(:serial_duration) { 1.week }
+  let(:serial) { Dodo::SerialTimeline.new serial_duration, &block }
   let(:offset) { 3.days }
-  let(:offset_window) { Dodo::OffsetTimeline.new window, offset }
+  let(:offset_serial) { Dodo::OffsetTimeline.new serial, offset }
 
   describe '#initialize' do
     subject { container }
@@ -44,8 +44,8 @@ RSpec.describe Dodo::Container do
       expect { subject }.to change { container.to_a.size }.by 1
     end
 
-    it 'should append the window provided to the timelines array' do
-      expect(subject.to_a.last).to eq offset_window
+    it 'should append the serial provided to the timelines array' do
+      expect(subject.to_a.last).to eq offset_serial
     end
 
     it 'should return the container itself' do
@@ -60,15 +60,15 @@ RSpec.describe Dodo::Container do
         it_behaves_like 'an appender of timelines'
 
         it 'should update the container duration to that of the
-            appended window' do
+            appended serial' do
           subject
           expect(
             container.duration
-          ).to eq offset_window.duration + offset_window.offset
+          ).to eq offset_serial.duration + offset_serial.offset
         end
       end
 
-      context 'with the sum of the duration of the appended window and' \
+      context 'with the sum of the duration of the appended serial and' \
               'its offset LESS than that of the containers duration' do
         before do
           allow(container).to receive(:duration).and_return(3.weeks)
@@ -81,7 +81,7 @@ RSpec.describe Dodo::Container do
         end
       end
 
-      context 'with the sum of the duration of the appended window and' \
+      context 'with the sum of the duration of the appended serial and' \
               'its offset GREATER that that of the containers duration' do
 
         let(:offset) { duration + 1.week }
@@ -89,9 +89,9 @@ RSpec.describe Dodo::Container do
         it_behaves_like 'an appender of timelines'
 
         it 'should change the duration of the container to the sum of the ' \
-           'appended window and its offset' do
+           'appended serial and its offset' do
           expect(subject.duration).to eq(
-            offset_window.duration + offset_window.offset
+            offset_serial.duration + offset_serial.offset
           )
         end
       end
@@ -100,11 +100,11 @@ RSpec.describe Dodo::Container do
 
   describe '#over' do
     let(:offset) { 0 }
-    subject { container.over window_duration, after: offset, &block }
+    subject { container.over serial_duration, after: offset, &block }
     before do
       container # Ensure the container is created before patching the
-      # window constructor
-      allow(Dodo::Window).to receive(:new).and_return(window)
+      # serial constructor
+      allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
     end
     it_behaves_like(
       'a method that allows additional timelines be added to a container'
@@ -112,12 +112,12 @@ RSpec.describe Dodo::Container do
   end
 
   describe '#also' do
-    subject { container.also after: offset, over: window_duration, &block }
+    subject { container.also after: offset, over: serial_duration, &block }
 
     before do
       container # Ensure the container is created before patching the
-      # window constructor
-      allow(Dodo::Window).to receive(:new).and_return(window)
+      # serial constructor
+      allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
     end
 
     context 'with an integer provided' do
@@ -128,17 +128,17 @@ RSpec.describe Dodo::Container do
   end
 
   describe '#use' do
-    context 'with a pre-baked window provided' do
-      subject { container.use window, after: offset }
+    context 'with a pre-baked serial provided' do
+      subject { container.use serial, after: offset }
       it_behaves_like(
         'a method that allows additional timelines be added to a container'
       )
     end
 
     context 'with many pre-baked timelines provided' do
-      let(:timelines) { build_list :window, 3 }
+      let(:timelines) { build_list :serial, 3 }
       let(:offset_timelines) do
-        timelines.map { |window| Dodo::OffsetTimeline.new window, offset }
+        timelines.map { |serial| Dodo::OffsetTimeline.new serial, offset }
       end
 
       subject { container.use(*timelines, after: offset) }
@@ -149,7 +149,7 @@ RSpec.describe Dodo::Container do
         }.by timelines.size
       end
 
-      it 'should append the window provided to the timelines array' do
+      it 'should append the serial provided to the timelines array' do
         expect(subject.to_a.last(timelines.size)).to eq offset_timelines
       end
 
@@ -163,22 +163,22 @@ RSpec.describe Dodo::Container do
     let(:times) { 3 }
     subject do
       container.repeat(
-        times: times, over: window_duration, after: offset, &block
+        times: times, over: serial_duration, after: offset, &block
       )
     end
 
     before do
       container # Ensure the container is created before patching the
-      # window constructor
-      allow(Dodo::Window).to receive(:new).and_return(window)
+      # serial constructor
+      allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
     end
 
     it 'should append to the timelines array' do
       expect { subject }.to change { container.to_a.size }.by times
     end
 
-    it 'should append the window provided to the timelines array' do
-      expect(subject.to_a.last(times)).to eq([offset_window] * 3)
+    it 'should append the serial provided to the timelines array' do
+      expect(subject.to_a.last(times)).to eq([offset_serial] * 3)
     end
 
     it 'should return the container itself' do

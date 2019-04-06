@@ -5,24 +5,24 @@ require 'securerandom'
 
 RSpec.describe Dodo::WindowScheduler do
   let(:moments) { build_list :moment, 3 }
-  let(:child_window) { build :window }
+  let(:child_serial) { build :serial }
   let(:child_container) { build :container }
-  let(:timelines) { [child_window, child_container] + moments }
+  let(:timelines) { [child_serial, child_container] + moments }
 
   let(:random_numbers) do
-    random_numbers = window.map do |_|
-      rand(window.unused_duration)
+    random_numbers = serial.map do |_|
+      rand(serial.unused_duration)
     end.sort
     2.times { random_numbers.pop }
     random_numbers.unshift 0 # ensure that the distribution achieves its lower
-    random_numbers << window.unused_duration # and upper bounds
+    random_numbers << serial.unused_duration # and upper bounds
   end
 
-  let(:window) do
-    duration = child_window.duration + child_container.duration + 1.day
-    window = build :window, duration: duration
-    timelines.each { |timeline| window.use timeline }
-    window
+  let(:serial) do
+    duration = child_serial.duration + child_container.duration + 1.day
+    serial = build :serial, duration: duration
+    timelines.each { |timeline| serial.use timeline }
+    serial
   end
 
   let(:scale_opts) { {} }
@@ -31,7 +31,7 @@ RSpec.describe Dodo::WindowScheduler do
   let(:starting_offset) { rand(10).days }
   let(:context) { Dodo::Context.new }
   let(:scheduler) do
-    described_class.new window, starting_offset, context, scale_opts
+    described_class.new serial, starting_offset, context, scale_opts
   end
 
   before do
@@ -42,7 +42,7 @@ RSpec.describe Dodo::WindowScheduler do
     subject { scheduler.to_a }
 
     shared_examples 'an scheduler of offset moments' do
-      context 'where the last timeline in window.to_a has a
+      context 'where the last timeline in serial.to_a has a
                duration of 0' do
         it 'should return an scheduler of offset timelines' do
           expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
@@ -55,7 +55,7 @@ RSpec.describe Dodo::WindowScheduler do
         it 'should yield timelines within a range equal to that of the
             stretched duration' do
           expect(subject.last.offset - subject.first.offset).to eq(
-            (window.unused_duration - random_numbers[2]) * stretch
+            (serial.unused_duration - random_numbers[2]) * stretch
           )
         end
 
@@ -65,7 +65,7 @@ RSpec.describe Dodo::WindowScheduler do
             expect(subject[index].offset).to eq(
               starting_offset +
               (stretch * (
-                child_window.duration + child_container.duration + rnd
+                child_serial.duration + child_container.duration + rnd
               ))
             )
           end
@@ -89,8 +89,8 @@ RSpec.describe Dodo::WindowScheduler do
     end
 
     context 'where the only timeline with non-zero duration appears last in
-             window.to_a' do
-      let(:timelines) { moments + [child_window] }
+             serial.to_a' do
+      let(:timelines) { moments + [child_serial] }
 
       it 'should yield timelines within a range equal to that of the
           unused duration' do
