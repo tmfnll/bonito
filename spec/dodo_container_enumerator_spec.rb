@@ -30,15 +30,15 @@ RSpec.describe Dodo::ContainerScheduler do
     end.sort
   end
 
-  let(:window) do
-    window = build :window
-    moments.each { |moment| window.use moment }
-    window
+  let(:serial) do
+    serial = build :serial
+    moments.each { |moment| serial.use moment }
+    serial
   end
-  let(:another_window) do
-    window = build :window
-    more_moments.each { |moment| window.use moment }
-    window
+  let(:another_serial) do
+    serial = build :serial
+    more_moments.each { |moment| serial.use moment }
+    serial
   end
 
   let(:distributed_moments) do
@@ -52,16 +52,16 @@ RSpec.describe Dodo::ContainerScheduler do
     end.sort
   end
 
-  let(:window_scheduler) do
-    scheduler = window.scheduler(starting_offset, context, opts)
+  let(:serial_scheduler) do
+    scheduler = serial.scheduler(starting_offset, context, opts)
     allow(scheduler).to(
       receive(:to_enum)
     ).and_return distributed_moments.to_enum
     scheduler
   end
 
-  let(:another_window_scheduler) do
-    scheduler = another_window.scheduler(starting_offset + after, context, opts)
+  let(:another_serial_scheduler) do
+    scheduler = another_serial.scheduler(starting_offset + after, context, opts)
     allow(
       scheduler
     ).to receive(:to_enum).and_return more_distributed_moments.to_enum
@@ -69,17 +69,17 @@ RSpec.describe Dodo::ContainerScheduler do
   end
 
   before do
-    allow(window).to receive(:scheduler).and_return(window_scheduler)
-    allow(another_window).to receive(:scheduler).and_return(
-      another_window_scheduler
+    allow(serial).to receive(:scheduler).and_return(serial_scheduler)
+    allow(another_serial).to receive(:scheduler).and_return(
+      another_serial_scheduler
     )
   end
 
   let(:container) do
-    allow(Dodo::Window).to receive(:new).and_return(window, another_window)
+    allow(Dodo::SerialTimeline).to receive(:new).and_return(serial, another_serial)
     Dodo::Container.new.tap do |container|
-      container.also after: 0, over: window.duration {}
-      container.also after: after, over: another_window.duration {}
+      container.also after: 0, over: serial.duration {}
+      container.also after: after, over: another_serial.duration {}
     end
   end
 
@@ -95,8 +95,8 @@ RSpec.describe Dodo::ContainerScheduler do
         (distributed_moments + more_distributed_moments).sort
       end
 
-      it 'should provide any opts to the underlying window schedulers' do
-        expect(window).to receive(:scheduler).with(
+      it 'should provide any opts to the underlying serial schedulers' do
+        expect(serial).to receive(:scheduler).with(
           starting_offset, context, opts
         )
         subject

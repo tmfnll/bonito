@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'dodo/timeline'
-require 'dodo/window'
+require 'dodo/serial_timeline'
 require 'algorithms'
 
 module Dodo
@@ -28,7 +28,7 @@ module Dodo
     end
 
     def over(duration, after: 0, &block)
-      use Dodo::Window.new(duration, &block), after: after
+      use Dodo::SerialTimeline.new(duration, &block), after: after
     end
 
     def also(over: duration, after: 0, &block)

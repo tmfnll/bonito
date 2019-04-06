@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dodo/window'
+require 'dodo/serial_timeline'
 require 'dodo/moment'
 require 'dodo/runner'
 require 'dodo/container'

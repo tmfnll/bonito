@@ -21,15 +21,15 @@ RSpec.describe Dodo::Runner do
       Dodo::ContextualMoment.new(Dodo::Moment.new(&block), offset, context)
     end
   end
-  let(:window) do
-    window = Dodo::Window.new(3.weeks) {}
-    moments.each { |moment| window.use moment }
-    window
+  let(:serial) do
+    serial = Dodo::SerialTimeline.new(3.weeks) {}
+    moments.each { |moment| serial.use moment }
+    serial
   end
   let(:start) { 2.weeks.ago }
   let(:context) { Dodo::Context.new }
   let(:starting_offset) { rand 100 }
-  let(:scheduler) { window.scheduler(starting_offset, context) }
+  let(:scheduler) { serial.scheduler(starting_offset, context) }
   let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
   let(:runner) { described_class.new decorated_enum, opts }
 
@@ -77,7 +77,7 @@ RSpec.describe Dodo::Runner do
   end
   describe '#call' do
     before do
-      allow(window).to receive(:scheduler).and_return moments
+      allow(serial).to receive(:scheduler).and_return moments
     end
 
     subject { runner.call }
