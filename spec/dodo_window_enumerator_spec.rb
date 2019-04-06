@@ -3,7 +3,7 @@
 require 'active_support/core_ext/numeric/time'
 require 'securerandom'
 
-RSpec.describe Dodo::WindowScheduler do
+RSpec.describe Dodo::SerialScheduler do
   let(:moments) { build_list :moment, 3 }
   let(:child_serial) { build :serial }
   let(:child_container) { build :container }

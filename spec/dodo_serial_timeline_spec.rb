@@ -184,8 +184,8 @@ RSpec.describe Dodo::SerialTimeline do
     let(:opts) { double }
     subject { serial.scheduler offset, context, opts }
     context 'with opts' do
-      it 'should create a new WindowScheduler with opts included' do
-        expect(Dodo::WindowScheduler).to receive(:new).with(
+      it 'should create a new SerialScheduler with opts included' do
+        expect(Dodo::SerialScheduler).to receive(:new).with(
           serial, offset, context, opts
         )
         subject
@@ -193,8 +193,8 @@ RSpec.describe Dodo::SerialTimeline do
     end
     context 'without opts' do
       subject { serial.scheduler offset, context }
-      it 'should create a new WindowScheduler with an empty hash as opts' do
-        expect(Dodo::WindowScheduler).to receive(:new).with(
+      it 'should create a new SerialScheduler with an empty hash as opts' do
+        expect(Dodo::SerialScheduler).to receive(:new).with(
           serial, offset, context, {}
         )
         subject
