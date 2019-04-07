@@ -17,18 +17,7 @@ RSpec.describe Dodo::ParallelScheduler do
   end
 
   let(:moments) { build_list :moment, 5 }
-  let(:offset_moments) do
-    moments.map do |moment|
-      Dodo::OffsetTimeline.new(moment, rand(10).days)
-    end.sort
-  end
-
   let(:more_moments) { build_list :moment, 5 }
-  let(:more_offset_moments) do
-    more_moments.map do |moment|
-      Dodo::OffsetTimeline.new(moment, rand(7).days)
-    end.sort
-  end
 
   let(:serial) do
     serial = build :serial
