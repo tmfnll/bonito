@@ -3,7 +3,7 @@
 require 'rspec'
 require 'active_support/core_ext/numeric/time'
 
-RSpec.describe Dodo::ContainerScheduler do
+RSpec.describe Dodo::ParallelScheduler do
   let(:duration) { 2.weeks }
   let(:opts) { {} }
   let(:after) { 2.days }
@@ -84,7 +84,7 @@ RSpec.describe Dodo::ContainerScheduler do
   end
 
   let(:parallel_scheduler) do
-    Dodo::ContainerScheduler.new parallel, starting_offset, context, opts
+    Dodo::ParallelScheduler.new parallel, starting_offset, context, opts
   end
 
   describe '#each' do
