@@ -14,9 +14,9 @@ before_script:
 - ./cc-test-reporter before-build
 script:
   - bundle exec rspec
+  - bundle exec rake rerdoc
 after_script:
 - ./cc-test-reporter after-build -t simplecov --exit-code $TRAVIS_TEST_RESULT
-- rake rerdoc
 cache: bundler
 
 deploy:
