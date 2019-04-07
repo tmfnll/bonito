@@ -46,13 +46,13 @@ RSpec.describe 'End to end' do
     end
   end
 
-  let(:context) do
-    Dodo::Context.new.tap do |context|
-      context.authors = []
-      context.articles = []
-      context.users = []
-      context.comments = []
-      context.users_and_authors = []
+  let(:scope) do
+    Dodo::Scope.new.tap do |scope|
+      scope.authors = []
+      scope.articles = []
+      scope.users = []
+      scope.comments = []
+      scope.users_and_authors = []
     end
   end
 
@@ -107,22 +107,22 @@ RSpec.describe 'End to end' do
   let(:progress_factory) { Dodo::ProgressBar.factory }
   let(:stretch) { 1 }
   let(:opts) { { stretch: stretch } }
-  let(:scheduler) { serial.scheduler(distribution, context, opts) }
+  let(:scheduler) { serial.scheduler(distribution, scope, opts) }
   let(:progress) { progress_factory.call }
   let(:decorated_enum) do
     Dodo::ProgressDecorator.new scheduler, progress
   end
 
-  let(:users_and_authors) { context.users_and_authors }
-  let(:authors) { context.authors }
-  let(:users) { context.users }
-  let(:articles) { context.articles }
-  let(:comments) { context.comments }
+  let(:users_and_authors) { scope.users_and_authors }
+  let(:authors) { scope.authors }
+  let(:users) { scope.users }
+  let(:articles) { scope.articles }
+  let(:comments) { scope.comments }
   let(:comments_by_article) { comments.group_by(&:article) }
 
   subject! do
     Dodo.run scaled_serial, starting: 3.weeks.ago,
-                            context: context,
+                            scope: scope,
                             progress_factory: progress_factory, **opts
   end
 

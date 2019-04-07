@@ -5,13 +5,13 @@ require 'dodo/timeline'
 module Dodo
   class MomentScheduler < Scheduler # :nodoc:
     def each
-      yield ContextualMoment.new(timeline, starting_offset, context)
+      yield ScopedMoment.new(timeline, starting_offset, scope)
     end
   end
 
   # A Moment represents a single instant in time in which events may occur.
   # Scheduler classes may be used in order to yield a sequence of
-  # Moment objects, each of which has been decorated with a Context object,
+  # Moment objects, each of which has been decorated with a Scope object,
   # within the context of which the events defined in the Moment will be
   # evaluated, as well as an Integer offset representing a number of
   # seconds from some arbitrary start point.

@@ -7,8 +7,8 @@ require 'timecop'
 
 module Dodo # :nodoc:
   class SerialScheduler < Scheduler # :nodoc:
-    def initialize(serial, starting_offset, parent_context, opts = {})
-      super serial, starting_offset, parent_context.push, opts
+    def initialize(serial, starting_offset, parent_scope, opts = {})
+      super serial, starting_offset, parent_scope.push, opts
       @distribution = Distribution.new starting_offset, serial, opts
     end
 
@@ -16,7 +16,7 @@ module Dodo # :nodoc:
     # Not sure how this can be avoided nicely at the moment
     def each
       @distribution.each do |timeline, offset|
-        timeline.scheduler(offset, context, opts).each do |moment|
+        timeline.scheduler(offset, scope, opts).each do |moment|
           yield moment
         end
       end
