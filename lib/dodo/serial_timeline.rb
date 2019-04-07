@@ -32,7 +32,7 @@ module Dodo # :nodoc:
   #
   # A SerialTimeline exposes methods that can either be used to define these
   # Moment objects directly or to create additional _child_ data structures
-  # (i.e Container objects or further, child SerialTimeline objects) which can in
+  # (i.e ParallelTimeline objects or further, child SerialTimeline objects) which can in
   # turn be provide more fine grained control over precisely _when_
   # any given Moment objects may be evaluated.
   #
@@ -73,17 +73,17 @@ module Dodo # :nodoc:
   # when this parent SerialTimeline is evaluated, the Moment will be _as_ _if_ _it_
   # _occurred_ during the _final_ _day_ of the 2 week period.
   #
-  # Finally, we may also define Container objects within serials using the
+  # Finally, we may also define ParallelTimeline objects within serials using the
   # #simultaneously method.  These allow for multiple SerialTimeline
   # objects to be defined over the same time period and for any Moment
   # objects contained within to be _interleaved_ when the parent SerialTimeline is
   # ultimately evaluated.
   #
-  # The #simultaneously method instantiates a Container object, whilst accepting
-  # a block.  The block is evaluated within the context of the new Container.
+  # The #simultaneously method instantiates a ParallelTimeline object, whilst accepting
+  # a block.  The block is evaluated within the context of the new ParallelTimeline.
   # Timelines defined within this block will be evaluated in parallel.
   #
-  # Note that Container implements many of the same methods as SerialTimeline
+  # Note that ParallelTimeline implements many of the same methods as SerialTimeline
   #
   # @example
   #
@@ -189,16 +189,16 @@ module Dodo # :nodoc:
       over(over, &repeated_block)
     end
 
-    # Define a new Container object append it as a child to the current
+    # Define a new ParallelTimeline object append it as a child to the current
     # SerialTimeline. Also permit the evaluation of methods within the context
-    # of the new Container.
+    # of the new ParallelTimeline.
     #
     # @param [Proc] block
-    # A block to be passed to the #new method on the child Container method.
+    # A block to be passed to the #new method on the child ParallelTimeline method.
     #
     # @return [SerialTimeline] The current SerialTimeline object
     def simultaneously(&block)
-      use Container.new(&block)
+      use ParallelTimeline.new(&block)
     end
 
     # Append an existing Timeline as a child of the current SerialTimeline
@@ -249,7 +249,7 @@ module Dodo # :nodoc:
     # @param [Integer] other An Integer denoting the degree of parallelism with
     # which to scale the serial.
     #
-    # @return [Container] A new Container whose child timelines are precisely
+    # @return [ParallelTimeline] A new ParallelTimeline whose child timelines are precisely
     # the current serial repeated +other+ times.
     def **(other)
       this = self

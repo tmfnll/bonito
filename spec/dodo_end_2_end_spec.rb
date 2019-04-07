@@ -134,48 +134,48 @@ RSpec.describe 'End to end' do
       expect(serial.to_a.size).to eq 2
     end
 
-    let(:container) { serial.to_a.first }
-    it 'should first add a container to the top level serial' do
-      expect(container).to be_a Dodo::Container
+    let(:parallel) { serial.to_a.first }
+    it 'should first add a parallel to the top level serial' do
+      expect(parallel).to be_a Dodo::ParallelTimeline
     end
 
-    it 'should add two serials to the container' do
-      expect(container.to_a.size).to eq 2
+    it 'should add two serials to the parallel' do
+      expect(parallel.to_a.size).to eq 2
     end
 
     it 'should add a single timeline to the first of these serial' do
-      expect(container.to_a.first.to_a.size).to eq 1
+      expect(parallel.to_a.first.to_a.size).to eq 1
     end
 
     it 'should add a serial to the first of these serials' do
-      expect(container.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
     end
 
     it 'it should add 5 timelines to this serial' do
-      expect(container.to_a.first.to_a.first.to_a.size).to eq 5
+      expect(parallel.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
     it 'it should add only moments to this serial' do
       expect(
-        container.to_a.first.to_a.first.to_a
+        parallel.to_a.first.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
     it 'should add a single timeline to the second of these serial' do
-      expect(container.to_a.last.to_a.size).to eq 1
+      expect(parallel.to_a.last.to_a.size).to eq 1
     end
 
     it 'should add a serial to the second of these serials' do
-      expect(container.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
     end
 
     it 'it should add 10 timelines to this serial' do
-      expect(container.to_a.last.to_a.first.to_a.size).to eq 10
+      expect(parallel.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
     it 'it should add only moments to this serial' do
       expect(
-        container.to_a.last.to_a.first.to_a
+        parallel.to_a.last.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
@@ -270,48 +270,48 @@ RSpec.describe 'End to end' do
       expect(serial.to_a.size).to eq 2
     end
 
-    let(:container) { serial.to_a.first }
-    it 'should first add a container to the top level serial' do
-      expect(container).to be_a Dodo::Container
+    let(:parallel) { serial.to_a.first }
+    it 'should first add a parallel to the top level serial' do
+      expect(parallel).to be_a Dodo::ParallelTimeline
     end
 
-    it 'should add two serials to the container' do
-      expect(container.to_a.size).to eq 2
+    it 'should add two serials to the parallel' do
+      expect(parallel.to_a.size).to eq 2
     end
 
     it 'should add a single happening to the first of these serial' do
-      expect(container.to_a.first.to_a.size).to eq 1
+      expect(parallel.to_a.first.to_a.size).to eq 1
     end
 
     it 'should add a serial to the first of these serials' do
-      expect(container.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
     end
 
     it 'it should add 5 happenings to this serial' do
-      expect(container.to_a.first.to_a.first.to_a.size).to eq 5
+      expect(parallel.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
     it 'it should add only moments to this serial' do
       expect(
-        container.to_a.first.to_a.first.to_a
+        parallel.to_a.first.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
     it 'should add a single happening to the second of these serial' do
-      expect(container.to_a.last.to_a.size).to eq 1
+      expect(parallel.to_a.last.to_a.size).to eq 1
     end
 
     it 'should add a serial to the second of these serials' do
-      expect(container.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
     end
 
     it 'it should add 10 happenings to this serial' do
-      expect(container.to_a.last.to_a.first.to_a.size).to eq 10
+      expect(parallel.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
     it 'it should add only moments to this serial' do
       expect(
-        container.to_a.last.to_a.first.to_a
+        parallel.to_a.last.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
@@ -415,48 +415,48 @@ RSpec.describe 'End to end' do
       expect(serial.to_a.size).to eq 2
     end
 
-    let(:container) { serial.to_a.first }
-    it 'should first add a container to the top level serial' do
-      expect(container).to be_a Dodo::Container
+    let(:parallel) { serial.to_a.first }
+    it 'should first add a parallel to the top level serial' do
+      expect(parallel).to be_a Dodo::ParallelTimeline
     end
 
-    it 'should add two serials to the container' do
-      expect(container.to_a.size).to eq 2
+    it 'should add two serials to the parallel' do
+      expect(parallel.to_a.size).to eq 2
     end
 
     it 'should add a single timeline to the first of these serial' do
-      expect(container.to_a.first.to_a.size).to eq 1
+      expect(parallel.to_a.first.to_a.size).to eq 1
     end
 
     it 'should add a serial to the first of these serials' do
-      expect(container.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
     end
 
     it 'it should add 5 timelines to this serial' do
-      expect(container.to_a.first.to_a.first.to_a.size).to eq 5
+      expect(parallel.to_a.first.to_a.first.to_a.size).to eq 5
     end
 
     it 'it should add only moments to this serial' do
       expect(
-        container.to_a.first.to_a.first.to_a
+        parallel.to_a.first.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 
     it 'should add a single timeline to the second of these serial' do
-      expect(container.to_a.last.to_a.size).to eq 1
+      expect(parallel.to_a.last.to_a.size).to eq 1
     end
 
     it 'should add a serial to the second of these serials' do
-      expect(container.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
     end
 
     it 'it should add 10 timelines to this serial' do
-      expect(container.to_a.last.to_a.first.to_a.size).to eq 10
+      expect(parallel.to_a.last.to_a.first.to_a.size).to eq 10
     end
 
     it 'it should add only moments to this serial' do
       expect(
-        container.to_a.last.to_a.first.to_a
+        parallel.to_a.last.to_a.first.to_a
       ).to all(be_a Dodo::Moment)
     end
 

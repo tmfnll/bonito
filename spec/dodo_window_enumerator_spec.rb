@@ -6,8 +6,8 @@ require 'securerandom'
 RSpec.describe Dodo::SerialScheduler do
   let(:moments) { build_list :moment, 3 }
   let(:child_serial) { build :serial }
-  let(:child_container) { build :container }
-  let(:timelines) { [child_serial, child_container] + moments }
+  let(:child_parallel) { build :parallel }
+  let(:timelines) { [child_serial, child_parallel] + moments }
 
   let(:random_numbers) do
     random_numbers = serial.map do |_|
@@ -19,7 +19,7 @@ RSpec.describe Dodo::SerialScheduler do
   end
 
   let(:serial) do
-    duration = child_serial.duration + child_container.duration + 1.day
+    duration = child_serial.duration + child_parallel.duration + 1.day
     serial = build :serial, duration: duration
     timelines.each { |timeline| serial.use timeline }
     serial
@@ -65,7 +65,7 @@ RSpec.describe Dodo::SerialScheduler do
             expect(subject[index].offset).to eq(
               starting_offset +
               (stretch * (
-                child_serial.duration + child_container.duration + rnd
+                child_serial.duration + child_parallel.duration + rnd
               ))
             )
           end

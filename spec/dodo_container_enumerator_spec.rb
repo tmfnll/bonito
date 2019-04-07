@@ -75,20 +75,20 @@ RSpec.describe Dodo::ContainerScheduler do
     )
   end
 
-  let(:container) do
+  let(:parallel) do
     allow(Dodo::SerialTimeline).to receive(:new).and_return(serial, another_serial)
-    Dodo::Container.new.tap do |container|
-      container.also after: 0, over: serial.duration {}
-      container.also after: after, over: another_serial.duration {}
+    Dodo::ParallelTimeline.new.tap do |parallel|
+      parallel.also after: 0, over: serial.duration {}
+      parallel.also after: after, over: another_serial.duration {}
     end
   end
 
-  let(:container_scheduler) do
-    Dodo::ContainerScheduler.new container, starting_offset, context, opts
+  let(:parallel_scheduler) do
+    Dodo::ContainerScheduler.new parallel, starting_offset, context, opts
   end
 
   describe '#each' do
-    subject { container_scheduler }
+    subject { parallel_scheduler }
 
     context 'without opts' do
       let(:expected_moments) do

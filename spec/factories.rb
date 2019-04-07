@@ -19,6 +19,6 @@ FactoryBot.define do
     initialize_with { new(duration, &block) }
   end
 
-  factory :container, class: Dodo::Container do
+  factory :parallel, class: Dodo::ParallelTimeline do
   end
 end
