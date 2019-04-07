@@ -25,25 +25,7 @@ RSpec.describe Dodo::Moment do
     end
   end
   describe '#scheduler' do
-    let(:starting_offset) { rand(10).days }
-    let(:opts) { double }
-    subject { moment.scheduler starting_offset, scope, opts }
-    context 'with opts' do
-      it 'should create a new MomentScheduler with opts included' do
-        expect(Dodo::MomentScheduler).to receive(:new).with(
-          moment, starting_offset, scope, opts
-        )
-        subject
-      end
-    end
-    context 'without opts' do
-      subject { moment.scheduler starting_offset, scope }
-      it 'should create a new MomentScheduler with an empty ahs as opts' do
-        expect(Dodo::MomentScheduler).to receive(:new).with(
-          moment, starting_offset, scope, {}
-        )
-        subject
-      end
-    end
+    let(:timeline) { moment }
+    it_behaves_like 'a moment scheduler'
   end
 end
