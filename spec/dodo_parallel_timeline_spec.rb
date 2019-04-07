@@ -192,11 +192,11 @@ RSpec.describe Dodo::ParallelTimeline do
     let(:distribution) { starting_offset }
     subject { parallel.scheduler starting_offset, context }
     context 'without opts' do
-      it 'should create and return a new ContainerScheduler' do
-        expect(subject).to be_a Dodo::ContainerScheduler
+      it 'should create and return a new ParallelScheduler' do
+        expect(subject).to be_a Dodo::ParallelScheduler
       end
-      it 'should create a ContainerScheduler with an empty hash as opts' do
-        expect(Dodo::ContainerScheduler).to receive(:new).with(
+      it 'should create a ParallelScheduler with an empty hash as opts' do
+        expect(Dodo::ParallelScheduler).to receive(:new).with(
           parallel, starting_offset, context, {}
         )
         subject
@@ -205,11 +205,11 @@ RSpec.describe Dodo::ParallelTimeline do
     context 'with opts' do
       let(:opts) { { stretch: 4 } }
       subject { parallel.scheduler starting_offset, context, opts }
-      it 'should create and return a new ContainerScheduler' do
-        expect(subject).to be_a Dodo::ContainerScheduler
+      it 'should create and return a new ParallelScheduler' do
+        expect(subject).to be_a Dodo::ParallelScheduler
       end
-      it 'should create a ContainerScheduler with an empty hash as opts' do
-        expect(Dodo::ContainerScheduler).to receive(:new).with(
+      it 'should create a ParallelScheduler with an empty hash as opts' do
+        expect(Dodo::ParallelScheduler).to receive(:new).with(
           parallel, starting_offset, context, opts
         )
         subject

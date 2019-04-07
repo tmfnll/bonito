@@ -5,7 +5,7 @@ require 'dodo/serial_timeline'
 require 'algorithms'
 
 module Dodo
-  class ContainerScheduler < Scheduler # :nodoc:
+  class ParallelScheduler < Scheduler # :nodoc:
     def initialize(parallel, starting_offset, context, opts = {})
       super
       @schedulers = parallel.map do |timeline|
@@ -20,7 +20,7 @@ module Dodo
   end
 
   class ParallelTimeline < Timeline # :nodoc:
-    schedule_with ContainerScheduler
+    schedule_with ParallelScheduler
 
     def initialize(&block)
       super 0
