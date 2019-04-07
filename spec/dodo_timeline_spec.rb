@@ -6,10 +6,10 @@ RSpec.describe Dodo::ScopedMoment do
   let(:moment) { build :moment }
   let(:offset) { 2.weeks.ago }
   let(:scope) { Dodo::Scope.new }
-  let(:scopeual_moment) { described_class.new moment, offset, scope }
+  let(:scoped_moment) { described_class.new moment, offset, scope }
 
   describe '#evaluate' do
-    subject { scopeual_moment.evaluate }
+    subject { scoped_moment.evaluate }
 
     it 'should evaluate the moment within the scope' do
       allow(scope).to receive(:instance_eval) do |&block|
