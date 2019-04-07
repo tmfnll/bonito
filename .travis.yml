@@ -16,4 +16,15 @@ script:
   - bundle exec rspec
 after_script:
 - ./cc-test-reporter after-build -t simplecov --exit-code $TRAVIS_TEST_RESULT
+- rake rerdoc
 cache: bundler
+
+deploy:
+  provider: pages
+  local_dir: docs
+  skip_cleanup: true
+  target_branch: gh-pages
+  github_token: $PERSONAL_ACCESS_TOKEN
+  keep_history: true
+  on:
+    branch: master
