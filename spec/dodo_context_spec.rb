@@ -2,11 +2,11 @@
 
 require 'rspec'
 
-RSpec.describe Dodo::Context do
+RSpec.describe Dodo::Scope do
   let(:parent) { described_class.new nil }
-  let(:context) { described_class.new parent }
+  let(:scope) { described_class.new parent }
 
-  subject { context }
+  subject { scope }
   describe '#initialize' do
     context 'with a parent context provided' do
       it 'should set the parent' do
@@ -14,7 +14,7 @@ RSpec.describe Dodo::Context do
       end
     end
     context 'without a parent context provided' do
-      subject { Dodo::Context.new }
+      subject { Dodo::Scope.new }
       it 'should set nil as the parent' do
         expect(subject.parent).to be_nil
       end
@@ -22,25 +22,25 @@ RSpec.describe Dodo::Context do
   end
 
   describe '#set' do
-    subject { context.foo = 'bar' }
+    subject { scope.foo = 'bar' }
 
     it 'should set the instance var :@foo' do
       subject
-      expect(context.instance_variable_get(:@foo)).to eq 'bar'
+      expect(scope.instance_variable_get(:@foo)).to eq 'bar'
     end
   end
 
   describe '#get' do
-    subject { context.foo }
+    subject { scope.foo }
     context 'where foo is set on the child context only' do
-      before { context.foo = 'bar' }
+      before { scope.foo = 'bar' }
       it 'should return bar' do
         expect(subject).to eq 'bar'
       end
     end
     context 'where foo is set on the child and parent contexts' do
       before do
-        context.foo = 'bar'
+        scope.foo = 'bar'
         parent.foo = 'baz'
       end
       it 'should return bar' do
@@ -61,9 +61,9 @@ RSpec.describe Dodo::Context do
   end
 
   describe '#push' do
-    subject { context.push }
-    it 'should return a context that is a child of the instance' do
-      expect(subject.parent).to be context
+    subject { scope.push }
+    it 'should return a scope that is a child of the instance' do
+      expect(subject.parent).to be scope
     end
   end
 end

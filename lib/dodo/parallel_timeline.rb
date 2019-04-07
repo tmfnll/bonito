@@ -6,10 +6,10 @@ require 'algorithms'
 
 module Dodo
   class ParallelScheduler < Scheduler # :nodoc:
-    def initialize(parallel, starting_offset, context, opts = {})
+    def initialize(parallel, starting_offset, scope, opts = {})
       super
       @schedulers = parallel.map do |timeline|
-        timeline.schedule(starting_offset, context, opts).to_enum
+        timeline.schedule(starting_offset, scope, opts).to_enum
       end
       @heap = LazyMinHeap.new(*@schedulers)
     end

@@ -1,11 +1,11 @@
 module Dodo
-  class Context # :nodoc:
+  class Scope # :nodoc:
     def initialize(parent = nil)
       @parent = parent
     end
 
     def push
-      Context.new self
+      self.class.new self
     end
 
     protected
@@ -44,14 +44,14 @@ module Dodo
     end
 
     def get(symbol)
-      context = self
+      scope = self
       instance_var = instance_var_for symbol
-      while context
-        if context.instance_variable_defined? instance_var
-          return context.instance_variable_get instance_var
+      while scope
+        if scope.instance_variable_defined? instance_var
+          return scope.instance_variable_get instance_var
         end
 
-        context = context.parent
+        scope = scope.parent
       end
       raise NoMethodError
     end

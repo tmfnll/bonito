@@ -7,9 +7,9 @@ RSpec.describe Dodo::MomentScheduler do
   let(:stretch) { 2 }
   let(:opts) { { stretch: stretch } }
   let(:moment) { Dodo::Moment.new(&block) }
-  let(:context) { Dodo::Context.new }
+  let(:scope) { Dodo::Scope.new }
   let(:scheduler) do
-    Dodo::MomentScheduler.new moment, starting_offset, context, opts
+    Dodo::MomentScheduler.new moment, starting_offset, scope, opts
   end
 
   describe '#initialize' do

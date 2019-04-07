@@ -10,9 +10,9 @@ RSpec.describe Dodo::ParallelScheduler do
 
   let(:starting_offset) { 0.seconds }
 
-  let(:context) do
-    instance_double(Dodo::Context).tap do |context|
-      allow(context).to receive(:push).and_return(context)
+  let(:scope) do
+    instance_double(Dodo::Scope).tap do |scope|
+      allow(scope).to receive(:push).and_return(scope)
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.describe Dodo::ParallelScheduler do
   end
 
   let(:serial_scheduler) do
-    scheduler = serial.scheduler(starting_offset, context, opts)
+    scheduler = serial.scheduler(starting_offset, scope, opts)
     allow(scheduler).to(
       receive(:to_enum)
     ).and_return distributed_moments.to_enum
@@ -61,7 +61,7 @@ RSpec.describe Dodo::ParallelScheduler do
   end
 
   let(:another_serial_scheduler) do
-    scheduler = another_serial.scheduler(starting_offset + after, context, opts)
+    scheduler = another_serial.scheduler(starting_offset + after, scope, opts)
     allow(
       scheduler
     ).to receive(:to_enum).and_return more_distributed_moments.to_enum
@@ -84,7 +84,7 @@ RSpec.describe Dodo::ParallelScheduler do
   end
 
   let(:parallel_scheduler) do
-    Dodo::ParallelScheduler.new parallel, starting_offset, context, opts
+    Dodo::ParallelScheduler.new parallel, starting_offset, scope, opts
   end
 
   describe '#each' do
@@ -97,7 +97,7 @@ RSpec.describe Dodo::ParallelScheduler do
 
       it 'should provide any opts to the underlying serial schedulers' do
         expect(serial).to receive(:scheduler).with(
-          starting_offset, context, opts
+          starting_offset, scope, opts
         )
         subject
       end

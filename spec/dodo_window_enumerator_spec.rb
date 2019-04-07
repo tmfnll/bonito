@@ -29,9 +29,9 @@ RSpec.describe Dodo::SerialScheduler do
   let(:stretch) { scale_opts.fetch(:stretch) { 1 } }
 
   let(:starting_offset) { rand(10).days }
-  let(:context) { Dodo::Context.new }
+  let(:scope) { Dodo::Scope.new }
   let(:scheduler) do
-    described_class.new serial, starting_offset, context, scale_opts
+    described_class.new serial, starting_offset, scope, scale_opts
   end
 
   before do
@@ -45,7 +45,7 @@ RSpec.describe Dodo::SerialScheduler do
       context 'where the last timeline in serial.to_a has a
                duration of 0' do
         it 'should return an scheduler of offset timelines' do
-          expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ContextualMoment]
+          expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ScopedMoment]
         end
 
         it 'should yield multiple moments' do

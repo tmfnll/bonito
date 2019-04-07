@@ -18,7 +18,7 @@ RSpec.describe Dodo::Runner do
   let(:offsets) { Array.new(5) { start + rand(10.days) } }
   let(:moments) do
     offsets.map do |offset|
-      Dodo::ContextualMoment.new(Dodo::Moment.new(&block), offset, context)
+      Dodo::ScopedMoment.new(Dodo::Moment.new(&block), offset, scope)
     end
   end
   let(:serial) do
@@ -27,9 +27,9 @@ RSpec.describe Dodo::Runner do
     serial
   end
   let(:start) { 2.weeks.ago }
-  let(:context) { Dodo::Context.new }
+  let(:scope) { Dodo::Scope.new }
   let(:starting_offset) { rand 100 }
-  let(:scheduler) { serial.scheduler(starting_offset, context) }
+  let(:scheduler) { serial.scheduler(starting_offset, scope) }
   let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
   let(:runner) { described_class.new decorated_enum, opts }
 
@@ -83,7 +83,7 @@ RSpec.describe Dodo::Runner do
     subject { runner.call }
 
     context 'with a context provided' do
-      it 'should evaluate each moment within context' do
+      it 'should evaluate each moment within scope' do
         moments.map do |moment|
           expect(moment).to receive(:evaluate).ordered
         end
@@ -108,8 +108,8 @@ RSpec.describe Dodo::Runner do
       end
     end
     context 'without any context provided' do
-      let(:context) { nil }
-      it 'should complete successfully having created a new context' do
+      let(:scope) { nil }
+      it 'should complete successfully having created a new scope' do
         subject
       end
     end

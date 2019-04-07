@@ -27,8 +27,8 @@ module Dodo
       @timelines.size
     end
 
-    def scheduler(starting_offset, context, opts = {})
-      self.class.scheduler_class.new self, starting_offset, context, opts
+    def scheduler(starting_offset, scope, opts = {})
+      self.class.scheduler_class.new self, starting_offset, scope, opts
     end
 
     private
@@ -55,19 +55,19 @@ module Dodo
       offset <=> other.offset
     end
 
-    def schedule(starting_offset, context, opts = {})
-      __getobj__.scheduler(starting_offset + offset, context, opts)
+    def schedule(starting_offset, scope, opts = {})
+      __getobj__.scheduler(starting_offset + offset, scope, opts)
     end
   end
 
-  class ContextualMoment < OffsetTimeline # :nodoc:
-    def initialize(moment, offset, context)
-      @context = context
+  class ScopedMoment < OffsetTimeline # :nodoc:
+    def initialize(moment, offset, scope)
+      @scope = scope
       super moment, offset
     end
 
     def evaluate
-      freeze { @context.instance_eval(&self) }
+      freeze { @scope.instance_eval(&self) }
     end
 
     private
@@ -80,15 +80,15 @@ module Dodo
   class Scheduler # :nodoc:
     include Enumerable
 
-    def initialize(timeline, starting_offset, context, opts = {})
+    def initialize(timeline, starting_offset, scope, opts = {})
       @timeline = timeline
       @starting_offset = starting_offset
-      @context = context
+      @scope = scope
       @opts = opts
     end
 
     private
 
-    attr_reader :timeline, :starting_offset, :context, :opts
+    attr_reader :timeline, :starting_offset, :scope, :opts
   end
 end

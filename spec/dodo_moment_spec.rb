@@ -3,7 +3,7 @@
 RSpec.describe Dodo::Moment do
   let(:block) { proc { p 'some block' } }
   let(:moment) { Dodo::Moment.new(&block) }
-  let(:context) { Dodo::Context.new }
+  let(:scope) { Dodo::Scope.new }
   describe '#initialize' do
     subject { moment }
     context 'when passed a block' do
@@ -27,20 +27,20 @@ RSpec.describe Dodo::Moment do
   describe '#scheduler' do
     let(:starting_offset) { rand(10).days }
     let(:opts) { double }
-    subject { moment.scheduler starting_offset, context, opts }
+    subject { moment.scheduler starting_offset, scope, opts }
     context 'with opts' do
       it 'should create a new MomentScheduler with opts included' do
         expect(Dodo::MomentScheduler).to receive(:new).with(
-          moment, starting_offset, context, opts
+          moment, starting_offset, scope, opts
         )
         subject
       end
     end
     context 'without opts' do
-      subject { moment.scheduler starting_offset, context }
+      subject { moment.scheduler starting_offset, scope }
       it 'should create a new MomentScheduler with an empty ahs as opts' do
         expect(Dodo::MomentScheduler).to receive(:new).with(
-          moment, starting_offset, context, {}
+          moment, starting_offset, scope, {}
         )
         subject
       end
