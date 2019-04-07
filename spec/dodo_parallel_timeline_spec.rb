@@ -187,33 +187,7 @@ RSpec.describe Dodo::ParallelTimeline do
   end
 
   describe '#scheduler' do
-    let(:starting_offset) { 2.days }
-    let(:scope) { Dodo::Scope.new }
-    let(:distribution) { starting_offset }
-    subject { parallel.scheduler starting_offset, scope }
-    context 'without opts' do
-      it 'should create and return a new ParallelScheduler' do
-        expect(subject).to be_a Dodo::ParallelScheduler
-      end
-      it 'should create a ParallelScheduler with an empty hash as opts' do
-        expect(Dodo::ParallelScheduler).to receive(:new).with(
-          parallel, starting_offset, scope, {}
-        )
-        subject
-      end
-    end
-    context 'with opts' do
-      let(:opts) { { stretch: 4 } }
-      subject { parallel.scheduler starting_offset, scope, opts }
-      it 'should create and return a new ParallelScheduler' do
-        expect(subject).to be_a Dodo::ParallelScheduler
-      end
-      it 'should create a ParallelScheduler with an empty hash as opts' do
-        expect(Dodo::ParallelScheduler).to receive(:new).with(
-          parallel, starting_offset, scope, opts
-        )
-        subject
-      end
-    end
+    let(:timeline) { parallel }
+    it_behaves_like 'a moment scheduler'
   end
 end

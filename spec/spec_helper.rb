@@ -10,6 +10,7 @@ require 'logger'
 require 'faker'
 require 'active_support/core_ext/numeric/time'
 require 'securerandom'
+require 'support/scheduler_examples'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

@@ -179,27 +179,8 @@ RSpec.describe Dodo::SerialTimeline do
   end
 
   describe '#scheduler' do
-    let(:offset) { 2.days.from_now }
-    let(:scope) { Dodo::Scope.new }
-    let(:opts) { double }
-    subject { serial.scheduler offset, scope, opts }
-    context 'with opts' do
-      it 'should create a new SerialScheduler with opts included' do
-        expect(Dodo::SerialScheduler).to receive(:new).with(
-          serial, offset, scope, opts
-        )
-        subject
-      end
-    end
-    context 'without opts' do
-      subject { serial.scheduler offset, scope }
-      it 'should create a new SerialScheduler with an empty hash as opts' do
-        expect(Dodo::SerialScheduler).to receive(:new).with(
-          serial, offset, scope, {}
-        )
-        subject
-      end
-    end
+    let(:timeline) { serial }
+    it_behaves_like 'a moment scheduler'
   end
 
   describe '#simultaneously' do
