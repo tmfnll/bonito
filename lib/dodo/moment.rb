@@ -24,7 +24,9 @@ module Dodo
     schedule_with MomentScheduler
 
     # Initialises a new Moment
-    # [block] A Proc that will be evaluated at some simulated point in time by a Runner
+    # [block]
+    #   A Proc that will be evaluated at some simulated point in time by a
+    #   Runner
     def initialize(&block)
       @block = block
       super 0
