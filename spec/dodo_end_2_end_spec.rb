@@ -109,9 +109,6 @@ RSpec.describe 'End to end' do
   let(:opts) { { stretch: stretch } }
   let(:scheduler) { serial.scheduler(distribution, scope, opts) }
   let(:progress) { progress_factory.call }
-  let(:decorated_enum) do
-    Dodo::ProgressDecorator.new scheduler, progress
-  end
 
   let(:users_and_authors) { scope.users_and_authors }
   let(:authors) { scope.authors }
