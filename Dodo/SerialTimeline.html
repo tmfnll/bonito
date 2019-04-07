@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class Dodo::Window - RDoc Documentation</title>
+<title>class Dodo::SerialTimeline - RDoc Documentation</title>
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "../";
@@ -52,6 +52,16 @@
   </div>
 
   
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#class-Dodo::SerialTimeline-label-Example">Example</a>
+    <li><a href="#class-Dodo::SerialTimeline-label-Example">Example</a>
+    <li><a href="#class-Dodo::SerialTimeline-label-Example">Example</a>
+  </ul>
+</div>
+
 
   <div id="class-metadata">
     
@@ -59,7 +69,7 @@
   <h3>Parent</h3>
 
   
-  <p class="link">Dodo::Timeline
+  <p class="link">Timeline
   
 </div>
 
@@ -97,82 +107,82 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-Dodo::Window">
-  <h1 id="class-Dodo::Window" class="class">
-    class Dodo::Window
+<main role="main" aria-labelledby="class-Dodo::SerialTimeline">
+  <h1 id="class-Dodo::SerialTimeline" class="class">
+    class Dodo::SerialTimeline
   </h1>
 
   <section class="description">
     
-<p>A <a href="Window.html"><code>Window</code></a> is a data structure with a duration (measured in seconds) that contains <code>timelines</code>. A <code>timeline</code> is any instance of a class that inherits from the Timeline base class.</p>
+<p>A <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is a data structure with a duration (measured in seconds) that contains <code>timelines</code>. A <code>timeline</code> is any instance of a class that inherits from the Timeline base class.</p>
 
-<p>A <a href="Window.html"><code>Window</code></a> serves to define an interval in which it may be <em>simulated</em> that one or more Moment objects are <em>evaluated</em> <em>in</em> series_.</p>
+<p>A <a href="SerialTimeline.html"><code>SerialTimeline</code></a> serves to define an interval in which it may be <em>simulated</em> that one or more <a href="Moment.html"><code>Moment</code></a> objects are <em>evaluated</em> <em>in</em> series_.</p>
 
-<p>A <a href="Window.html"><code>Window</code></a> exposes methods that can either be used to define these Moment objects directly or to create additional <em>child</em> data structures (i.e Container objects or further, child <a href="Window.html"><code>Window</code></a> objects) which can in turn be provide more fine grained control over precisely <em>when</em> any given Moment objects may be evaluated.</p>
+<p>A <a href="SerialTimeline.html"><code>SerialTimeline</code></a> exposes methods that can either be used to define these <a href="Moment.html"><code>Moment</code></a> objects directly or to create additional <em>child</em> data structures (i.e ParallelTimeline objects or further, child <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects) which can in turn be provide more fine grained control over precisely <em>when</em> any given <a href="Moment.html"><code>Moment</code></a> objects may be evaluated.</p>
 
-<p>@example</p>
+<h3 id="class-Dodo::SerialTimeline-label-Example">Example<span><a href="#class-Dodo::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">please</span> { <span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>The above defines a <a href="Window.html"><code>Window</code></a> (using the Dodo#over module method) that specifies a 2 week time period. A single Moment is included in this window (via the <a href="Window.html#method-i-please"><code>please</code></a> factory method).  When the top level <a href="Window.html"><code>Window</code></a> is evaluated (using a Runner object) the block</p>
+<p>The above defines a <a href="SerialTimeline.html"><code>SerialTimeline</code></a> (using the Dodo#over module method) that specifies a 2 week time period. A single <a href="Moment.html"><code>Moment</code></a> is included in this serial (via the <a href="SerialTimeline.html#method-i-please"><code>please</code></a> factory method).  When the top level <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is evaluated (using a Runner object) the block</p>
 
 <pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
 </pre>
 
 <p>is evaluated <em>exactly</em> <em>once</em>. Furthermore, the simulated time at which the block is evaluated will be contained at some point within the 2 week interval beginning on some start date provided when instantiating the Runner object.</p>
 
-<p>As mentioned, it is also possible to include other data structures within <a href="Window.html"><code>Window</code></a> objects, including other <a href="Window.html"><code>Window</code></a> objects.</p>
+<p>As mentioned, it is also possible to include other data structures within <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects, including other <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects.</p>
 
-<p>@example</p>
+<h3 id="class-Dodo::SerialTimeline-label-Example">Example<span><a href="#class-Dodo::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
-<p>We could use the <a href="Window.html#method-i-over"><code>over</code></a> method to add an empty <a href="Window.html"><code>Window</code></a> to the previous example in order to force the already included Moment to be evaluated during the last day of the 2 week period.</p>
+<p>We could use the <a href="SerialTimeline.html#method-i-over"><code>over</code></a> method to add an empty <a href="SerialTimeline.html"><code>SerialTimeline</code></a> to the previous example in order to force the already included <a href="Moment.html"><code>Moment</code></a> to be evaluated during the last day of the 2 week period.</p>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
-  <span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>)  <span class="ruby-comment"># This defines an empty window</span>
+  <span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>)  <span class="ruby-comment"># This defines an empty serial</span>
   <span class="ruby-identifier">please</span> { <span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>The empty <a href="Window.html"><code>Window</code></a> returned by the <a href="Window.html#method-i-over"><code>over</code></a> factory method consumes 13 days of the parent <a href="Window.html"><code>Window</code></a> object&#39;s total duration of 2 weeks.  This means that when this parent <a href="Window.html"><code>Window</code></a> is evaluated, the Moment will be <em>as</em> <em>if</em> <em>it</em> <em>occurred</em> during the <em>final</em> <em>day</em> of the 2 week period.</p>
+<p>The empty <a href="SerialTimeline.html"><code>SerialTimeline</code></a> returned by the <a href="SerialTimeline.html#method-i-over"><code>over</code></a> factory method consumes 13 days of the parent <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object&#39;s total duration of 2 weeks.  This means that when this parent <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is evaluated, the <a href="Moment.html"><code>Moment</code></a> will be <em>as</em> <em>if</em> <em>it</em> <em>occurred</em> during the <em>final</em> <em>day</em> of the 2 week period.</p>
 
-<p>Finally, we may also define Container objects within windows using the <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> method.  These allow for multiple <a href="Window.html"><code>Window</code></a> objects to be defined over the same time period and for any Moment objects contained within to be <em>interleaved</em> when the parent <a href="Window.html"><code>Window</code></a> is ultimately evaluated.</p>
+<p>Finally, we may also define ParallelTimeline objects within serials using the <a href="SerialTimeline.html#method-i-simultaneously"><code>simultaneously</code></a> method.  These allow for multiple <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects to be defined over the same time period and for any <a href="Moment.html"><code>Moment</code></a> objects contained within to be <em>interleaved</em> when the parent <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is ultimately evaluated.</p>
 
-<p>The <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> method instantiates a Container object, whilst accepting a block.  The block is evaluated within the context of the new Container. Timelines defined within this block will be evaluated in parallel.</p>
+<p>The <a href="SerialTimeline.html#method-i-simultaneously"><code>simultaneously</code></a> method instantiates a ParallelTimeline object, whilst accepting a block.  The block is evaluated within the context of the new ParallelTimeline. Timelines defined within this block will be evaluated in parallel.</p>
 
-<p>Note that Container implements many of the same methods as <a href="Window.html"><code>Window</code></a></p>
+<p>Note that ParallelTimeline implements many of the same methods as <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
 
-<p>@example</p>
+<h3 id="class-Dodo::SerialTimeline-label-Example">Example<span><a href="#class-Dodo::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
 <pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">simultaneously</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Window 1 #{Time.now}&quot;</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;SerialTimeline 1 #{Time.now}&quot;</span>
     <span class="ruby-keyword">end</span>
     <span class="ruby-identifier">over</span> <span class="ruby-value">6</span>.<span class="ruby-identifier">days</span>, <span class="ruby-value">after:</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Window 2 #{Time.now}&quot;</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;SerialTimeline 2 #{Time.now}&quot;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> {}  <span class="ruby-comment"># This defines an empty window</span>
+  <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> {}  <span class="ruby-comment"># This defines an empty serial</span>
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>Now, when evaluating this <a href="Window.html"><code>Window</code></a> both the blocks</p>
+<p>Now, when evaluating this <a href="SerialTimeline.html"><code>SerialTimeline</code></a> both the blocks</p>
 
-<pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Window 1 #{Time.now}&quot;</span>
+<pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;SerialTimeline 1 #{Time.now}&quot;</span>
 </pre>
 
 <p>and</p>
 
-<pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Window 2 #{Time.now}&quot;</span>
+<pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;SerialTimeline 2 #{Time.now}&quot;</span>
 </pre>
 
-<p>will be evaluated once during the first week.  The precise instant is chosen randomly within this interval with the only constraint being that the second block cannot be evaluated during the first day (This offset is controlled by the <code>after</code> parameter of the <a href="Window.html#method-i-simultaneously"><code>simultaneously</code></a> method).</p>
+<p>will be evaluated once during the first week.  The precise instant is chosen randomly within this interval with the only constraint being that the second block cannot be evaluated during the first day (This offset is controlled by the <code>after</code> parameter of the <a href="SerialTimeline.html#method-i-simultaneously"><code>simultaneously</code></a> method).</p>
 
-<p><strong>Note</strong> that the moment from the second <a href="Window.html"><code>Window</code></a> could still be evaluated at a simulated time <em>before</em> that at which the moment from the first <a href="Window.html"><code>Window</code></a> is evaluated.</p>
+<p><strong>Note</strong> that the moment from the second <a href="SerialTimeline.html"><code>SerialTimeline</code></a> could still be evaluated at a simulated time <em>before</em> that at which the moment from the first <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is evaluated.</p>
 
   </section>
 
@@ -206,19 +216,28 @@
 
         <div class="method-description">
           
-          <p>Instantiate a new <a href="Window.html"><code>Window</code></a> object</p>
+          <p>Instantiate a new <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
+<dl class="rdoc-list label-list"><dt>duration
+<dd>
+<p>The total time period (in seconds) that the <a href="SerialTimeline.html"><code>SerialTimeline</code></a> encompasses</p>
+</dd><dt>parent
+<dd>
+<p>If the <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is a child of another Timeline, parent is this Timeline</p>
+</dd><dt>block
+<dd>
+<p>A block that will be evaluated within the context of the newly created <a href="SerialTimeline.html"><code>SerialTimeline</code></a>.  Note that the following two statements are equivalent</p>
 
-<p>@param [Integer] duration The total time period (in seconds) that the <a href="Window.html"><code>Window</code></a> encompasses @param [Timeline] parent If the <a href="Window.html"><code>Window</code></a> is a child of another Timeline, parent is this Timeline @param [Proc] block A block that will be evaluated within the context of the newly created <a href="Window.html"><code>Window</code></a>.  Note that the following two statements are equivalent</p>
+<p>a_serial = <a href="SerialTimeline.html#method-c-new"><code>Dodo::SerialTimeline.new(1.week)</code></a> do</p>
 
-<pre class="ruby"><span class="ruby-identifier">a_window</span> = <span class="ruby-constant">Dodo</span><span class="ruby-operator">::</span><span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">1</span>.<span class="ruby-identifier">week</span>) <span class="ruby-keyword">do</span>
-  <span class="ruby-identifier">please</span> { <span class="ruby-identifier">p</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
-<span class="ruby-keyword">end</span>
-
-<span class="ruby-identifier">another_window</span> = <span class="ruby-constant">Dodo</span><span class="ruby-operator">::</span><span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span>
-<span class="ruby-identifier">window</span>.<span class="ruby-identifier">please</span> { <span class="ruby-identifier">p</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
+<pre class="ruby"><span class="ruby-identifier">please</span> { <span class="ruby-identifier">p</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 </pre>
 
-<p>The ability to include a block in this way is in order to allow the code used to define a given <a href="Window.html"><code>Window</code></a> will reflect its hierarchy.</p>
+<p>end</p>
+
+<p>another_serial = <a href="SerialTimeline.html#method-c-new"><code>Dodo::SerialTimeline.new</code></a> 1.week serial.please { p Time.now }</p>
+</dd></dl>
+
+<p>The ability to include a block in this way is in order to allow the code used to define a given <a href="SerialTimeline.html"><code>SerialTimeline</code></a> will reflect its hierarchy.</p>
           
           
             <div class="method-calls-super">
@@ -229,7 +248,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 138</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-identifier">parent</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-ivar">@parent</span> = <span class="ruby-identifier">parent</span>
   <span class="ruby-ivar">@total_child_duration</span> = <span class="ruby-value">0</span>
@@ -267,25 +286,27 @@
 
         <div class="method-description">
           
-          <p>Repeatedly apply the <a href="Window.html#method-i-2B"><code>+</code></a> method of the current <a href="Window.html"><code>Window</code></a> to itself</p>
+          <p>Repeatedly apply the <a href="SerialTimeline.html#method-i-2B"><code>+</code></a> method of the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a> to itself</p>
+<dl class="rdoc-list label-list"><dt>other
+<dd>
+<p>Denotes the number of times the current serial should be added to itself.</p>
+</dd></dl>
 
-<p>@param [Integer] other Denotes the number of times the current window should be added to itself.</p>
+<p>Returns a new <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
 
-<p>@return [Window] A new <a href="Window.html"><code>Window</code></a> object</p>
+<p>Note that the following statements are equivalent for some serial <code>serial</code>:</p>
 
-<p>Note that the following statements are equivalent for some window <code>window</code>:</p>
-
-<pre class="ruby"><span class="ruby-identifier">window</span> <span class="ruby-operator">*</span> <span class="ruby-value">3</span>
-<span class="ruby-identifier">window</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">window</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">window</span>
+<pre class="ruby"><span class="ruby-identifier">serial</span> <span class="ruby-operator">*</span> <span class="ruby-value">3</span>
+<span class="ruby-identifier">serial</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">serial</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">serial</span>
 </pre>
           
           
 
           
           <div class="method-source-code" id="2A-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 241</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 254</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">*</span>(<span class="ruby-identifier">other</span>)
-  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">other</span>) <span class="ruby-keyword">do</span>
+  <span class="ruby-constant">SerialTimeline</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">other</span>) <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">other</span>) { <span class="ruby-identifier">entries</span> }.<span class="ruby-identifier">reduce</span>(<span class="ruby-value">:+</span>))
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -312,20 +333,22 @@
 
         <div class="method-description">
           
-          <p>Scale up a window by parallelising it according to some factor</p>
+          <p>Scale up a serial by parallelising it according to some factor</p>
+<dl class="rdoc-list label-list"><dt>other
+<dd>
+<p>An Integer denoting the degree of parallelism with which to scale the serial.</p>
+</dd></dl>
 
-<p>@param [Integer] other An Integer denoting the degree of parallelism with which to scale the window.</p>
-
-<p>@return [Container] A new Container whose child timelines are precisely the current window repeated <code>other</code> times.</p>
+<p>Returns a new ParallelTimeline whose child timelines are precisely the current serial repeated <code>other</code> times.</p>
           
           
 
           
           <div class="method-source-code" id="2A-2A-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 254</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 268</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">**</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-identifier">this</span> = <span class="ruby-keyword">self</span>
-  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>) <span class="ruby-keyword">do</span>
+  <span class="ruby-constant">SerialTimeline</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>) <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">simultaneously</span> { <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">other</span>) { <span class="ruby-identifier">this</span> }) }
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -352,19 +375,21 @@
 
         <div class="method-description">
           
-          <p>Combine two Windows into a single, larger <a href="Window.html"><code>Window</code></a> object.</p>
+          <p>Combine two Windows into a single, larger <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object.</p>
+<dl class="rdoc-list label-list"><dt>other
+<dd>
+<p>Some other <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
+</dd></dl>
 
-<p>@param [Window] other Some other <a href="Window.html"><code>Window</code></a> object</p>
-
-<p>@return [Window] a <a href="Window.html"><code>Window</code></a> object consisting of the ordered child Timeline objects of the current <a href="Window.html"><code>Window</code></a> with the ordered child Timeline objects of <code>other</code> appended to the end.</p>
+<p>Returns a <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object consisting of the ordered child Timeline objects of the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a> with the ordered child Timeline objects of <code>other</code> appended to the end.</p>
           
           
 
           
           <div class="method-source-code" id="2B-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 222</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
-  <span class="ruby-constant">Window</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">duration</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">duration</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-constant">SerialTimeline</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">duration</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">duration</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span>(<span class="ruby-identifier">to_a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>))
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -391,19 +416,22 @@
 
         <div class="method-description">
           
-          <p>Define a new <a href="Window.html"><code>Window</code></a> and add it as a child to the current <a href="Window.html"><code>Window</code></a></p>
+          <p>Define a new <a href="SerialTimeline.html"><code>SerialTimeline</code></a> and add it as a child to the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
+<dl class="rdoc-list label-list"><dt>duration
+<dd>
+<p>The duration (in seconds) of the newly created child <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
+</dd><dt>block
+<dd>
+<p>A block passed to the new method on the child <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
+</dd></dl>
 
-<p>@param [Integer] duration The duration (in seconds) of the newly created child <a href="Window.html"><code>Window</code></a></p>
-
-<p>@params [Proc] block A block passed to the new method on the child <a href="Window.html"><code>Window</code></a> object</p>
-
-<p>@return [Window] The newly created <a href="Window.html"><code>Window</code></a> object</p>
+<p>Returns the newly created <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="over-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 160</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">over</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-keyword">self</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>).<span class="ruby-identifier">tap</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">method</span>(<span class="ruby-value">:use</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -430,17 +458,19 @@
 
         <div class="method-description">
           
-          <p>Define a new Moment and add it as a child to the current <a href="Window.html"><code>Window</code></a></p>
+          <p>Define a new <a href="Moment.html"><code>Moment</code></a> and add it as a child to the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
+<dl class="rdoc-list label-list"><dt>block
+<dd>
+<p>A block passed to the new method on the child <a href="Moment.html"><code>Moment</code></a> object</p>
+</dd></dl>
 
-<p>@params [Proc] block A block passed to the new method on the child Moment object</p>
-
-<p>@return [Moment] The newly created Moment object</p>
+<p>Returns the newly created <a href="Moment.html"><code>Moment</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="please-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 170</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">please</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-constant">Moment</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>).<span class="ruby-identifier">tap</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">method</span>(<span class="ruby-value">:use</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -467,21 +497,25 @@
 
         <div class="method-description">
           
-          <p>Define a new window and append it multiple times as a child of the current <a href="Window.html"><code>Window</code></a> object.</p>
+          <p>Define a new serial and append it multiple times as a child of the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object.</p>
+<dl class="rdoc-list label-list"><dt>times
+<dd>
+<p>The number of times that the new <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object to be appended to the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
+</dd><dt>over
+<dd>
+<p>The total duration (in senconds) of the new repeated <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects.</p>
+</dd><dt>block
+<dd>
+<p>A block passed to the new method on the child <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
+</dd></dl>
 
-<p>@param [Integer] times The number of times that the new <a href="Window.html"><code>Window</code></a> object to be appended to the current <a href="Window.html"><code>Window</code></a></p>
-
-<p>@param [Integer] over The total duration (in senconds) of the new repeated <a href="Window.html"><code>Window</code></a> objects.</p>
-
-<p>@param [Proc] block A block passed to the new method on the child <a href="Window.html"><code>Window</code></a> object</p>
-
-<p>@return [Window] The current <a href="Window.html"><code>Window</code></a></p>
+<p>Returns the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
           
           
 
           
           <div class="method-source-code" id="repeat-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 187</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">repeat</span>(<span class="ruby-value">times:</span>, <span class="ruby-value">over:</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">repeated_block</span> = <span class="ruby-identifier">proc</span> { <span class="ruby-identifier">times</span>.<span class="ruby-identifier">times</span> { <span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) } }
   <span class="ruby-identifier">over</span>(<span class="ruby-identifier">over</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">repeated_block</span>)
@@ -509,19 +543,21 @@
 
         <div class="method-description">
           
-          <p>Define a new Container object append it as a child to the current <a href="Window.html"><code>Window</code></a>. Also permit the evaluation of methods within the context of the new Container.</p>
+          <p>Define a new ParallelTimeline object append it as a child to the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a>. Also permit the evaluation of methods within the context of the new ParallelTimeline.</p>
+<dl class="rdoc-list label-list"><dt>block
+<dd>
+<p>A block to be passed to the new method on the child ParallelTimeline method.</p>
+</dd></dl>
 
-<p>@param [Proc] block A block to be passed to the new method on the child Container method.</p>
-
-<p>@return [Window] The current <a href="Window.html"><code>Window</code></a> object</p>
+<p>Returns the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="simultaneously-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 200</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 210</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">simultaneously</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-identifier">use</span> <span class="ruby-constant">Container</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">use</span> <span class="ruby-constant">ParallelTimeline</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -546,13 +582,13 @@
 
         <div class="method-description">
           
-          <p>The the amount of duration remaining taking into account the duration of any Timeline objects included as children of the <a href="Window.html"><code>Window</code></a>.</p>
+          <p>The the amount of duration remaining taking into account the duration of any Timeline objects included as children of the <a href="SerialTimeline.html"><code>SerialTimeline</code></a>.</p>
           
           
 
           
           <div class="method-source-code" id="unused_duration-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 147</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unused_duration</span>
   <span class="ruby-identifier">duration</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@total_child_duration</span>
 <span class="ruby-keyword">end</span></pre>
@@ -579,17 +615,19 @@
 
         <div class="method-description">
           
-          <p>Append an existing Timeline as a child of the current <a href="Window.html"><code>Window</code></a></p>
+          <p>Append an existing Timeline as a child of the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
+<dl class="rdoc-list label-list"><dt>timelines
+<dd>
+<p>An array of Timeline objects that will be appended, in order to the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
+</dd></dl>
 
-<p>@params [Array] timelines An array of Timeline objects that will be appended, in order to the current <a href="Window.html"><code>Window</code></a></p>
-
-<p>@return [Window] The current <a href="Window.html"><code>Window</code></a> object</p>
+<p>Returns the current <a href="SerialTimeline.html"><code>SerialTimeline</code></a> object</p>
           
           
 
           
           <div class="method-source-code" id="use-source">
-            <pre><span class="ruby-comment"># File lib/dodo/window.rb, line 210</span>
+            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 221</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">timelines</span>)
   <span class="ruby-identifier">timelines</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">timeline</span><span class="ruby-operator">|</span> <span class="ruby-identifier">send</span> <span class="ruby-value">:&lt;&lt;</span>, <span class="ruby-identifier">timeline</span> }
   <span class="ruby-keyword">self</span>
