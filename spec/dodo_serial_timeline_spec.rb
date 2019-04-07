@@ -205,22 +205,22 @@ RSpec.describe Dodo::SerialTimeline do
   describe '#simultaneously' do
     let(:block) { proc { called? } }
     subject { serial.simultaneously(&block) }
-    let(:container) { Dodo::Container.new }
+    let(:parallel) { Dodo::ParallelTimeline.new }
 
     before do
-      allow(Dodo::Container).to receive(:new).and_return container
+      allow(Dodo::ParallelTimeline).to receive(:new).and_return parallel
     end
 
-    it 'should append the container to the timeline array' do
+    it 'should append the parallel to the timeline array' do
       expect { subject }.to change {
         serial.to_a
-      }.from([]).to([container])
+      }.from([]).to([parallel])
     end
 
     it 'should evaluate the block passed' do
-      expect(Dodo::Container).to receive(:new) do |&blk|
+      expect(Dodo::ParallelTimeline).to receive(:new) do |&blk|
         expect(blk).to eq block
-        container
+        parallel
       end
       subject
     end
@@ -288,7 +288,7 @@ RSpec.describe Dodo::SerialTimeline do
     end
 
     it 'should return a new serial consisting of a single timeline' do
-      expect(subject.first).to be_a Dodo::Container
+      expect(subject.first).to be_a Dodo::ParallelTimeline
     end
 
     it 'should return a new serial consisting of a single timeline which itself

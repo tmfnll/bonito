@@ -6,9 +6,9 @@ require 'algorithms'
 
 module Dodo
   class ContainerScheduler < Scheduler # :nodoc:
-    def initialize(container, starting_offset, context, opts = {})
+    def initialize(parallel, starting_offset, context, opts = {})
       super
-      @schedulers = container.map do |timeline|
+      @schedulers = parallel.map do |timeline|
         timeline.schedule(starting_offset, context, opts).to_enum
       end
       @heap = LazyMinHeap.new(*@schedulers)
@@ -19,7 +19,7 @@ module Dodo
     end
   end
 
-  class Container < Timeline # :nodoc:
+  class ParallelTimeline < Timeline # :nodoc:
     schedule_with ContainerScheduler
 
     def initialize(&block)

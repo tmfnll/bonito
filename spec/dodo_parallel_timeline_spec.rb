@@ -2,17 +2,17 @@
 
 require 'active_support/core_ext/numeric/time'
 
-RSpec.describe Dodo::Container do
+RSpec.describe Dodo::ParallelTimeline do
   let(:duration) { 2.weeks }
   let(:block) { proc { true } }
-  let(:container) { described_class.new }
+  let(:parallel) { described_class.new }
   let(:serial_duration) { 1.week }
   let(:serial) { Dodo::SerialTimeline.new serial_duration, &block }
   let(:offset) { 3.days }
   let(:offset_serial) { Dodo::OffsetTimeline.new serial, offset }
 
   describe '#initialize' do
-    subject { container }
+    subject { parallel }
 
     context 'without a block' do
       it 'should have an initial duration of 0' do
@@ -21,10 +21,10 @@ RSpec.describe Dodo::Container do
     end
 
     context 'with a block' do
-      let(:allocated) { Dodo::Container.allocate }
+      let(:allocated) { Dodo::ParallelTimeline.allocate }
       let(:block) { proc { true } }
 
-      subject { Dodo::Container.new(&block) }
+      subject { Dodo::ParallelTimeline.new(&block) }
 
       it 'should have an initial duration of 0' do
         expect(subject.duration).to eq 0
@@ -41,54 +41,54 @@ RSpec.describe Dodo::Container do
 
   shared_examples 'an appender of timelines' do
     it 'should append to the timelines array' do
-      expect { subject }.to change { container.to_a.size }.by 1
+      expect { subject }.to change { parallel.to_a.size }.by 1
     end
 
     it 'should append the serial provided to the timelines array' do
       expect(subject.to_a.last).to eq offset_serial
     end
 
-    it 'should return the container itself' do
-      expect(subject).to be container
+    it 'should return the parallel itself' do
+      expect(subject).to be parallel
     end
   end
 
   shared_examples 'a method that allows additional timelines be ' \
-                  'added to a container' do
+                  'added to a parallel' do
     context 'when passed a single OffsetTimeline as an argument' do
-      context 'with a newly initialized container' do
+      context 'with a newly initialized parallel' do
         it_behaves_like 'an appender of timelines'
 
-        it 'should update the container duration to that of the
+        it 'should update the parallel duration to that of the
             appended serial' do
           subject
           expect(
-            container.duration
+            parallel.duration
           ).to eq offset_serial.duration + offset_serial.offset
         end
       end
 
       context 'with the sum of the duration of the appended serial and' \
-              'its offset LESS than that of the containers duration' do
+              'its offset LESS than that of the parallels duration' do
         before do
-          allow(container).to receive(:duration).and_return(3.weeks)
+          allow(parallel).to receive(:duration).and_return(3.weeks)
         end
 
         it_behaves_like 'an appender of timelines'
 
-        it 'should not change the duration of the container' do
-          expect { subject }.not_to(change { container.duration })
+        it 'should not change the duration of the parallel' do
+          expect { subject }.not_to(change { parallel.duration })
         end
       end
 
       context 'with the sum of the duration of the appended serial and' \
-              'its offset GREATER that that of the containers duration' do
+              'its offset GREATER that that of the parallels duration' do
 
         let(:offset) { duration + 1.week }
 
         it_behaves_like 'an appender of timelines'
 
-        it 'should change the duration of the container to the sum of the ' \
+        it 'should change the duration of the parallel to the sum of the ' \
            'appended serial and its offset' do
           expect(subject.duration).to eq(
             offset_serial.duration + offset_serial.offset
@@ -100,38 +100,38 @@ RSpec.describe Dodo::Container do
 
   describe '#over' do
     let(:offset) { 0 }
-    subject { container.over serial_duration, after: offset, &block }
+    subject { parallel.over serial_duration, after: offset, &block }
     before do
-      container # Ensure the container is created before patching the
+      parallel # Ensure the parallel is created before patching the
       # serial constructor
       allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
     end
     it_behaves_like(
-      'a method that allows additional timelines be added to a container'
+      'a method that allows additional timelines be added to a parallel'
     )
   end
 
   describe '#also' do
-    subject { container.also after: offset, over: serial_duration, &block }
+    subject { parallel.also after: offset, over: serial_duration, &block }
 
     before do
-      container # Ensure the container is created before patching the
+      parallel # Ensure the parallel is created before patching the
       # serial constructor
       allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
     end
 
     context 'with an integer provided' do
       it_behaves_like(
-        'a method that allows additional timelines be added to a container'
+        'a method that allows additional timelines be added to a parallel'
       )
     end
   end
 
   describe '#use' do
     context 'with a pre-baked serial provided' do
-      subject { container.use serial, after: offset }
+      subject { parallel.use serial, after: offset }
       it_behaves_like(
-        'a method that allows additional timelines be added to a container'
+        'a method that allows additional timelines be added to a parallel'
       )
     end
 
@@ -141,11 +141,11 @@ RSpec.describe Dodo::Container do
         timelines.map { |serial| Dodo::OffsetTimeline.new serial, offset }
       end
 
-      subject { container.use(*timelines, after: offset) }
+      subject { parallel.use(*timelines, after: offset) }
 
       it 'should append to the timelines array' do
         expect { subject }.to change {
-          container.to_a.size
+          parallel.to_a.size
         }.by timelines.size
       end
 
@@ -153,8 +153,8 @@ RSpec.describe Dodo::Container do
         expect(subject.to_a.last(timelines.size)).to eq offset_timelines
       end
 
-      it 'should return the container itself' do
-        expect(subject).to be container
+      it 'should return the parallel itself' do
+        expect(subject).to be parallel
       end
     end
   end
@@ -162,27 +162,27 @@ RSpec.describe Dodo::Container do
   describe '#repeat' do
     let(:times) { 3 }
     subject do
-      container.repeat(
+      parallel.repeat(
         times: times, over: serial_duration, after: offset, &block
       )
     end
 
     before do
-      container # Ensure the container is created before patching the
+      parallel # Ensure the parallel is created before patching the
       # serial constructor
       allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
     end
 
     it 'should append to the timelines array' do
-      expect { subject }.to change { container.to_a.size }.by times
+      expect { subject }.to change { parallel.to_a.size }.by times
     end
 
     it 'should append the serial provided to the timelines array' do
       expect(subject.to_a.last(times)).to eq([offset_serial] * 3)
     end
 
-    it 'should return the container itself' do
-      expect(subject).to be container
+    it 'should return the parallel itself' do
+      expect(subject).to be parallel
     end
   end
 
@@ -190,27 +190,27 @@ RSpec.describe Dodo::Container do
     let(:starting_offset) { 2.days }
     let(:context) { Dodo::Context.new }
     let(:distribution) { starting_offset }
-    subject { container.scheduler starting_offset, context }
+    subject { parallel.scheduler starting_offset, context }
     context 'without opts' do
       it 'should create and return a new ContainerScheduler' do
         expect(subject).to be_a Dodo::ContainerScheduler
       end
       it 'should create a ContainerScheduler with an empty hash as opts' do
         expect(Dodo::ContainerScheduler).to receive(:new).with(
-          container, starting_offset, context, {}
+          parallel, starting_offset, context, {}
         )
         subject
       end
     end
     context 'with opts' do
       let(:opts) { { stretch: 4 } }
-      subject { container.scheduler starting_offset, context, opts }
+      subject { parallel.scheduler starting_offset, context, opts }
       it 'should create and return a new ContainerScheduler' do
         expect(subject).to be_a Dodo::ContainerScheduler
       end
       it 'should create a ContainerScheduler with an empty hash as opts' do
         expect(Dodo::ContainerScheduler).to receive(:new).with(
-          container, starting_offset, context, opts
+          parallel, starting_offset, context, opts
         )
         subject
       end
