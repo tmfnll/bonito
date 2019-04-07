@@ -23,20 +23,20 @@ module Dodo # :nodoc:
     end
   end
 
-  # A SerialTimeline is a data structure with a duration (measured in seconds) that
-  # contains +timelines+. A +timeline+ is any instance of a class that inherits
-  # from the Timeline base class.
+  # A SerialTimeline is a data structure with a duration (measured in seconds)
+  # that contains +timelines+. A +timeline+ is any instance of a class that
+  # inherits from the Timeline base class.
   #
-  # A SerialTimeline serves to define an interval in which it may be _simulated_ that
-  # one or more Moment objects are _evaluated_ _in_ series_.
+  # A SerialTimeline serves to define an interval in which it may be
+  # _simulated_ that one or more Moment objects are _evaluated_ _in_ series_.
   #
   # A SerialTimeline exposes methods that can either be used to define these
   # Moment objects directly or to create additional _child_ data structures
-  # (i.e ParallelTimeline objects or further, child SerialTimeline objects) which can in
-  # turn be provide more fine grained control over precisely _when_
+  # (i.e ParallelTimeline objects or further, child SerialTimeline objects)
+  # which can in turn be provide more fine grained control over precisely _when_
   # any given Moment objects may be evaluated.
   #
-  # @example
+  # === Example
   #
   #   Dodo.over(2.weeks) do
   #     please { puts Time.now }
@@ -57,7 +57,7 @@ module Dodo # :nodoc:
   # As mentioned, it is also possible to include other data structures within
   # SerialTimeline objects, including other SerialTimeline objects.
   #
-  # @example
+  # === Example
   #
   # We could use the #over method to add an empty SerialTimeline to the previous
   # example in order to force the already included Moment to be evaluated
@@ -68,24 +68,26 @@ module Dodo # :nodoc:
   #     please { puts Time.now }
   #   end
   #
-  # The empty SerialTimeline returned by the #over factory method consumes 13 days
-  # of the parent SerialTimeline object's total duration of 2 weeks.  This means that
-  # when this parent SerialTimeline is evaluated, the Moment will be _as_ _if_ _it_
-  # _occurred_ during the _final_ _day_ of the 2 week period.
+  # The empty SerialTimeline returned by the #over factory method consumes 13
+  # days of the parent SerialTimeline object's total duration of 2 weeks.  This
+  # means that when this parent SerialTimeline is evaluated, the Moment will be
+  # _as_ _if_ _it_ _occurred_ during the _final_ _day_ of the 2 week period.
   #
-  # Finally, we may also define ParallelTimeline objects within serials using the
-  # #simultaneously method.  These allow for multiple SerialTimeline
+  # Finally, we may also define ParallelTimeline objects within serials using
+  # the #simultaneously method.  These allow for multiple SerialTimeline
   # objects to be defined over the same time period and for any Moment
-  # objects contained within to be _interleaved_ when the parent SerialTimeline is
-  # ultimately evaluated.
+  # objects contained within to be _interleaved_ when the parent SerialTimeline
+  # is ultimately evaluated.
   #
-  # The #simultaneously method instantiates a ParallelTimeline object, whilst accepting
-  # a block.  The block is evaluated within the context of the new ParallelTimeline.
-  # Timelines defined within this block will be evaluated in parallel.
+  # The #simultaneously method instantiates a ParallelTimeline object, whilst
+  # accepting a block.  The block is evaluated within the context of the new
+  # ParallelTimeline. Timelines defined within this block will be evaluated in
+  # parallel.
   #
-  # Note that ParallelTimeline implements many of the same methods as SerialTimeline
+  # Note that ParallelTimeline implements many of the same methods as
+  # SerialTimeline
   #
-  # @example
+  # === Example
   #
   #   Dodo.over(2.weeks) do
   #     simultaneously do
@@ -110,21 +112,24 @@ module Dodo # :nodoc:
   # offset is controlled by the +after+ parameter of the #simultaneously
   # method).
   #
-  # *Note* that the moment from the second SerialTimeline could still be evaluated at
-  # a simulated time _before_ that at which the moment from the first SerialTimeline
-  # is evaluated.
+  # *Note* that the moment from the second SerialTimeline could still be
+  # evaluated at a simulated time _before_ that at which the moment from the
+  # first SerialTimeline is evaluated.
   class SerialTimeline < Timeline
     schedule_with SerialScheduler
 
     # Instantiate a new SerialTimeline object
     #
-    # @param [Integer] duration The total time period (in seconds) that the
-    # SerialTimeline encompasses
-    # @param [Timeline] parent If the SerialTimeline is a child of another Timeline,
-    # parent is this Timeline
-    # @param [Proc] block A block that will be evaluated within the context of
-    # the newly created SerialTimeline.  Note that the following two statements are
-    # equivalent
+    # [duration]
+    #   The total time period (in seconds) that the
+    #   SerialTimeline encompasses
+    # [parent]
+    #   If the SerialTimeline is a child of another Timeline,
+    #   parent is this Timeline
+    # [block]
+    #   A block that will be evaluated within the context of
+    #   the newly created SerialTimeline.  Note that the following two
+    #   statements are equivalent
     #
     #   a_serial = Dodo::SerialTimeline.new(1.week) do
     #     please { p Time.now }
@@ -148,25 +153,26 @@ module Dodo # :nodoc:
       duration - @total_child_duration
     end
 
-    # Define a new SerialTimeline and add it as a child to the current SerialTimeline
+    # Define a new SerialTimeline and add it as a child to the current
+    # SerialTimeline
     #
-    # @param [Integer] duration
-    # The duration (in seconds) of the newly created child SerialTimeline
+    # [duration]
+    #   The duration (in seconds) of the newly created child SerialTimeline
     #
-    # @params [Proc] block A block passed to the #new method on the child SerialTimeline
-    # object
+    # [block]
+    #   A block passed to the #new method on the child SerialTimeline object
     #
-    # @return [SerialTimeline] The newly created SerialTimeline object
+    # Returns the newly created SerialTimeline object
     def over(duration, &block)
       self.class.new(duration, self, &block).tap(&method(:use))
     end
 
     # Define a new Moment and add it as a child to the current SerialTimeline
     #
-    # @params [Proc] block A block passed to the #new method on the child Moment
-    # object
+    # [block]
+    #   A block passed to the #new method on the child Moment object
     #
-    # @return [Moment] The newly created Moment object
+    # Returns the newly created Moment object
     def please(&block)
       Moment.new(&block).tap(&method(:use))
     end
@@ -174,16 +180,19 @@ module Dodo # :nodoc:
     # Define a new serial and append it multiple times as a child of the
     # current SerialTimeline object.
     #
-    # @param [Integer] times The number of times that the new SerialTimeline object to
-    # be appended to the current SerialTimeline
+    # [times]
+    #   The number of times that the new SerialTimeline object to
+    #   be appended to the current SerialTimeline
     #
-    # @param [Integer] over The total duration (in senconds) of the new
-    # repeated SerialTimeline objects.
+    # [over]
+    #   The total duration (in senconds) of the new
+    #   repeated SerialTimeline objects.
     #
-    # @param [Proc] block A block passed to the #new method on the child SerialTimeline
-    # object
+    # [block]
+    #   A block passed to the #new method on the child SerialTimeline
+    #   object
     #
-    # @return [SerialTimeline] The current SerialTimeline
+    # Returns the current SerialTimeline
     def repeat(times:, over:, &block)
       repeated_block = proc { times.times { instance_eval(&block) } }
       over(over, &repeated_block)
@@ -193,20 +202,22 @@ module Dodo # :nodoc:
     # SerialTimeline. Also permit the evaluation of methods within the context
     # of the new ParallelTimeline.
     #
-    # @param [Proc] block
-    # A block to be passed to the #new method on the child ParallelTimeline method.
+    # [block]
+    #   A block to be passed to the #new method on the child ParallelTimeline
+    #   method.
     #
-    # @return [SerialTimeline] The current SerialTimeline object
+    # Returns the current SerialTimeline object
     def simultaneously(&block)
       use ParallelTimeline.new(&block)
     end
 
     # Append an existing Timeline as a child of the current SerialTimeline
     #
-    # @params [Array] timelines An array of Timeline objects that will be
-    # appended, in order to the current SerialTimeline
+    # [timelines]
+    #   An array of Timeline objects that will be
+    #   appended, in order to the current SerialTimeline
     #
-    # @return [SerialTimeline] The current SerialTimeline object
+    # Returns the current SerialTimeline object
     def use(*timelines)
       timelines.each { |timeline| send :<<, timeline }
       self
@@ -214,11 +225,12 @@ module Dodo # :nodoc:
 
     # Combine two Windows into a single, larger SerialTimeline object.
     #
-    # @param [SerialTimeline] other Some other SerialTimeline object
+    # [other]
+    #   Some other SerialTimeline object
     #
-    # @return [SerialTimeline] a SerialTimeline object consisting of the ordered child Timeline
-    # objects of the current SerialTimeline with the ordered child Timeline objects of
-    # +other+ appended to the end.
+    # Returns a SerialTimeline object consisting of the ordered child Timeline
+    # objects of the current SerialTimeline with the ordered child Timeline
+    # objects of +other+ appended to the end.
     def +(other)
       SerialTimeline.new duration + other.duration do
         use(*(to_a + other.to_a))
@@ -227,10 +239,11 @@ module Dodo # :nodoc:
 
     # Repeatedly apply the #+ method of the current SerialTimeline to itself
     #
-    # @param [Integer] other Denotes the number of times the current serial
-    # should be added to itself.
+    # [other]
+    #   Denotes the number of times the current serial
+    #   should be added to itself.
     #
-    # @return [SerialTimeline] A new SerialTimeline object
+    # Returns a new SerialTimeline object
     #
     # Note that the following statements are equivalent for
     # some serial +serial+:
@@ -246,10 +259,11 @@ module Dodo # :nodoc:
 
     # Scale up a serial by parallelising it according to some factor
     #
-    # @param [Integer] other An Integer denoting the degree of parallelism with
-    # which to scale the serial.
+    # [other]
+    #   An Integer denoting the degree of parallelism with
+    #   which to scale the serial.
     #
-    # @return [ParallelTimeline] A new ParallelTimeline whose child timelines are precisely
+    # Returns a new ParallelTimeline whose child timelines are precisely
     # the current serial repeated +other+ times.
     def **(other)
       this = self
