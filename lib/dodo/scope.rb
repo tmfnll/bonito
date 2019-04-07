@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dodo
   class Scope # :nodoc:
     def initialize(parent = nil)

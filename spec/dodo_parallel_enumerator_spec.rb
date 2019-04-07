@@ -76,7 +76,9 @@ RSpec.describe Dodo::ParallelScheduler do
   end
 
   let(:parallel) do
-    allow(Dodo::SerialTimeline).to receive(:new).and_return(serial, another_serial)
+    allow(Dodo::SerialTimeline).to receive(:new).and_return(
+      serial, another_serial
+    )
     Dodo::ParallelTimeline.new.tap do |parallel|
       parallel.also after: 0, over: serial.duration {}
       parallel.also after: after, over: another_serial.duration {}
