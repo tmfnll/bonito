@@ -1,11 +1,11 @@
-Mon, 08 Apr 2019 08:33:36 +0000
-README.md	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/serial_timeline.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/version.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/moment.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/scope.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/runner.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/progress.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/parallel_timeline.rb	Mon, 08 Apr 2019 08:32:45 +0000
-lib/dodo/timeline.rb	Mon, 08 Apr 2019 08:32:45 +0000
+Mon, 08 Apr 2019 08:33:43 +0000
+README.md	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/serial_timeline.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/version.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/moment.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/scope.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/runner.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/progress.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/parallel_timeline.rb	Mon, 08 Apr 2019 08:32:59 +0000
+lib/dodo/timeline.rb	Mon, 08 Apr 2019 08:32:59 +0000
