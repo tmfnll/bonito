@@ -21,6 +21,34 @@ RSpec.describe Dodo::Scope do
     end
   end
 
+  describe '#respond_to?' do
+    let(:symbol) { :abc }
+    subject { scope.respond_to? symbol }
+
+    context 'where the symbol denotes a valid setter' do
+      context 'where the symbol denotes a valid setter' do
+        let(:symbol) { :abc= }
+        it 'should return true' do
+          expect(subject).to be true
+        end
+      end
+    end
+
+    context 'where the symbol is not valid' do
+      let(:symbol) { :abc? }
+      it 'should return false' do
+        expect(subject).to be false
+      end
+    end
+
+    context 'where symbol denotes a valid getter' do
+      before { scope.abc = true }
+      it 'should return true' do
+        expect(subject).to be true
+      end
+    end
+  end
+
   describe '#set' do
     subject { scope.foo = 'bar' }
 
