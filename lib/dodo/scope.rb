@@ -5,6 +5,7 @@ module Dodo
     def initialize(scope, symbol)
       @scope = scope
       @symbol = symbol
+      @instance_var = :"@#{@symbol.to_s.chomp('=')}"
     end
 
     def access(*args)
@@ -22,21 +23,17 @@ module Dodo
     def get
       scope = @scope
       while scope
-        if scope.instance_variable_defined? instance_var
-          return scope.instance_variable_get instance_var
+        if scope.instance_variable_defined? @instance_var
+          return scope.instance_variable_get @instance_var
         end
 
         scope = scope.parent
       end
-      raise NoMethodError
+      raise NameError
     end
 
     def set(value)
-      @scope.instance_variable_set instance_var, value
-    end
-
-    def instance_var
-      :"@#{@symbol.to_s.chomp('=')}"
+      @scope.instance_variable_set @instance_var, value
     end
   end
 
@@ -57,7 +54,7 @@ module Dodo
 
     def method_missing(symbol, *args)
       Accessor.new(self, symbol).access(*args)
-    rescue NoMethodError
+    rescue NameError
       super
     end
 
@@ -69,7 +66,7 @@ module Dodo
 
       accessor.access
       true
-    rescue NoMethodError
+    rescue NameError
       super
     end
   end
