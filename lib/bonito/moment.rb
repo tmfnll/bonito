@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'dodo/timeline'
+require 'bonito/timeline'
 
-module Dodo
+module Bonito
   class MomentScheduler < Scheduler # :nodoc:
     def each
       yield ScopedMoment.new(timeline, starting_offset, scope)

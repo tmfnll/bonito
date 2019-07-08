@@ -2,14 +2,14 @@
 
 require 'active_support/core_ext/numeric/time'
 
-RSpec.describe Dodo::ParallelTimeline do
+RSpec.describe Bonito::ParallelTimeline do
   let(:duration) { 2.weeks }
   let(:block) { proc { true } }
   let(:parallel) { described_class.new }
   let(:serial_duration) { 1.week }
-  let(:serial) { Dodo::SerialTimeline.new serial_duration, &block }
+  let(:serial) { Bonito::SerialTimeline.new serial_duration, &block }
   let(:offset) { 3.days }
-  let(:offset_serial) { Dodo::OffsetTimeline.new serial, offset }
+  let(:offset_serial) { Bonito::OffsetTimeline.new serial, offset }
 
   describe '#initialize' do
     subject { parallel }
@@ -21,10 +21,10 @@ RSpec.describe Dodo::ParallelTimeline do
     end
 
     context 'with a block' do
-      let(:allocated) { Dodo::ParallelTimeline.allocate }
+      let(:allocated) { Bonito::ParallelTimeline.allocate }
       let(:block) { proc { true } }
 
-      subject { Dodo::ParallelTimeline.new(&block) }
+      subject { Bonito::ParallelTimeline.new(&block) }
 
       it 'should have an initial duration of 0' do
         expect(subject.duration).to eq 0
@@ -104,7 +104,7 @@ RSpec.describe Dodo::ParallelTimeline do
     before do
       parallel # Ensure the parallel is created before patching the
       # serial constructor
-      allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
+      allow(Bonito::SerialTimeline).to receive(:new).and_return(serial)
     end
     it_behaves_like(
       'a method that allows additional timelines be added to a parallel'
@@ -117,7 +117,7 @@ RSpec.describe Dodo::ParallelTimeline do
     before do
       parallel # Ensure the parallel is created before patching the
       # serial constructor
-      allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
+      allow(Bonito::SerialTimeline).to receive(:new).and_return(serial)
     end
 
     context 'with an integer provided' do
@@ -138,7 +138,7 @@ RSpec.describe Dodo::ParallelTimeline do
     context 'with many pre-baked timelines provided' do
       let(:timelines) { build_list :serial, 3 }
       let(:offset_timelines) do
-        timelines.map { |serial| Dodo::OffsetTimeline.new serial, offset }
+        timelines.map { |serial| Bonito::OffsetTimeline.new serial, offset }
       end
 
       subject { parallel.use(*timelines, after: offset) }
@@ -170,7 +170,7 @@ RSpec.describe Dodo::ParallelTimeline do
     before do
       parallel # Ensure the parallel is created before patching the
       # serial constructor
-      allow(Dodo::SerialTimeline).to receive(:new).and_return(serial)
+      allow(Bonito::SerialTimeline).to receive(:new).and_return(serial)
     end
 
     it 'should append to the timelines array' do

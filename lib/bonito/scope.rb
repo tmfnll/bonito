@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Dodo
+module Bonito
   class Accessor # :nodoc:
     def initialize(scope, symbol)
       @scope = scope

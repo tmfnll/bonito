@@ -1,18 +1,19 @@
-# Dodo
+# Bonito
 
-
-![build](https://travis-ci.org/TomFinill/dodo.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/TomFinill/dodo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/TomFinill/dodo/test_coverage)
+![build](https://travis-ci.org/TomFinill/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/TomFinill/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/TomFinill/bonito/test_coverage)
 
 ## TL;DR
 
-The **Demo Data Dodo** is a ruby DSL which provides a 
-family of data structures that can be used to simulate the occurrence of 
-interrelated events over a series of (nested) intervals.
+**Bonito** is a ruby DSL for generating canned data.  It can simulate, by 
+ _freezing time_, sequences of events happening in series and parallel in 
+ order to approximate any kind of live data.
 
-`Dodo` uses [Timecop](https://github.com/travisjeffery/timecop) to _freeze_ 
-time at instants specified by these data structures.
+`Bonito` uses [Timecop](https://github.com/travisjeffery/timecop) in order to
+ perform this _freezing_. 
 
-### Example
+![bonito](https://live.staticflickr.com/3363/3278938654_a9991fa129_z.jpg)
+
+### An example is worth a thousand theorems
 
 #### Timeline Definition
 
@@ -31,16 +32,16 @@ Obviously, each `Article` should be created by an `Author` and the simulated
  `Author` with this being followed afterwards by a series of `Comment`s on the
  `Article` being created by `User`s.
  
-`Dodo` offers a `Window` object to model such timelines. 
+`Bonito` offers a `Window` object to model such timelines. 
 
 Each `Window` has a duration in which events occur.  These events are referred 
-to in `Dodo` as `Moment`s.  
+to in `Bonito` as `Moment`s.  
 
 For example, a `Window` representing the timeline described above could be 
 created as follows:
 
 ```ruby
-example_window = Dodo.over 1.week do
+example_window = Bonito.over 1.week do
   please do
     author = authors.sample
     title = Faker::Company.bs
@@ -58,7 +59,7 @@ example_window = Dodo.over 1.week do
 end
 ```
 
-Here, via the `over` method on the `Dodo` module, a `Window` is defined.  Within
+Here, via the `over` method on the `Bonito` module, a `Window` is defined.  Within
 this window a series of `Moment`s are defined. Firstly, the `Window#please` method 
 is invoked to define the event.  In this case the event consists of creating an
 `Article`.
@@ -80,7 +81,7 @@ their associated `Comment`s.  One way to achieve this would be to repeat the
 previously defined `Window` via the `repeat` command:
 
 ```ruby
-serial_window = Dodo.over 10.weeks do
+serial_window = Bonito.over 10.weeks do
   repeat times: 5 do
     use example_window
   end
@@ -100,7 +101,7 @@ then fill that container with the same, `Window` five times, using the
 `Container#use` method.
 
 ```ruby
-parallel_window = Dodo.over 2.weeks do
+parallel_window = Bonito.over 2.weeks do
   simultaneously do
     repeat times: 5 do
       use example_window 
@@ -123,7 +124,7 @@ This is achieved via a `Runner` object that takes a `Window` and uses it to
 evaluate `Moment`s.
 
 ```ruby
-  Dodo.run parallel_window, starting: 8.weeks_ago
+  Bonito.run parallel_window, starting: 8.weeks_ago
 ```
 
 This will take the `Window` object `parallel_window` and distribute the `Moment`s
@@ -141,7 +142,7 @@ representing the news company for which articles are being written) as well
 as events that we wish to be able to scale, such as the creation of `Article`
 objects and their associated `Comment`s.
 
-Using `Dodo`, we could define two windows: a `singleton_window` that is run once per
+Using `Bonito`, we could define two windows: a `singleton_window` that is run once per
 dataset and generates our `Organisation` model, as well as a `scalable_window`
 that results in different sizes of data according to some size parameter.
 
@@ -155,4 +156,4 @@ scaled_window = singleton_window + (scalable_window * factor)
 The `scaled_window`, when run, will run the `scalable_window` `factor` times
 in parallel.
 
-![dodo](https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Dodo_%28PSF%29.png/203px-Dodo_%28PSF%29.png)
+

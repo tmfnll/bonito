@@ -47,7 +47,7 @@ RSpec.describe 'End to end' do
   end
 
   let(:scope) do
-    Dodo::Scope.new.tap do |scope|
+    Bonito::Scope.new.tap do |scope|
       scope.authors = []
       scope.articles = []
       scope.users = []
@@ -57,7 +57,7 @@ RSpec.describe 'End to end' do
   end
 
   let(:serial) do
-    Dodo.over 1.week do
+    Bonito.over 1.week do
       simultaneously do
         over 1.day do
           repeat times: 5, over: 1.day do
@@ -104,7 +104,7 @@ RSpec.describe 'End to end' do
   let(:scaled_serial) { serial }
 
   let(:logger) { Logger.new STDOUT }
-  let(:progress_factory) { Dodo::ProgressBar.factory }
+  let(:progress_factory) { Bonito::ProgressBar.factory }
   let(:stretch) { 1 }
   let(:opts) { { stretch: stretch } }
   let(:scheduler) { serial.scheduler(distribution, scope, opts) }
@@ -118,7 +118,7 @@ RSpec.describe 'End to end' do
   let(:comments_by_article) { comments.group_by(&:article) }
 
   subject! do
-    Dodo.run scaled_serial, starting: 3.weeks.ago,
+    Bonito.run scaled_serial, starting: 3.weeks.ago,
                             scope: scope,
                             progress_factory: progress_factory, **opts
   end
@@ -133,7 +133,7 @@ RSpec.describe 'End to end' do
 
     let(:parallel) { serial.to_a.first }
     it 'should first add a parallel to the top level serial' do
-      expect(parallel).to be_a Dodo::ParallelTimeline
+      expect(parallel).to be_a Bonito::ParallelTimeline
     end
 
     it 'should add two serials to the parallel' do
@@ -145,7 +145,7 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add a serial to the first of these serials' do
-      expect(parallel.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.first.to_a.first).to be_a Bonito::SerialTimeline
     end
 
     it 'it should add 5 timelines to this serial' do
@@ -155,7 +155,7 @@ RSpec.describe 'End to end' do
     it 'it should add only moments to this serial' do
       expect(
         parallel.to_a.first.to_a.first.to_a
-      ).to all(be_a Dodo::Moment)
+      ).to all(be_a Bonito::Moment)
     end
 
     it 'should add a single timeline to the second of these serial' do
@@ -163,7 +163,7 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add a serial to the second of these serials' do
-      expect(parallel.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.last.to_a.first).to be_a Bonito::SerialTimeline
     end
 
     it 'it should add 10 timelines to this serial' do
@@ -173,12 +173,12 @@ RSpec.describe 'End to end' do
     it 'it should add only moments to this serial' do
       expect(
         parallel.to_a.last.to_a.first.to_a
-      ).to all(be_a Dodo::Moment)
+      ).to all(be_a Bonito::Moment)
     end
 
     let(:child_serial) { serial.to_a.last }
     it 'should then add a serial to the top level serial' do
-      expect(child_serial).to be_a Dodo::SerialTimeline
+      expect(child_serial).to be_a Bonito::SerialTimeline
     end
 
     it 'should add 10 timelines to this child_serial' do
@@ -269,7 +269,7 @@ RSpec.describe 'End to end' do
 
     let(:parallel) { serial.to_a.first }
     it 'should first add a parallel to the top level serial' do
-      expect(parallel).to be_a Dodo::ParallelTimeline
+      expect(parallel).to be_a Bonito::ParallelTimeline
     end
 
     it 'should add two serials to the parallel' do
@@ -281,7 +281,7 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add a serial to the first of these serials' do
-      expect(parallel.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.first.to_a.first).to be_a Bonito::SerialTimeline
     end
 
     it 'it should add 5 happenings to this serial' do
@@ -291,7 +291,7 @@ RSpec.describe 'End to end' do
     it 'it should add only moments to this serial' do
       expect(
         parallel.to_a.first.to_a.first.to_a
-      ).to all(be_a Dodo::Moment)
+      ).to all(be_a Bonito::Moment)
     end
 
     it 'should add a single happening to the second of these serial' do
@@ -299,7 +299,7 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add a serial to the second of these serials' do
-      expect(parallel.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.last.to_a.first).to be_a Bonito::SerialTimeline
     end
 
     it 'it should add 10 happenings to this serial' do
@@ -309,12 +309,12 @@ RSpec.describe 'End to end' do
     it 'it should add only moments to this serial' do
       expect(
         parallel.to_a.last.to_a.first.to_a
-      ).to all(be_a Dodo::Moment)
+      ).to all(be_a Bonito::Moment)
     end
 
     let(:child_serial) { serial.to_a.last }
     it 'should then add a serial to the top level serial' do
-      expect(child_serial).to be_a Dodo::SerialTimeline
+      expect(child_serial).to be_a Bonito::SerialTimeline
     end
 
     it 'should add 10 happenings to this child_serial' do
@@ -414,7 +414,7 @@ RSpec.describe 'End to end' do
 
     let(:parallel) { serial.to_a.first }
     it 'should first add a parallel to the top level serial' do
-      expect(parallel).to be_a Dodo::ParallelTimeline
+      expect(parallel).to be_a Bonito::ParallelTimeline
     end
 
     it 'should add two serials to the parallel' do
@@ -426,7 +426,7 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add a serial to the first of these serials' do
-      expect(parallel.to_a.first.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.first.to_a.first).to be_a Bonito::SerialTimeline
     end
 
     it 'it should add 5 timelines to this serial' do
@@ -436,7 +436,7 @@ RSpec.describe 'End to end' do
     it 'it should add only moments to this serial' do
       expect(
         parallel.to_a.first.to_a.first.to_a
-      ).to all(be_a Dodo::Moment)
+      ).to all(be_a Bonito::Moment)
     end
 
     it 'should add a single timeline to the second of these serial' do
@@ -444,7 +444,7 @@ RSpec.describe 'End to end' do
     end
 
     it 'should add a serial to the second of these serials' do
-      expect(parallel.to_a.last.to_a.first).to be_a Dodo::SerialTimeline
+      expect(parallel.to_a.last.to_a.first).to be_a Bonito::SerialTimeline
     end
 
     it 'it should add 10 timelines to this serial' do
@@ -454,12 +454,12 @@ RSpec.describe 'End to end' do
     it 'it should add only moments to this serial' do
       expect(
         parallel.to_a.last.to_a.first.to_a
-      ).to all(be_a Dodo::Moment)
+      ).to all(be_a Bonito::Moment)
     end
 
     let(:child_serial) { serial.to_a.last }
     it 'should then add a serial to the top level serial' do
-      expect(child_serial).to be_a Dodo::SerialTimeline
+      expect(child_serial).to be_a Bonito::SerialTimeline
     end
 
     it 'should add 10 timelines to this child_serial' do

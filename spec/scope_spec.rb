@@ -2,7 +2,7 @@
 
 require 'rspec'
 
-RSpec.describe Dodo::Scope do
+RSpec.describe Bonito::Scope do
   let(:parent) { described_class.new nil }
   let(:scope) { described_class.new parent }
 
@@ -14,7 +14,7 @@ RSpec.describe Dodo::Scope do
       end
     end
     context 'without a parent context provided' do
-      subject { Dodo::Scope.new }
+      subject { Bonito::Scope.new }
       it 'should set nil as the parent' do
         expect(subject.parent).to be_nil
       end

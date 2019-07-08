@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Dodo::SerialTimeline do
+RSpec.describe Bonito::SerialTimeline do
   let(:duration) { 2.weeks }
-  let(:serial) { Dodo::SerialTimeline.new(duration) {} }
-  let(:moment) { Dodo::Moment.new {} }
+  let(:serial) { Bonito::SerialTimeline.new(duration) {} }
+  let(:moment) { Bonito::Moment.new {} }
   let(:block) { -> { true } }
 
   describe '#initialize' do
-    let(:uninitialized) { Dodo::SerialTimeline.allocate }
+    let(:uninitialized) { Bonito::SerialTimeline.allocate }
 
     subject { serial }
 
@@ -31,7 +31,7 @@ RSpec.describe Dodo::SerialTimeline do
     end
 
     context 'without a block provided' do
-      subject { Dodo::SerialTimeline.new duration }
+      subject { Bonito::SerialTimeline.new duration }
       it 'should set duration' do
         expect(subject.duration).to eq duration
       end
@@ -50,7 +50,7 @@ RSpec.describe Dodo::SerialTimeline do
     subject { serial.use timeline }
 
     context 'with a timeline whose duration is less than that of the serial' do
-      let(:timeline) { Dodo::SerialTimeline.new(duration - 1) {} }
+      let(:timeline) { Bonito::SerialTimeline.new(duration - 1) {} }
 
       it 'should successfully append the timeline' do
         expect(subject.instance_variable_get(:@timelines)).to eq [timeline]
@@ -66,10 +66,10 @@ RSpec.describe Dodo::SerialTimeline do
 
     context 'with a timeline whose duration is greater than
              that of the serial' do
-      let(:timeline) { Dodo::SerialTimeline.new(duration + 1) {} }
+      let(:timeline) { Bonito::SerialTimeline.new(duration + 1) {} }
 
       it 'should successfully append the timeline' do
-        expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
+        expect { subject }.to raise_error(Bonito::WindowDurationExceeded)
       end
     end
   end
@@ -96,13 +96,13 @@ RSpec.describe Dodo::SerialTimeline do
       let(:timeline_duration) { serial.duration }
 
       it 'should successfully append the timeline' do
-        expect { subject }.to raise_error(Dodo::WindowDurationExceeded)
+        expect { subject }.to raise_error(Bonito::WindowDurationExceeded)
       end
     end
   end
 
   describe '#over' do
-    let(:child) { Dodo::SerialTimeline.new(duration - 1) {} }
+    let(:child) { Bonito::SerialTimeline.new(duration - 1) {} }
 
     before do
       allow(serial.class).to receive(:new).and_return child
@@ -131,13 +131,13 @@ RSpec.describe Dodo::SerialTimeline do
 
   describe '#please' do
     before do
-      allow(Dodo::Moment).to receive(:new).and_return(moment)
+      allow(Bonito::Moment).to receive(:new).and_return(moment)
     end
 
     subject { serial.please(&block) }
 
     it 'should instantiate a new child' do
-      expect(Dodo::Moment).to receive(:new) do |&blk|
+      expect(Bonito::Moment).to receive(:new) do |&blk|
         expect(blk).to eq block
         moment
       end
@@ -169,7 +169,7 @@ RSpec.describe Dodo::SerialTimeline do
       end
 
       it 'should return a SerialTimeline' do
-        expect(subject).to be_a Dodo::SerialTimeline
+        expect(subject).to be_a Bonito::SerialTimeline
       end
 
       it 'should return a serial with two timelines' do
@@ -186,10 +186,10 @@ RSpec.describe Dodo::SerialTimeline do
   describe '#simultaneously' do
     let(:block) { proc { called? } }
     subject { serial.simultaneously(&block) }
-    let(:parallel) { Dodo::ParallelTimeline.new }
+    let(:parallel) { Bonito::ParallelTimeline.new }
 
     before do
-      allow(Dodo::ParallelTimeline).to receive(:new).and_return parallel
+      allow(Bonito::ParallelTimeline).to receive(:new).and_return parallel
     end
 
     it 'should append the parallel to the timeline array' do
@@ -199,7 +199,7 @@ RSpec.describe Dodo::SerialTimeline do
     end
 
     it 'should evaluate the block passed' do
-      expect(Dodo::ParallelTimeline).to receive(:new) do |&blk|
+      expect(Bonito::ParallelTimeline).to receive(:new) do |&blk|
         expect(blk).to eq block
         parallel
       end
@@ -214,7 +214,7 @@ RSpec.describe Dodo::SerialTimeline do
     subject { serial + another_serial }
 
     it 'should return a serial' do
-      expect(subject).to be_a Dodo::SerialTimeline
+      expect(subject).to be_a Bonito::SerialTimeline
     end
 
     it 'should return a new serial whose duration is the sum of the
@@ -238,7 +238,7 @@ RSpec.describe Dodo::SerialTimeline do
     subject { serial * factor }
 
     it 'should return a serial' do
-      expect(subject).to be_a Dodo::SerialTimeline
+      expect(subject).to be_a Bonito::SerialTimeline
     end
 
     it 'should return a new serial whose duration is the product of the original
@@ -261,7 +261,7 @@ RSpec.describe Dodo::SerialTimeline do
     subject { serial**factor }
 
     it 'should return a serial' do
-      expect(subject).to be_a Dodo::SerialTimeline
+      expect(subject).to be_a Bonito::SerialTimeline
     end
 
     it 'should return a new serial consisting of a single timeline' do
@@ -269,7 +269,7 @@ RSpec.describe Dodo::SerialTimeline do
     end
 
     it 'should return a new serial consisting of a single timeline' do
-      expect(subject.first).to be_a Dodo::ParallelTimeline
+      expect(subject.first).to be_a Bonito::ParallelTimeline
     end
 
     it 'should return a new serial consisting of a single timeline which itself

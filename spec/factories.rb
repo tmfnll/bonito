@@ -4,14 +4,14 @@ require 'active_support/core_ext/numeric/time'
 require 'factory_bot'
 
 FactoryBot.define do
-  factory :moment, class: Dodo::Moment do
+  factory :moment, class: Bonito::Moment do
     transient do
       block { proc { true } }
     end
     initialize_with { new(&block) }
   end
 
-  factory :serial, class: Dodo::SerialTimeline do
+  factory :serial, class: Bonito::SerialTimeline do
     transient do
       block { proc { true } }
     end
@@ -19,6 +19,6 @@ FactoryBot.define do
     initialize_with { new(duration, &block) }
   end
 
-  factory :parallel, class: Dodo::ParallelTimeline do
+  factory :parallel, class: Bonito::ParallelTimeline do
   end
 end
