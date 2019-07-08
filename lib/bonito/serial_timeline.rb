@@ -42,10 +42,10 @@ module Bonito # :nodoc:
   #     please { puts Time.now }
   #   end
   #
-  # The above defines a SerialTimeline (using the Bonito#over module method) that
-  # specifies a 2 week time period. A single Moment is included in this serial
-  # (via the #please factory method).  When the top level SerialTimeline is
-  # evaluated (using a Runner object) the block
+  # The above defines a SerialTimeline (using the Bonito#over module method)
+  # that specifies a 2 week time period. A single Moment is included in this
+  # serial (via the #please factory method).  When the top level SerialTimeline
+  # is evaluated (using a Runner object) the block
   #
   #   puts Time.now
   #
