@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class Dodo::SerialTimeline - RDoc Documentation</title>
+<title>class Bonito::SerialTimeline - RDoc Documentation</title>
 
 <script type="text/javascript">
   var rdoc_rel_prefix = "../";
@@ -56,9 +56,9 @@
   <h3>Table of Contents</h3>
 
   <ul class="link-list" role="directory">
-    <li><a href="#class-Dodo::SerialTimeline-label-Example">Example</a>
-    <li><a href="#class-Dodo::SerialTimeline-label-Example">Example</a>
-    <li><a href="#class-Dodo::SerialTimeline-label-Example">Example</a>
+    <li><a href="#class-Bonito::SerialTimeline-label-Example">Example</a>
+    <li><a href="#class-Bonito::SerialTimeline-label-Example">Example</a>
+    <li><a href="#class-Bonito::SerialTimeline-label-Example">Example</a>
   </ul>
 </div>
 
@@ -107,9 +107,9 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-Dodo::SerialTimeline">
-  <h1 id="class-Dodo::SerialTimeline" class="class">
-    class Dodo::SerialTimeline
+<main role="main" aria-labelledby="class-Bonito::SerialTimeline">
+  <h1 id="class-Bonito::SerialTimeline" class="class">
+    class Bonito::SerialTimeline
   </h1>
 
   <section class="description">
@@ -120,14 +120,14 @@
 
 <p>A <a href="SerialTimeline.html"><code>SerialTimeline</code></a> exposes methods that can either be used to define these <a href="Moment.html"><code>Moment</code></a> objects directly or to create additional <em>child</em> data structures (i.e ParallelTimeline objects or further, child <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects) which can in turn be provide more fine grained control over precisely <em>when</em> any given <a href="Moment.html"><code>Moment</code></a> objects may be evaluated.</p>
 
-<h3 id="class-Dodo::SerialTimeline-label-Example">Example<span><a href="#class-Dodo::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
+<h3 id="class-Bonito::SerialTimeline-label-Example">Example<span><a href="#class-Bonito::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
-<pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
+<pre class="ruby"><span class="ruby-constant">Bonito</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">please</span> { <span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 <span class="ruby-keyword">end</span>
 </pre>
 
-<p>The above defines a <a href="SerialTimeline.html"><code>SerialTimeline</code></a> (using the Dodo#over module method) that specifies a 2 week time period. A single <a href="Moment.html"><code>Moment</code></a> is included in this serial (via the <a href="SerialTimeline.html#method-i-please"><code>please</code></a> factory method).  When the top level <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is evaluated (using a Runner object) the block</p>
+<p>The above defines a <a href="SerialTimeline.html"><code>SerialTimeline</code></a> (using the Bonito#over module method) that specifies a 2 week time period. A single <a href="Moment.html"><code>Moment</code></a> is included in this serial (via the <a href="SerialTimeline.html#method-i-please"><code>please</code></a> factory method).  When the top level <a href="SerialTimeline.html"><code>SerialTimeline</code></a> is evaluated (using a Runner object) the block</p>
 
 <pre class="ruby"><span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
 </pre>
@@ -136,11 +136,11 @@
 
 <p>As mentioned, it is also possible to include other data structures within <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects, including other <a href="SerialTimeline.html"><code>SerialTimeline</code></a> objects.</p>
 
-<h3 id="class-Dodo::SerialTimeline-label-Example">Example<span><a href="#class-Dodo::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
+<h3 id="class-Bonito::SerialTimeline-label-Example">Example<span><a href="#class-Bonito::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
 <p>We could use the <a href="SerialTimeline.html#method-i-over"><code>over</code></a> method to add an empty <a href="SerialTimeline.html"><code>SerialTimeline</code></a> to the previous example in order to force the already included <a href="Moment.html"><code>Moment</code></a> to be evaluated during the last day of the 2 week period.</p>
 
-<pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
+<pre class="ruby"><span class="ruby-constant">Bonito</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">day</span>)  <span class="ruby-comment"># This defines an empty serial</span>
   <span class="ruby-identifier">please</span> { <span class="ruby-identifier">puts</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 <span class="ruby-keyword">end</span>
@@ -154,9 +154,9 @@
 
 <p>Note that ParallelTimeline implements many of the same methods as <a href="SerialTimeline.html"><code>SerialTimeline</code></a></p>
 
-<h3 id="class-Dodo::SerialTimeline-label-Example">Example<span><a href="#class-Dodo::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
+<h3 id="class-Bonito::SerialTimeline-label-Example">Example<span><a href="#class-Bonito::SerialTimeline-label-Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
 
-<pre class="ruby"><span class="ruby-constant">Dodo</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
+<pre class="ruby"><span class="ruby-constant">Bonito</span>.<span class="ruby-identifier">over</span>(<span class="ruby-value">2</span>.<span class="ruby-identifier">weeks</span>) <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">simultaneously</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
       <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;SerialTimeline 1 #{Time.now}&quot;</span>
@@ -227,14 +227,14 @@
 <dd>
 <p>A block that will be evaluated within the context of the newly created <a href="SerialTimeline.html"><code>SerialTimeline</code></a>.  Note that the following two statements are equivalent</p>
 
-<p>a_serial = <a href="SerialTimeline.html#method-c-new"><code>Dodo::SerialTimeline.new(1.week)</code></a> do</p>
+<p>a_serial = <a href="SerialTimeline.html#method-c-new"><code>Bonito::SerialTimeline.new(1.week)</code></a> do</p>
 
 <pre class="ruby"><span class="ruby-identifier">please</span> { <span class="ruby-identifier">p</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> }
 </pre>
 
 <p>end</p>
 
-<p>another_serial = <a href="SerialTimeline.html#method-c-new"><code>Dodo::SerialTimeline.new</code></a> 1.week serial.please { p Time.now }</p>
+<p>another_serial = <a href="SerialTimeline.html#method-c-new"><code>Bonito::SerialTimeline.new</code></a> 1.week serial.please { p Time.now }</p>
 </dd></dl>
 
 <p>The ability to include a block in this way is in order to allow the code used to define a given <a href="SerialTimeline.html"><code>SerialTimeline</code></a> will reflect its hierarchy.</p>
@@ -248,7 +248,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 143</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-identifier">parent</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-ivar">@parent</span> = <span class="ruby-identifier">parent</span>
   <span class="ruby-ivar">@total_child_duration</span> = <span class="ruby-value">0</span>
@@ -304,7 +304,7 @@
 
           
           <div class="method-source-code" id="2A-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 254</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 254</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">*</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-constant">SerialTimeline</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">other</span>) <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">other</span>) { <span class="ruby-identifier">entries</span> }.<span class="ruby-identifier">reduce</span>(<span class="ruby-value">:+</span>))
@@ -345,7 +345,7 @@
 
           
           <div class="method-source-code" id="2A-2A-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 268</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 268</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">**</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-identifier">this</span> = <span class="ruby-keyword">self</span>
   <span class="ruby-constant">SerialTimeline</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>) <span class="ruby-keyword">do</span>
@@ -387,7 +387,7 @@
 
           
           <div class="method-source-code" id="2B-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 234</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)
   <span class="ruby-constant">SerialTimeline</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">duration</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">duration</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">use</span>(<span class="ruby-operator">*</span>(<span class="ruby-identifier">to_a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>.<span class="ruby-identifier">to_a</span>))
@@ -431,7 +431,7 @@
 
           
           <div class="method-source-code" id="over-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 166</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">over</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">duration</span>, <span class="ruby-keyword">self</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>).<span class="ruby-identifier">tap</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">method</span>(<span class="ruby-value">:use</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -470,7 +470,7 @@
 
           
           <div class="method-source-code" id="please-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 176</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">please</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-constant">Moment</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>).<span class="ruby-identifier">tap</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">method</span>(<span class="ruby-value">:use</span>))
 <span class="ruby-keyword">end</span></pre>
@@ -515,7 +515,7 @@
 
           
           <div class="method-source-code" id="repeat-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 196</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">repeat</span>(<span class="ruby-value">times:</span>, <span class="ruby-value">over:</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">repeated_block</span> = <span class="ruby-identifier">proc</span> { <span class="ruby-identifier">times</span>.<span class="ruby-identifier">times</span> { <span class="ruby-identifier">instance_eval</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) } }
   <span class="ruby-identifier">over</span>(<span class="ruby-identifier">over</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">repeated_block</span>)
@@ -555,7 +555,7 @@
 
           
           <div class="method-source-code" id="simultaneously-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 210</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 210</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">simultaneously</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">use</span> <span class="ruby-constant">ParallelTimeline</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -588,7 +588,7 @@
 
           
           <div class="method-source-code" id="unused_duration-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 152</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">unused_duration</span>
   <span class="ruby-identifier">duration</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@total_child_duration</span>
 <span class="ruby-keyword">end</span></pre>
@@ -627,7 +627,7 @@
 
           
           <div class="method-source-code" id="use-source">
-            <pre><span class="ruby-comment"># File lib/dodo/serial_timeline.rb, line 221</span>
+            <pre><span class="ruby-comment"># File lib/bonito/serial_timeline.rb, line 221</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">timelines</span>)
   <span class="ruby-identifier">timelines</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">timeline</span><span class="ruby-operator">|</span> <span class="ruby-identifier">send</span> <span class="ruby-value">:&lt;&lt;</span>, <span class="ruby-identifier">timeline</span> }
   <span class="ruby-keyword">self</span>
