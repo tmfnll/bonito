@@ -119,8 +119,8 @@ RSpec.describe 'End to end' do
 
   subject! do
     Bonito.run scaled_serial, starting: 3.weeks.ago,
-                            scope: scope,
-                            progress_factory: progress_factory, **opts
+                              scope: scope,
+                              progress_factory: progress_factory, **opts
   end
 
   context 'without scaling' do
