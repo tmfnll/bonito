@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'timecop'
-module Dodo # :nodoc:
+module Bonito # :nodoc:
   class Runner # :nodoc:
     def initialize(enumerable, opts = {})
       @enumerable = enumerable

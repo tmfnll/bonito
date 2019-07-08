@@ -3,14 +3,14 @@
 require 'spec_helper'
 require 'logger'
 
-RSpec.describe Dodo::ProgressLogger do
+RSpec.describe Bonito::ProgressLogger do
   let(:logger) { instance_double Logger }
   let(:total) { 10 }
   let(:prefix) { 'Progress :' }
   let(:current) { 3 }
 
   let(:progress) do
-    Dodo::ProgressLogger.new logger, total: total, prefix: prefix
+    Bonito::ProgressLogger.new logger, total: total, prefix: prefix
   end
 
   before { allow(logger).to receive(:info) }
@@ -59,17 +59,17 @@ RSpec.describe Dodo::ProgressLogger do
       expect(progress.current).to eq current + increment
     end
     context 'without an integer total' do
-      let(:progress) { Dodo::ProgressLogger.new logger, prefix: prefix }
+      let(:progress) { Bonito::ProgressLogger.new logger, prefix: prefix }
       it 'should log the current progress by itself' do
         expect(logger).to receive(:info).with("#{prefix} #{incremented} / -")
         subject
       end
     end
     context 'without a prefix' do
-      let(:progress) { Dodo::ProgressLogger.new logger, total: total }
+      let(:progress) { Bonito::ProgressLogger.new logger, total: total }
       it 'should log the current progress with the default prefix' do
         expect(logger).to receive(:info).with(
-          "Dodo::ProgressLogger{#{progress.object_id}} : " \
+          "Bonito::ProgressLogger{#{progress.object_id}} : " \
           "Progress Made : #{incremented} / #{total}"
         )
         subject

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'ruby-progressbar'
-module Dodo
+module Bonito
   module ProgressCounter # :nodoc:
     attr_reader :total
     attr_reader :current

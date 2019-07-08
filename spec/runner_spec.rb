@@ -3,7 +3,7 @@
 require 'rspec'
 require 'active_support/core_ext/numeric/time'
 
-RSpec.describe Dodo::Runner do
+RSpec.describe Bonito::Runner do
   let(:live) { false }
   let(:daemonise) { false }
   let(:progress) do
@@ -18,19 +18,19 @@ RSpec.describe Dodo::Runner do
   let(:offsets) { Array.new(5) { start + rand(10.days) } }
   let(:moments) do
     offsets.map do |offset|
-      Dodo::ScopedMoment.new(Dodo::Moment.new(&block), offset, scope)
+      Bonito::ScopedMoment.new(Bonito::Moment.new(&block), offset, scope)
     end
   end
   let(:serial) do
-    serial = Dodo::SerialTimeline.new(3.weeks) {}
+    serial = Bonito::SerialTimeline.new(3.weeks) {}
     moments.each { |moment| serial.use moment }
     serial
   end
   let(:start) { 2.weeks.ago }
-  let(:scope) { Dodo::Scope.new }
+  let(:scope) { Bonito::Scope.new }
   let(:starting_offset) { rand 100 }
   let(:scheduler) { serial.scheduler(starting_offset, scope) }
-  let(:decorated_enum) { Dodo::ProgressDecorator.new scheduler, progress }
+  let(:decorated_enum) { Bonito::ProgressDecorator.new scheduler, progress }
   let(:runner) { described_class.new decorated_enum, opts }
 
   describe '#initialize' do

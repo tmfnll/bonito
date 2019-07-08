@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe Dodo::Moment do
+RSpec.describe Bonito::Moment do
   let(:block) { proc { p 'some block' } }
-  let(:moment) { Dodo::Moment.new(&block) }
-  let(:scope) { Dodo::Scope.new }
+  let(:moment) { Bonito::Moment.new(&block) }
+  let(:scope) { Bonito::Scope.new }
   describe '#initialize' do
     subject { moment }
     context 'when passed a block' do

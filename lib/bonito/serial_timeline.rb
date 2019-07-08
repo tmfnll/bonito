@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'dodo/timeline'
-require 'dodo/moment'
+require 'bonito/timeline'
+require 'bonito/moment'
 require 'securerandom'
 require 'timecop'
 
-module Dodo # :nodoc:
+module Bonito # :nodoc:
   class SerialScheduler < Scheduler # :nodoc:
     def initialize(serial, starting_offset, parent_scope, opts = {})
       super serial, starting_offset, parent_scope.push, opts
@@ -38,11 +38,11 @@ module Dodo # :nodoc:
   #
   # === Example
   #
-  #   Dodo.over(2.weeks) do
+  #   Bonito.over(2.weeks) do
   #     please { puts Time.now }
   #   end
   #
-  # The above defines a SerialTimeline (using the Dodo#over module method) that
+  # The above defines a SerialTimeline (using the Bonito#over module method) that
   # specifies a 2 week time period. A single Moment is included in this serial
   # (via the #please factory method).  When the top level SerialTimeline is
   # evaluated (using a Runner object) the block
@@ -63,7 +63,7 @@ module Dodo # :nodoc:
   # example in order to force the already included Moment to be evaluated
   # during the last day of the 2 week period.
   #
-  #   Dodo.over(2.weeks) do
+  #   Bonito.over(2.weeks) do
   #     over(2.weeks - 1.day)  # This defines an empty serial
   #     please { puts Time.now }
   #   end
@@ -89,7 +89,7 @@ module Dodo # :nodoc:
   #
   # === Example
   #
-  #   Dodo.over(2.weeks) do
+  #   Bonito.over(2.weeks) do
   #     simultaneously do
   #       over 1.week do
   #         puts "SerialTimeline 1 #{Time.now}"
@@ -131,11 +131,11 @@ module Dodo # :nodoc:
     #   the newly created SerialTimeline.  Note that the following two
     #   statements are equivalent
     #
-    #   a_serial = Dodo::SerialTimeline.new(1.week) do
+    #   a_serial = Bonito::SerialTimeline.new(1.week) do
     #     please { p Time.now }
     #   end
     #
-    #   another_serial = Dodo::SerialTimeline.new 1.week
+    #   another_serial = Bonito::SerialTimeline.new 1.week
     #   serial.please { p Time.now }
     #
     # The ability to include a block in this way is in order to allow the
@@ -286,10 +286,10 @@ module Dodo # :nodoc:
     end
   end
 
-  class DodoException < StandardError
+  class BonitoException < StandardError
   end
 
-  class WindowDurationExceeded < DodoException
+  class WindowDurationExceeded < BonitoException
   end
 
   def self.over(duration, &block)

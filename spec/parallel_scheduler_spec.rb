@@ -3,7 +3,7 @@
 require 'rspec'
 require 'active_support/core_ext/numeric/time'
 
-RSpec.describe Dodo::ParallelScheduler do
+RSpec.describe Bonito::ParallelScheduler do
   let(:duration) { 2.weeks }
   let(:opts) { {} }
   let(:after) { 2.days }
@@ -11,7 +11,7 @@ RSpec.describe Dodo::ParallelScheduler do
   let(:starting_offset) { 0.seconds }
 
   let(:scope) do
-    instance_double(Dodo::Scope).tap do |scope|
+    instance_double(Bonito::Scope).tap do |scope|
       allow(scope).to receive(:push).and_return(scope)
     end
   end
@@ -32,12 +32,12 @@ RSpec.describe Dodo::ParallelScheduler do
 
   let(:distributed_moments) do
     moments.map do |moment|
-      Dodo::OffsetTimeline.new moment, rand(10).days
+      Bonito::OffsetTimeline.new moment, rand(10).days
     end.sort
   end
   let(:more_distributed_moments) do
     more_moments.map do |moment|
-      Dodo::OffsetTimeline.new moment, rand(7).days + after
+      Bonito::OffsetTimeline.new moment, rand(7).days + after
     end.sort
   end
 
@@ -65,17 +65,17 @@ RSpec.describe Dodo::ParallelScheduler do
   end
 
   let(:parallel) do
-    allow(Dodo::SerialTimeline).to receive(:new).and_return(
+    allow(Bonito::SerialTimeline).to receive(:new).and_return(
       serial, another_serial
     )
-    Dodo::ParallelTimeline.new.tap do |parallel|
+    Bonito::ParallelTimeline.new.tap do |parallel|
       parallel.also after: 0, over: serial.duration {}
       parallel.also after: after, over: another_serial.duration {}
     end
   end
 
   let(:parallel_scheduler) do
-    Dodo::ParallelScheduler.new parallel, starting_offset, scope, opts
+    Bonito::ParallelScheduler.new parallel, starting_offset, scope, opts
   end
 
   describe '#each' do

@@ -5,7 +5,7 @@ require 'rspec'
 RSpec.shared_examples 'a moment scheduler' do
   let(:starting_offset) { rand(10).days }
   let(:opts) { double }
-  let(:scope) { Dodo::Scope.new }
+  let(:scope) { Bonito::Scope.new }
   subject { timeline.scheduler starting_offset, scope, opts }
   context 'with opts' do
     it 'should create a new MomentScheduler with opts included' do

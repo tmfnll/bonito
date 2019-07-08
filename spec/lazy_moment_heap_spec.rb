@@ -2,7 +2,7 @@
 
 require 'rspec'
 
-RSpec.describe Dodo::LazyMinHeap do
+RSpec.describe Bonito::LazyMinHeap do
   let(:arrays) do
     Array.new(rand(2..5)) { Array.new(rand(1..5)) { rand 100 }.sort }
   end

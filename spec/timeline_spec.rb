@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-RSpec.describe Dodo::ScopedMoment do
+RSpec.describe Bonito::ScopedMoment do
   let(:moment) { build :moment }
   let(:offset) { 2.weeks.ago }
-  let(:scope) { Dodo::Scope.new }
+  let(:scope) { Bonito::Scope.new }
   let(:scoped_moment) { described_class.new moment, offset, scope }
 
   describe '#evaluate' do

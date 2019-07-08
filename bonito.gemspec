@@ -2,11 +2,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'dodo/version'
+require 'bonito/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'dodo'
-  spec.version       = Dodo::VERSION
+  spec.name          = 'bonito'
+  spec.version       = Bonito::VERSION
   spec.authors       = ['Tom Finill']
   spec.email         = ['tomfinill@gmail.com']
 

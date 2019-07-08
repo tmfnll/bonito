@@ -4,7 +4,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'bundler/setup'
-require 'dodo'
+require 'bonito'
 require 'factory_bot'
 require 'logger'
 require 'faker'

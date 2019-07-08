@@ -1,6 +1,6 @@
 AllCops:
   Exclude:
-  - 'dodo.gemspec'
+  - 'bonito.gemspec'
 
 Metrics/BlockLength:
   ExcludedMethods: [

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require 'rspec'
-RSpec.describe Dodo::MomentScheduler do
+RSpec.describe Bonito::MomentScheduler do
   let(:block) { -> { true } }
   let(:starting_offset) { rand 100 }
   let(:stretch) { 2 }
   let(:opts) { { stretch: stretch } }
-  let(:moment) { Dodo::Moment.new(&block) }
-  let(:scope) { Dodo::Scope.new }
+  let(:moment) { Bonito::Moment.new(&block) }
+  let(:scope) { Bonito::Scope.new }
   let(:scheduler) do
-    Dodo::MomentScheduler.new moment, starting_offset, scope, opts
+    Bonito::MomentScheduler.new moment, starting_offset, scope, opts
   end
 
   describe '#initialize' do

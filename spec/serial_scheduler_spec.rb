@@ -3,7 +3,7 @@
 require 'active_support/core_ext/numeric/time'
 require 'securerandom'
 
-RSpec.describe Dodo::SerialScheduler do
+RSpec.describe Bonito::SerialScheduler do
   let(:moments) { build_list :moment, 3 }
   let(:child_serial) { build :serial }
   let(:child_parallel) { build :parallel }
@@ -29,7 +29,7 @@ RSpec.describe Dodo::SerialScheduler do
   let(:stretch) { scale_opts.fetch(:stretch) { 1 } }
 
   let(:starting_offset) { rand(10).days }
-  let(:scope) { Dodo::Scope.new }
+  let(:scope) { Bonito::Scope.new }
   let(:scheduler) do
     described_class.new serial, starting_offset, scope, scale_opts
   end
@@ -45,7 +45,7 @@ RSpec.describe Dodo::SerialScheduler do
       context 'where the last timeline in serial.to_a has a
                duration of 0' do
         it 'should return an scheduler of offset timelines' do
-          expect(Set[*subject.map(&:class)]).to eq Set[Dodo::ScopedMoment]
+          expect(Set[*subject.map(&:class)]).to eq Set[Bonito::ScopedMoment]
         end
 
         it 'should yield multiple moments' do

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'dodo/timeline'
-require 'dodo/serial_timeline'
+require 'bonito/timeline'
+require 'bonito/serial_timeline'
 require 'algorithms'
 
-module Dodo
+module Bonito
   class ParallelScheduler < Scheduler # :nodoc:
     def initialize(parallel, starting_offset, scope, opts = {})
       super
@@ -28,7 +28,7 @@ module Dodo
     end
 
     def over(duration, after: 0, &block)
-      use Dodo::SerialTimeline.new(duration, &block), after: after
+      use Bonito::SerialTimeline.new(duration, &block), after: after
     end
 
     def also(over: duration, after: 0, &block)
