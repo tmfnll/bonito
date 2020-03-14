@@ -101,19 +101,30 @@
 
 <p>We could use <code>Bonito</code> to define a <code>serial timeline</code>:</p>
 
-<pre class="ruby"><span class="ruby-identifier">serial</span> = <span class="ruby-constant">Bonito</span>.<span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
-  <span class="ruby-identifier">please</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">author</span> = <span class="ruby-identifier">authors</span>.<span class="ruby-identifier">sample</span>
+<pre class="ruby"><span class="ruby-comment"># First we create data structures to store out data and keep track of them in</span>
+ <span class="ruby-comment"># a `Scope` object:</span>
+<span class="ruby-constant">Bonito</span><span class="ruby-operator">::</span><span class="ruby-constant">Scope</span>.<span class="ruby-identifier">new</span>.<span class="ruby-identifier">tap</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">scope</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">authors</span> = []
+  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">articles</span> = []
+  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">users</span> = []
+  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">comments</span> = []
+  <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">users_and_authors</span> = []
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Next we define out serial timeline:</span>
+<span class="ruby-identifier">serial</span> = <span class="ruby-constant">Bonito</span>.<span class="ruby-identifier">over</span> <span class="ruby-value">1</span>.<span class="ruby-identifier">week</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">please</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">scope</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">author</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">authors</span>.<span class="ruby-identifier">sample</span>
     <span class="ruby-identifier">title</span> = <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Company</span>.<span class="ruby-identifier">bs</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">article</span> = <span class="ruby-constant">Article</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">title</span>, <span class="ruby-identifier">author</span>)
-    <span class="ruby-identifier">articles</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">article</span>
+    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">article</span> = <span class="ruby-constant">Article</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">title</span>, <span class="ruby-identifier">author</span>)
+    <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">articles</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">article</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">repeat</span> <span class="ruby-value">times:</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">10</span>), <span class="ruby-value">over:</span> <span class="ruby-value">5</span>.<span class="ruby-identifier">days</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">please</span> <span class="ruby-keyword">do</span>
-      <span class="ruby-identifier">user</span> = <span class="ruby-identifier">users</span>.<span class="ruby-identifier">sample</span>
+    <span class="ruby-identifier">please</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">scope</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">user</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">users</span>.<span class="ruby-identifier">sample</span>
       <span class="ruby-identifier">content</span> = <span class="ruby-constant">Faker</span><span class="ruby-operator">::</span><span class="ruby-constant">Lorem</span>.<span class="ruby-identifier">sentence</span>
-      <span class="ruby-identifier">comments</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Comment</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">content</span>, <span class="ruby-identifier">article</span>, <span class="ruby-identifier">user</span>)
+      <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">comments</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Comment</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">content</span>, <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">article</span>, <span class="ruby-identifier">user</span>)
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span>
@@ -169,7 +180,7 @@
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="https://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.2.0.
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.2.1.
   <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 
