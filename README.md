@@ -1,6 +1,6 @@
 # Bonito
 
-![build](https://travis-ci.org/TomFinill/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/TomFinill/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/TomFinill/bonito/test_coverage)
+![build](https://travis-ci.org/tmfnll/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/tmfnll/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/tmfnll/bonito/test_coverage)
 
 ## TL;DR
 
