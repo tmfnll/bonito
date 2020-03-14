@@ -1,11 +1,11 @@
-Sat, 14 Mar 2020 20:24:05 -0000
-README.md	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/version.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/serial_timeline.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/moment.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/progress.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/timeline.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/parallel_timeline.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/scope.rb	Sat, 14 Mar 2020 20:23:32 +0000
-lib/bonito/runner.rb	Sat, 14 Mar 2020 20:23:32 +0000
+Sat, 14 Mar 2020 20:24:15 -0000
+README.md	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/version.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/serial_timeline.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/moment.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/progress.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/timeline.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/parallel_timeline.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/scope.rb	Sat, 14 Mar 2020 20:23:34 +0000
+lib/bonito/runner.rb	Sat, 14 Mar 2020 20:23:34 +0000
