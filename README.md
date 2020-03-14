@@ -18,19 +18,30 @@ write _articles_ and _users_ _comment_ on these articles.
 We could use `Bonito` to define a `serial timeline`:
 
 ```ruby
+# First we create data structures to store out data and keep track of them in
+ # a `Scope` object: 
+Bonito::Scope.new.tap do |scope|
+  scope.authors = []
+  scope.articles = []
+  scope.users = []
+  scope.comments = []
+  scope.users_and_authors = []
+end
+
+# Next we define out serial timeline:
 serial = Bonito.over 1.week do
-  please do
-    author = authors.sample
+  please do |scope|
+    author = scope.authors.sample
     title = Faker::Company.bs
-    self.article = Article.new(title, author)
-    articles << article
+    scope.article = Article.new(title, author)
+    scope.articles << article
   end
 
   repeat times: rand(10), over: 5.days do
-    please do
-      user = users.sample
+    please do |scope|
+      user = scope.users.sample
       content = Faker::Lorem.sentence
-      comments << Comment.new(content, article, user)
+      scope.comments << Comment.new(content, scope.article, user)
     end
   end
 end

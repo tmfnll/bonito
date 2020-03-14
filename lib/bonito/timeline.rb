@@ -67,7 +67,7 @@ module Bonito
     end
 
     def evaluate
-      freeze { @scope.instance_eval(&self) }
+      freeze { to_proc.call(@scope) }
     end
 
     private

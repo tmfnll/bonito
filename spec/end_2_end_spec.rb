@@ -61,41 +61,41 @@ RSpec.describe 'End to end' do
       simultaneously do
         over 1.day do
           repeat times: 5, over: 1.day do
-            please do
+            please do |scope|
               name = Faker::Name.name
               author = Author.new(name)
-              authors << author
-              users_and_authors << author
+              scope.authors << author
+              scope.users_and_authors << author
             end
           end
         end
 
         also over: 1.day, after: 2.hours do
           repeat times: 10, over: 1.day do
-            please do
+            please do |scope|
               name = Faker::Name.name
               email = Faker::Internet.safe_email(name)
               user = User.new(name, email)
-              users << user
-              users_and_authors << user
+              scope.users << user
+              scope.users_and_authors << user
             end
           end
         end
       end
 
       repeat times: 5, over: 5.days do
-        please do
-          author = authors.sample
+        please do |scope|
+          author = scope.authors.sample
           title = Faker::Company.bs
-          self.article = Article.new(title, author)
-          articles << article
+          scope.article = Article.new(title, author)
+          scope.articles << scope.article
         end
 
         repeat times: rand(10), over: 5.hours do
-          please do
-            user = users.sample
+          please do |scope|
+            user = scope.users.sample
             content = Faker::Lorem.sentence
-            comments << Comment.new(content, article, user)
+            scope.comments << Comment.new(content, scope.article, user)
           end
         end
       end
