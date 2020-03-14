@@ -12,14 +12,12 @@ RSpec.describe Bonito::ScopedMoment do
     subject { scoped_moment.evaluate }
 
     it 'should evaluate the moment within the scope' do
-      expect(scope).to receive(:instance_eval) do |&block|
-        expect(block).to eq(moment.to_proc)
-      end
+      expect(moment.to_proc).to receive(:call).with(scope)
       subject
     end
 
     it 'should evaluate the moment within the scope at the offset' do
-      expect(scope).to receive(:instance_eval) do |&_block|
+      expect(moment.to_proc).to receive(:call) do |&_block|
         expect(Time.now).to eq offset
       end
       subject
