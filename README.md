@@ -1,14 +1,15 @@
 # Bonito
 
-![build](https://travis-ci.org/tmfnll/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/maintainability)](https://codeclimate.com/github/tmfnll/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/42198ebf17bf127e0da6/test_coverage)](https://codeclimate.com/github/tmfnll/bonito/test_coverage)
+![build](https://travis-ci.org/tmfnll/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/15ad4524ca0d4c0cdff4/maintainability)](https://codeclimate.com/github/tmfnll/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/15ad4524ca0d4c0cdff4/test_coverage)](https://codeclimate.com/github/tmfnll/bonito/test_coverage)
 
 ## TL;DR
 
-**Bonito** is a ruby DSL for generating canned data where timing is important.  
+_`Bonito` is a ruby DSL for generating canned data where timing is important._  
 
 `Bonito` uses [Timecop](https://github.com/travisjeffery/timecop) in simulate
 the flow of time as it generates data.
 
+## An Example
 
 #### `Bonito` can generate data in series:
 
@@ -19,7 +20,7 @@ We could use `Bonito` to define a `serial timeline`:
 
 ```ruby
 # First we create data structures to store out data and keep track of them in
- # a `Scope` object: 
+# a `Scope` object: 
 Bonito::Scope.new.tap do |scope|
   scope.authors = []
   scope.articles = []
