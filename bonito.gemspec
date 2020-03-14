@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'A simple tool to create demo data'
   spec.description   = 'Create realistic demo data by simulating events occurring over some time period'
-  spec.homepage      = 'https://github.com/TomFinill/bonito'
+  spec.homepage      = 'https://github.com/tmfnll/bonito'
   spec.license       = 'MIT'
 
   # Specify which files should be added to the gem when it is released.
