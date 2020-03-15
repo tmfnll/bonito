@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require 'logger'
 require 'ruby-progressbar'
+
 module Bonito
   module ProgressCounter # :nodoc:
     attr_reader :total
