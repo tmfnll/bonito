@@ -2,7 +2,7 @@
 
 _Data, in a can_
 
-![build](https://travis-ci.org/tmfnll/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/15ad4524ca0d4c0cdff4/maintainability)](https://codeclimate.com/github/tmfnll/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/15ad4524ca0d4c0cdff4/test_coverage)](https://codeclimate.com/github/tmfnll/bonito/test_coverage)
+![build](https://travis-ci.org/TomFinill/bonito.svg?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/15ad4524ca0d4c0cdff4/maintainability)](https://codeclimate.com/github/tmfnll/bonito/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/15ad4524ca0d4c0cdff4/test_coverage)](https://codeclimate.com/github/tmfnll/bonito/test_coverage)
 
 ## TL;DR
 
