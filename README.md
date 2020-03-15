@@ -11,6 +11,19 @@ _`Bonito` is a ruby DSL for generating canned data where timing is important._
 `Bonito` uses [Timecop](https://github.com/travisjeffery/timecop) to simulate
 the flow of time as it generates data.
 
+## Installation
+```
+gem install bonito
+```
+or, if using [Bundler](https://bundler.io/)
+```ruby
+gem 'bonito', '~> 0.2.1'
+```
+
+```ruby
+require 'bonito'
+```
+
 ## Introduction
 
 At the core of `Bonito` is the concept of a _timeline_.  A timeline is a sort
