@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'factory_bot'
   spec.add_development_dependency 'faker', '~> 2.10.1'
-  spec.add_development_dependency 'rake', '~> 12.3'
+  spec.add_development_dependency 'rake', '~> 13'
   spec.add_development_dependency 'rdoc'
   spec.add_development_dependency 'reek'
   spec.add_development_dependency 'rspec', '~> 3.0'
