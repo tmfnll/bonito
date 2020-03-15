@@ -74,7 +74,7 @@ RSpec.describe 'End to end' do
           repeat times: 10, over: 1.day do
             please do |scope|
               name = Faker::Name.name
-              email = Faker::Internet.safe_email(name)
+              email = Faker::Internet.safe_email(name: name)
               user = User.new(name, email)
               scope.users << user
               scope.users_and_authors << user
